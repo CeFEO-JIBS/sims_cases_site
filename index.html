@@ -3118,7 +3118,7 @@ const ERIKSSON={
  prompt:{kind:'family board meeting',lead:'Niklas, Mattias, Kajsa and Hanna are discussing',place:'the Eriksson Group’s headquarters facing the old harbour of Göteborg, Sweden; the boardroom, on a windy afternoon',issue:'a proposed significant investment in a tech startup, and Niklas’s proposal to reduce the say of family members who are not active in the company',dyn:'Niklas, the CEO and elder brother, values caution and stability; his younger brother Mattias is calm but determined to take a calculated risk; decades of rivalry sit between them; Kajsa, Niklas’s daughter, backs her father; Hanna, Mattias’s daughter, has done the due diligence on the startup; nobody raises their voice',voice:'how open the conversation between the brothers is',board:'soundness of the decision process',trust:'trust within the family'},
  place:'Göteborg · real estate and manufacturing',
 };
-const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,BIXA,SJOSTROM];
+const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,SJOSTROM,BIXA];
 // only the watch mode is offered; the playable roles and their decisions stay in the data for later use
 CASES.forEach(c=>{if(c.parts)return;const w=c.roles.find(r=>r[0]==='watch');c.roles=[['watch','Watch the case',w?w[2]:'See the case play out as written.']];c.blurb=c.blurb.replace(/\s*[^.!?]*partly on you\.\s*$/,'')});
 let CASE=LINDQVIST,CAST,BASE,DEC_AT,DECISIONS,QUESTIONS,METERS,MEET,IDLE,REACT;
