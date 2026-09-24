@@ -235,7 +235,7 @@ body.focus aside,body.focus .brand{display:none !important}
         <button id="meetBtn" class="primary">Call board meeting</button>
         <button id="castBtn">Meet the cast</button>
         <button id="camBtn" class="on">Close-ups</button>
-        <button id="thinkBtn" class="on">Thoughts</button><button id="figBtn" title="Switch between the new and the classic figures">New figures</button>
+        <button id="thinkBtn" class="on">Thoughts</button><button id="figBtn" style="display:none">New figures</button>
         <button id="replayBtn" class="primary">Start over</button>
         <button id="closeCaseBtn">Close case</button>
       </div>
@@ -1315,7 +1315,7 @@ function personDrawable(p){
 // Adult proportions (about 7.5 heads), built as simple 3D forms (ellipsoids and capsules) and projected with the
 // room's own 2:1 view, so a figure can turn in any direction. The body always faces the table; the head turns
 // toward the speaker, and toward the viewer while speaking. Units are centimetres; S maps them to canvas units.
-let FIG='v2';try{const f=localStorage.getItem('fbsim.fig');if(f==='v1'||f==='v2')FIG=f}catch(e){}
+let FIG='v1';
 const V2S=1.5,V2K=.70711*V2S,V2C=.86603*V2S;
 const v2V=[.61237,.61237,.5];                       // unit vector from the figure toward the viewer (world x, y, z)
 function v2scr(w){return[(w[0]-w[1])*V2K,(w[0]+w[1])*V2K*.5-w[2]*V2C]}
