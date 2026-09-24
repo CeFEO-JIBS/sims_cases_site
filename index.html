@@ -75,6 +75,17 @@ canvas.pointer{cursor:pointer}
 @media (max-width:560px){.casechip.dim{display:none}}
 .keytags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .keytags span{font-size:11.5px;background:#E8EEEE;color:#2F4A4E;border-radius:999px;padding:2px 8px}
+.startpick{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;width:min(560px,92vw);background:rgba(255,255,255,.95);color:#22282B;border-radius:20px;box-shadow:0 16px 40px rgba(10,25,30,.35);backdrop-filter:blur(12px);padding:14px 16px 14px}
+.startpick .sptitle{font-size:19px;font-weight:800;color:#2F6E73;margin:0 2px 10px}
+.startpick .sprow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.startpick button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;padding:11px 14px;border-radius:14px;border:1px solid var(--line,#D8DEDC);background:#F3F6F5;color:#22282B;cursor:pointer}
+.startpick button strong{font-size:15px}.startpick button span{font-size:12.5px;opacity:.75}
+.startpick button.spgo{background:#2F6E73;border-color:#2F6E73;color:#fff}.startpick button.spgo span{opacity:.85}
+.muninnbtn{position:absolute;right:16px;top:188px;z-index:6;display:flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border-radius:999px;border:0;background:rgba(255,255,255,.95);box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer;font:inherit;color:#22282B;animation:munin .5s ease-out}
+.muninnbtn img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.muninnbtn span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}.muninnbtn strong{font-size:14px}.muninnbtn em{font-style:normal;font-size:12px;opacity:.7}
+@keyframes munin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (max-width:760px){.muninnbtn{top:auto;bottom:96px;right:12px}}
 .cutcard{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:#0E1418;color:#F4F1EA;font:600 22px/1.3 inherit;letter-spacing:.04em;opacity:0;pointer-events:none;text-align:center;padding:20px}
 .hud{position:absolute; left:12px; right:12px; display:flex; gap:10px; justify-content:space-between; align-items:flex-start; pointer-events:none; flex-wrap:wrap}
 .hud.top{top:12px}
@@ -224,7 +235,7 @@ body.focus aside,body.focus .brand{display:none !important}
         <button id="meetBtn" class="primary">Call board meeting</button>
         <button id="castBtn">Meet the cast</button>
         <button id="camBtn" class="on">Close-ups</button>
-        <button id="thinkBtn" class="on">Thoughts</button>
+        <button id="thinkBtn" class="on">Thoughts</button><button id="figBtn" title="Switch between the new and the classic figures">New figures</button>
         <button id="replayBtn" class="primary">Start over</button>
         <button id="closeCaseBtn">Close case</button>
       </div>
@@ -1300,11 +1311,378 @@ function personDrawable(p){
   const z0=p.seated?p.seatZ:0;
   return {x0:p.x-.15,x1:p.x+.15,y0:p.y-.15,y1:p.y+.15,z0,z1:z0+68,draw:()=>drawPerson(p)};
 }
+// ---------------------------------------------------------------- figures, version 2
+// Adult proportions (about 7.5 heads), built as simple 3D forms (ellipsoids and capsules) and projected with the
+// room's own 2:1 view, so a figure can turn in any direction. The body always faces the table; the head turns
+// toward the speaker, and toward the viewer while speaking. Units are centimetres; S maps them to canvas units.
+let FIG='v2';try{const f=localStorage.getItem('fbsim.fig');if(f==='v1'||f==='v2')FIG=f}catch(e){}
+const V2S=1.5,V2K=.70711*V2S,V2C=.86603*V2S;
+const v2V=[.61237,.61237,.5];                       // unit vector from the figure toward the viewer (world x, y, z)
+function v2scr(w){return[(w[0]-w[1])*V2K,(w[0]+w[1])*V2K*.5-w[2]*V2C]}
+function v2dep(w){return w[0]*v2V[0]+w[1]*v2V[1]+w[2]*v2V[2]}
+const v2add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],v2mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k],v2dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const v2norm=a=>{const n=Math.hypot(a[0],a[1],a[2])||1;return[a[0]/n,a[1]/n,a[2]/n]};
+const v2cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+// a frame: origin o, axes x (the person's right), y (forward), z (up), all in world units (cm)
+function v2frame(o,fwd,pitch){const f=v2norm([fwd[0],fwd[1],0]),r=[-f[1],f[0],0];let y=f,z=[0,0,1];
+  if(pitch){const c=Math.cos(pitch),s=Math.sin(pitch);y=[f[0]*c,f[1]*c,-s];z=[f[0]*s,f[1]*s,c]}
+  return{o,x:r,y,z}}
+const v2w=(F,x,y,z)=>[F.o[0]+F.x[0]*x+F.y[0]*y+F.z[0]*z,F.o[1]+F.x[1]*x+F.y[1]*y+F.z[1]*z,F.o[2]+F.x[2]*x+F.y[2]*y+F.z[2]*z];
+const v2rot=(v,a)=>{const c=Math.cos(a),s=Math.sin(a);return[v[0]*c-v[1]*s,v[0]*s+v[1]*c]};
+const v2ang=(a,b)=>Math.atan2(a[0]*b[1]-a[1]*b[0],a[0]*b[0]+a[1]*b[1]);   // signed angle from a to b (ground)
+function v2ik(S,T,L1,L2,pole){let d=[T[0]-S[0],T[1]-S[1],T[2]-S[2]],n=Math.hypot(...d)||1;const mx=L1+L2-.5;
+  if(n>mx){T=v2add(S,v2mul(d,mx/n));d=v2mul(d,mx/n);n=mx}
+  const dir=v2mul(d,1/n),a=(L1*L1-L2*L2+n*n)/(2*n),h=Math.sqrt(Math.max(0,L1*L1-a*a));
+  let pp=v2add(pole,v2mul(dir,-v2dot(pole,dir)));pp=v2norm(pp);return[v2add(v2add(S,v2mul(dir,a)),v2mul(pp,h)),T]}
+const v2rgba=(hex,a)=>{const m=shade(hex,0).match(/\d+/g)||[0,0,0];return`rgba(${m[0]},${m[1]},${m[2]},${a})`};
+
+function drawPersonV2(p){
+  const c=ctx;
+  const [gx,gy]=P(p.x,p.y,0),z0=p.seated?p.seatZ:0;let [bx,by]=P(p.x,p.y,z0);
+  if(p.gesture==='fidget')bx+=Math.sin(animT*6+p.id*2)*1.5;
+  const X=bx,Y=by,GX=gx,GY=gy;
+  c.globalAlpha=1;
+  if(!p.seated){const g=c.createRadialGradient(GX,GY,1,GX,GY,14);g.addColorStop(0,'rgba(20,14,10,.3)');g.addColorStop(1,'rgba(20,14,10,0)');c.save();c.translate(GX,GY);c.scale(1,.45);c.translate(-GX,-GY);c.fillStyle=g;c.beginPath();c.arc(GX,GY,14,0,6.283);c.fill();c.restore()}
+  if(p.isPlayer||p===selected){c.save();c.strokeStyle=p.isPlayer?'rgba(240,199,102,.95)':'rgba(134,179,182,.95)';c.lineWidth=2;c.beginPath();c.ellipse(GX,GY,17,7,0,0,6.283);c.stroke();c.restore()}
+  // ---- orientation: the body faces the table; the head turns toward whoever matters
+  const sf=p.seated&&((p.spot&&p.spot.face)||(p.extra&&CHAIRFACE[p.x+'|'+p.y]));
+  let body=sf?({'+x':[1,0],'-x':[-1,0],'+y':[0,1],'-y':[0,-1]}[sf]):[p.fx??.3,p.fy??1];
+  if(!sf&&!p.moving&&p.gaze){const t=p.gaze.p?[p.gaze.p.x,p.gaze.p.y]:p.gaze.w;const d=[t[0]-p.x,t[1]-p.y];if(Math.hypot(...d)>.05)body=d}
+  body=(()=>{const n=Math.hypot(body[0],body[1])||1;return[body[0]/n,body[1]/n]})();
+  const spk=p.talking&&!p.moving;
+  let look=null,lookZ=0;                                   // ground direction the head turns toward, and a vertical hint
+  if(spk)look=[.7071,.7071];                               // the viewer
+  else if(p.gaze&&!p.moving){const t=p.gaze.p?[p.gaze.p.x,p.gaze.p.y,(p.gaze.p.seated?p.gaze.p.seatZ:0)+30]:p.gaze.w;
+    const d=[t[0]-p.x,t[1]-p.y];const n=Math.hypot(...d);if(n>.05){look=[d[0]/n,d[1]/n];lookZ=((t[2]||26)-(p.seated?p.seatZ+30:62))/(n*60)}}
+  if(!look)look=body;
+  let yawH=v2ang(body,look);const tw=spk?.42:.22,nk=spk?1.25:.95;const twist=Math.max(-tw,Math.min(tw,yawH*.3));yawH=Math.max(-nk,Math.min(nk,yawH-twist))+twist;
+  const upper=v2rot(body,twist),headF=v2rot(body,yawH);
+  // ---- gesture and animation state (same vocabulary as version 1)
+  let G=p.gesture||null;
+  if(!G&&p.react==='cross')G='cross';
+  if(!G&&spk&&Math.floor(animT/1.7+p.id)%3!==0)G='talk';
+  if(!G&&!p.talking&&p.seated&&p.idle)G=p.idle;
+  if(G==='glasses'&&!p.glasses)G=null;
+  const down=G==='phone'||G==='write'||G==='type'||(p.gaze&&p.gaze.w&&p.gaze.w[2]===25&&p.gaze.w!==TABLE);
+  const step=p.moving?Math.sin(p.phase):0;
+  const br=p.moving?0:Math.sin(animT*1.9+p.id*1.7)*.35;
+  const nod=p.react==='nod'?Math.max(0,Math.sin((animT-(p.reactT||0))*8))*.22:0;
+  const tb=spk?Math.max(0,Math.sin(animT*8.5+p.id))*.05:0;
+  const pitch=(down?.42:0)+nod-tb+Math.max(-.25,Math.min(.25,-lookZ));
+  const fem=!!p.fem,ht=p.hairType||'short',age=p.age||0;
+  // ---- colours
+  const S0=p.skin,S1=shade(S0,-.1),S2=shade(S0,-.22),SH=shade(S0,.08),
+    J0=p.shirt,J1=shade(J0,-.16),J2=shade(J0,-.32),JH=shade(J0,.1),
+    T0=p.trous,T1=shade(T0,-.2),IN=p.turtle||p.inner||'#F4F2EE',IN1=shade(IN,-.1),
+    H0=p.hair,H1=shade(H0,-.2),HH=shade(H0,.22),SHOE=p.shoe||'#2E2724',
+    OUTW=.9,OUTC='rgba(30,22,18,.28)';
+  // ---- frames. Standing: origin on the floor. Seated: origin on the seat.
+  const zh=p.seated?7:93+(p.moving?Math.abs(step)*1.2:0);
+  const floorZ=p.seated?-Math.max(20,(GY-Y)*2/V2C):0;
+  const FB=v2frame([0,0,br*.2],body,0),FU=v2frame([0,0,0],upper,0);
+  c.save();c.translate(X,Y);c.scale(.5,.5);c.lineCap='round';c.lineJoin='round';
+  let PJ=v2scr;const S=(w)=>w.length===2?w:PJ(w);
+  const fillPath=(fl,lw)=>{c.fillStyle=fl;c.fill();if(lw!==0){c.strokeStyle=OUTC;c.lineWidth=lw||OUTW;c.stroke()}};
+  const lin=(a,b,st)=>{const g=c.createLinearGradient(a[0],a[1],b[0],b[1]);st.forEach((s,i)=>g.addColorStop(i/(st.length-1),s));return g};
+  const cap=(A,B,w1,w2,col,hi,noOut)=>{const a=S(A),b=S(B);const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L;const r1=w1*V2S,r2=w2*V2S;
+    const shp=(e,fl)=>{c.fillStyle=fl;c.beginPath();c.moveTo(a[0]+nx*(r1+e),a[1]+ny*(r1+e));c.lineTo(b[0]+nx*(r2+e),b[1]+ny*(r2+e));c.lineTo(b[0]-nx*(r2+e),b[1]-ny*(r2+e));c.lineTo(a[0]-nx*(r1+e),a[1]-ny*(r1+e));c.closePath();c.fill();
+      c.beginPath();c.arc(a[0],a[1],r1+e,0,6.283);c.fill();c.beginPath();c.arc(b[0],b[1],r2+e,0,6.283);c.fill()};
+    if(!noOut)shp(.55,shade(col,-.2));shp(0,col);
+    if(hi){const sg=(nx+ny<0)?1:-1;c.save();c.globalAlpha=.42;c.strokeStyle=hi;c.lineWidth=Math.min(r1,r2)*.55;c.beginPath();c.moveTo(a[0]+nx*sg*r1*.45,a[1]+ny*sg*r1*.45);c.lineTo(b[0]+nx*sg*r2*.45,b[1]+ny*sg*r2*.45);c.stroke();c.restore()}};
+  const ell=(W,rx,ry,col,rot)=>{const s=S(W);c.beginPath();c.ellipse(s[0],s[1],Math.max(.1,rx),Math.max(.1,ry),rot||0,0,6.283);c.fillStyle=col;c.fill()};
+  // ---- torso sections: [z, half-width, half-depth, twist share]
+  const shW=(fem?18.2:20.5)+(p.pads?1.8:0),hipW=fem?17.5:16.2,waistW=fem?13.2:15;
+  const jacket=!p.casual&&!p.turtle;
+  const secs=[[zh-(jacket?11:6),hipW+(jacket?1.2:.2),11.5,0],[zh,hipW,11.4,0],[zh+17,waistW,10,.35],[zh+36,fem?16.2:17.8,11.6,.7],[zh+48.5,shW,10.4,1],[zh+53.5,12.5,8.2,1],[zh+57,6.2,5.4,1]];
+  const secFrame=k=>v2frame([0,0,0],v2rot(body,twist*k),0);
+  const secPts=(s)=>{const F=secFrame(s[3]);const ax=F.x,ay=F.y;const kx=(ax[0]-ax[1]),ky=(ay[0]-ay[1]);const t0=Math.atan2(s[2]*ky,s[1]*kx);
+    const pt=t=>S(v2add([ax[0]*s[1]*Math.cos(t)+ay[0]*s[2]*Math.sin(t),ax[1]*s[1]*Math.cos(t)+ay[1]*s[2]*Math.sin(t),0],[0,0,s[0]]));
+    const A=pt(t0),B=pt(t0+Math.PI);return A[0]>=B[0]?{R:A,L:B,tR:t0,tL:t0+Math.PI,pt}:{R:B,L:A,tR:t0+Math.PI,tL:t0,pt}};
+  const facing=v2dot([body[0],body[1],0],v2V)/.866;          // 1 facing the viewer, -1 back to the viewer
+  const upFacing=v2dot([upper[0],upper[1],0],v2V)/.866;
+  const torsoPath=(L)=>{const P2=(L||secs).map(secPts);c.beginPath();const top=P2[P2.length-1],bot=P2[0];
+    const arcTo=(sp,t0,upper,n)=>{const m1=sp.pt(t0+Math.PI/2)[1],m2=sp.pt(t0-Math.PI/2)[1];const dir=((m1<m2)===upper)?1:-1;for(let i=1;i<=n;i++){const q=sp.pt(t0+dir*Math.PI*i/n);c.lineTo(q[0],q[1])}};
+    c.moveTo(top.R[0],top.R[1]);arcTo(top,top.tR,true,10);
+    for(let i=P2.length-2;i>=0;i--){const q=P2[i].L,pr=P2[i+1].L;c.quadraticCurveTo(pr[0],pr[1],(pr[0]+q[0])/2,(pr[1]+q[1])/2)}c.lineTo(bot.L[0],bot.L[1]);
+    arcTo(bot,bot.tL,false,10);
+    for(let i=1;i<P2.length;i++){const q=P2[i].R,pr=P2[i-1].R;c.quadraticCurveTo(pr[0],pr[1],(pr[0]+q[0])/2,(pr[1]+q[1])/2)}
+    c.lineTo(top.R[0],top.R[1]);c.closePath()};
+  // front surface point of the torso at height z, lateral x (in the frame for that height)
+  const secAt=z=>{let i=0;while(i<secs.length-2&&secs[i+1][0]<z)i++;const a=secs[i],b=secs[i+1],t=Math.max(0,Math.min(1,(z-a[0])/(b[0]-a[0])));return[z,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t,a[3]+(b[3]-a[3])*t]};
+  const front=(x,z,out)=>{const s=secAt(z);const F=secFrame(s[3]);const k=Math.min(.98,Math.abs(x)/s[1]);return v2w(F,x,s[2]*Math.sqrt(1-k*k)+(out||0),z)};
+  const back3=(x,z)=>{const s=secAt(z);const F=secFrame(s[3]);const k=Math.min(.98,Math.abs(x)/s[1]);return v2w(F,x,-s[2]*Math.sqrt(1-k*k),z)};
+  const poly3=(pts,fl,lw)=>{c.beginPath();pts.forEach((w,i)=>{const s=S(w);i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1])});c.closePath();fillPath(fl,lw)};
+  const line3=(pts,w,col)=>{c.beginPath();pts.forEach((q,i)=>{const s=S(q);i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1])});c.strokeStyle=col;c.lineWidth=w;c.stroke()};
+  // ---- limbs
+  const shY=zh+48,shX=shW-4.2;
+  const SLw=v2w(FU,-shX,0,shY),SRw=v2w(FU,shX,0,shY);
+  const HPL=v2w(FB,-8.8,0,zh-3),HPR=v2w(FB,8.8,0,zh-3);
+  const zt=40;                                                  // table height above the seat
+  // hand targets in the upper-body frame for each gesture (seated / standing)
+  const osc=(f,a)=>Math.sin(animT*f+p.id)*a;
+  let hl,hr,openR=false,openL=false,prop=null,nearFace=false;
+  if(p.seated){
+    hl=[-11,24,zt+1];hr=[11,24,zt+1];
+    if(G==='type'){hl=[-9,26,zt+1+(osc(16,1)>0?1.5:0)];hr=[9,26,zt+1+(osc(16.5,1)>0?1.5:0)]}
+    else if(G==='write'){hr=[6+osc(7,3),26,zt+1+Math.abs(osc(14,1))];prop='pen'}
+    else if(G==='talk'){hr=[16+osc(3.1,3),24,zt+13+osc(6,4)];openR=true}
+    else if(G==='hand'){hr=[20,10,zh+92];openR=true}
+    else if(G==='sip'){hr=[4,17,zh+63];prop='mug';nearFace=true}
+    else if(G==='glasses'){hr=[9,11,zh+71];nearFace=true}
+    else if(G==='twirl'){hr=[13,5,zh+74];nearFace=true}
+    else if(G==='phone'){hl=[-4,27,zt+9];hr=[4,27,zt+9];prop='phone'}
+    else if(G==='pen'){hr=[6,22,zh+55];prop='penv'}
+    else if(G==='tap'){hr=[13,25,zt+1+(osc(15,1)>0?1.2:0)]}
+    else if(G==='cross'){hl=[11,13,zh+30];hr=[-11,14,zh+33]}
+  }else{
+    const sw=p.moving?step*16:0;
+    hl=[-21,-sw*.8+2,zh-18+Math.abs(sw)*.12];hr=[21,sw*.8+2,zh-18+Math.abs(sw)*.12];
+    if(G==='hand'){hr=[20,10,zh+92];openR=true}
+    else if(G==='talk'){hr=[16+osc(3.1,3),24,zh+18+osc(6,4)];openR=true}
+    else if(G==='sip'){hr=[4,17,zh+63];prop='mug';nearFace=true}
+    else if(G==='phone'){hl=[-4,24,zh+16];hr=[4,24,zh+16];prop='phone'}
+    else if(G==='cross'){hl=[11,13,zh+30];hr=[-11,14,zh+33]}
+  }
+  const armW=(sh,h,side)=>{const T=v2w(FU,h[0],h[1],h[2]);const pole=v2add(v2mul(FU.x,side*.4),v2add(v2mul(FU.y,-.45),[0,0,-1]));const [E,T2]=v2ik(sh,T,28.5,28,pole);return[sh,E,T2]};
+  const AL=armW(SLw,hl,-1),AR=armW(SRw,hr,1);
+  const legW=(hp,side,ph)=>{let K,A,Toe;
+    if(p.seated){K=v2w(FB,side*10.5,43,zh-1);A=v2w(FB,side*11,47,floorZ+8);Toe=v2w(FB,side*11.5,61,floorZ+2)}
+    else{const sw=p.moving?Math.sin(p.phase+ph)*17:0,lift=p.moving?Math.max(0,-Math.cos(p.phase+ph))*7:0;
+      A=v2w(FB,side*9,sw,8+lift);K=v2w(FB,side*9.5,sw*.5+4,49+lift*.5);Toe=v2w(FB,side*9.6,sw+14,2+lift)}
+    return[hp,K,A,Toe]};
+  const LL=legW(HPL,-1,0),LR=legW(HPR,1,Math.PI);
+  const drawLeg=(L)=>{if(p.skirt){cap(L[1],L[2],4.6,3.8,S1,SH);if(p.seated)cap(L[0],v2add(L[1],v2mul(FB.y,2)),8.4,7.2,T0,shade(T0,.1))}
+    else{cap(L[0],L[1],6.9,5.6,T0,shade(T0,.12));cap(L[1],L[2],5.3,4.4,p.seated?T1:T0,shade(T0,.1))}
+    if(p.socks&&!p.skirt)cap(v2add(L[2],[0,0,.5]),v2add(L[2],[0,0,-2]),4,4,p.socks,null,true);
+    // shoe: a rounded wedge from heel to toe
+    const heel=v2add(L[2],[0,0,-5.5]),toe=v2add(L[3],[0,0,1.5]);cap(heel,toe,p.skirt?3.6:4.6,p.skirt?2.6:3.6,SHOE,'rgba(255,255,255,.35)')};
+  const drawSkirt=()=>{if(!p.skirt||p.seated)return;const L=[[zh-40,hipW+3.5,13.5,0],[zh-20,hipW+1.5,12.4,0],[zh+2,hipW,11.4,0]];
+    torsoPath(L);const a=S(v2w(FB,-hipW,0,zh-20)),b=S(v2w(FB,hipW,0,zh-20));fillPath(lin(a,b,[shade(T0,.1),T0,T1]),.8)};
+  const hand=(W,d,open,side)=>{const tip=v2add(W,v2mul(d,open?7.5:5.2));cap(v2add(W,v2mul(d,-.6)),tip,2.6,2.3,S0,SH);
+    const th=v2add(v2add(W,v2mul(d,1.6)),v2mul(FU.x,-side*2.2));cap(v2add(W,v2mul(FU.x,-side*1.4)),th,1.1,1,S1,null,true);
+    if(open){const a=S(tip);c.strokeStyle=S1;c.lineWidth=1.6;c.beginPath();for(let k=-1;k<=1;k++){c.moveTo(a[0]+k*2,a[1]);c.lineTo(a[0]+k*2.6,a[1]-3)}c.stroke()}};
+  const drawArm=(A,side,open)=>{const[Sh,E,T]=A;const lit=side<0;const col=lit?J0:J1,hi=lit?JH:J0;
+    cap(Sh,E,4.8,4.3,col,hi);cap(E,T,4.3,3.7,col,hi);
+    // cuff and watch, then the hand
+    const d=v2norm([T[0]-E[0],T[1]-E[1],T[2]-E[2]]),w1=v2add(T,v2mul(d,-2.2)),w0=v2add(T,v2mul(d,-4.2));
+    if(jacket||p.casual)cap(v2add(T,v2mul(d,-2)),v2add(T,v2mul(d,-.9)),3.2,3.1,IN,null,true);
+    const wat=side<0?(!fem&&p.watch?p.watch:p.bracelet):null;if(wat)cap(v2add(w1,v2mul(d,.2)),v2add(w1,v2mul(d,1.6)),3.9,3.9,wat,null,true);
+    hand(T,d,open,side)};
+  // ---- head geometry
+  const neckTop=zh+62.5,HC=zh+70.5;
+  const FH=v2frame(v2w(FU,0,.8,HC),headF,pitch);
+  const HS=1.1;const hw=(x,y,z)=>v2w(FH,x*HS,y*HS,z*HS);
+  const R=8.3*HS,JR=6.9*HS;const cran=hw(0,-.6,3.4),jawC=hw(0,1.3,-4.2);
+  const Vl=[v2dot(v2V,FH.x),v2dot(v2V,FH.y),v2dot(v2V,FH.z)];     // view direction in head coordinates
+  const EH=.17,cEH=Math.cos(EH),sEH=Math.sin(EH),HCw=v2w(FH,0,0,0),HCs=v2scr(HCw);
+  const VH=[cEH*.70711,cEH*.70711,sEH];
+  const headPJ=w=>{const d=[w[0]-HCw[0],w[1]-HCw[1],w[2]-HCw[2]];return[HCs[0]+(d[0]-d[1])*V2K,HCs[1]+(d[0]+d[1])*.70711*sEH*V2S-d[2]*cEH*V2S]};
+  Vl[0]=v2dot(VH,FH.x);Vl[1]=v2dot(VH,FH.y);Vl[2]=v2dot(VH,FH.z);
+  const vis=(nx,ny,nz)=>nx*Vl[0]+ny*Vl[1]+nz*Vl[2];
+  const faceOn=Vl[1];                                             // 1 face to the viewer, -1 back of the head
+  // region of a sphere (centre Cw, radius Rs, in head axes) where the unit direction n satisfies n.h >= t; returns a path
+  const SR=[.70711,-.70711,0],SD=[sEH*.70711,sEH*.70711,-cEH];
+  const toHead=w=>[v2dot(w,FH.x),v2dot(w,FH.y),v2dot(w,FH.z)];
+  const capRegion=(h,t,Cw,Rs)=>{Cw=Cw||cran;Rs=Rs||R;h=v2norm(h);const C=S(Cw),r=Rs*V2S;
+    const hv=vis(...h);const u0=Math.abs(h[2])<.9?v2norm(v2cross(h,[0,0,1])):v2norm(v2cross(h,[1,0,0])),w0=v2cross(h,u0);
+    const rho=Math.sqrt(Math.max(0,1-t*t));const N=40,pts=[];
+    for(let i=0;i<N;i++){const a=i/N*6.283,n=[0,1,2].map(k=>h[k]*t+rho*(u0[k]*Math.cos(a)+w0[k]*Math.sin(a)));
+      pts.push({s:S(v2add(Cw,v2add(v2add(v2mul(FH.x,n[0]*Rs),v2mul(FH.y,n[1]*Rs)),v2mul(FH.z,n[2]*Rs)))),v:vis(...n)})}
+    c.beginPath();
+    if(!pts.some(q=>q.v>0)){if(hv>0)c.arc(C[0],C[1],r,0,6.283);return}
+    if(pts.every(q=>q.v>0)){pts.forEach((q,i)=>i?c.lineTo(q.s[0],q.s[1]):c.moveTo(q.s[0],q.s[1]));c.closePath();if(hv<=0){c.moveTo(C[0]+r,C[1]);c.arc(C[0],C[1],r,0,6.283)}return}
+    let st=0;while(!(pts[st].v>0&&pts[(st+N-1)%N].v<=0))st=(st+1)%N;
+    const run=[];let i=st;while(pts[i].v>0&&run.length<N){run.push(pts[i].s);i=(i+1)%N}
+    const e0=run[0],e1=run[run.length-1],a0=Math.atan2(e0[1]-C[1],e0[0]-C[0]),a1=Math.atan2(e1[1]-C[1],e1[0]-C[0]);
+    const inside=m=>{const n=toHead(v2add(v2mul(SR,Math.cos(m)),v2mul(SD,Math.sin(m))));return n[0]*h[0]+n[1]*h[1]+n[2]*h[2]>=t};
+    const span=((a0-a1)%6.283+6.283)%6.283;const fwd=inside(a1+span/2);
+    run.forEach((q,k)=>k?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));
+    if(fwd)c.arc(C[0],C[1],r,a1,a1+span,false);else c.arc(C[0],C[1],r,a1,a1-(6.283-span),true);c.closePath()};
+  const headShape=(e)=>{e=e||0;const a=S(cran),b=S(jawC);c.beginPath();c.arc(a[0],a[1],R*V2S+e,0,6.283);c.moveTo(b[0]+JR*V2S+e,b[1]);c.ellipse(b[0],b[1],JR*.97*V2S+e,JR*1.07*V2S+e,0,0,6.283)};
+  const skinFill=()=>{const a=S(cran);return lin([a[0]-R*V2S,a[1]-R*V2S],[a[0]+R*V2S,a[1]+R*V2S],[SH,S0,S0,S1])};
+  // ---- hair masses
+  const longMass=(front)=>{if(ht!=='long'&&ht!=='bob')return;const pj0=PJ;PJ=headPJ;const len=ht==='long'?30:9;const wdt=ht==='long'?10.2:9.6;
+    const a=hw(-wdt,-1.5,2),b=hw(wdt,-1.5,2),d=hw(wdt*(ht==='bob'?1:.8),-3.5,-len),e=hw(-wdt*(ht==='bob'?1:.8),-3.5,-len);const s=[a,b,d,e].map(S);
+    c.beginPath();c.moveTo(s[0][0],s[0][1]);c.lineTo(s[1][0],s[1][1]);c.quadraticCurveTo((s[1][0]+s[2][0])/2+3,(s[1][1]+s[2][1])/2,s[2][0],s[2][1]);
+    c.quadraticCurveTo((s[2][0]+s[3][0])/2,(s[2][1]+s[3][1])/2+4,s[3][0],s[3][1]);c.quadraticCurveTo((s[3][0]+s[0][0])/2-3,(s[3][1]+s[0][1])/2,s[0][0],s[0][1]);c.closePath();
+    fillPath(lin(s[0],s[3],[H0,H1]));PJ=pj0;if(!front){PJ=headPJ;c.save();c.clip();c.strokeStyle=v2rgba(shade2(H0,-.25),.5);c.lineWidth=1;for(let k=-3;k<=3;k++){const q0=S(hw(k*2.8,-6,0)),q1=S(hw(k*3.2,-7,-len+2));c.beginPath();c.moveTo(q0[0],q0[1]);c.quadraticCurveTo(q0[0]+k,q0[1]+(q1[1]-q0[1])*.5,q1[0],q1[1]);c.stroke()}c.restore();PJ=pj0}};
+  const hairCap=()=>{
+    const bald=ht==='bald';
+    // cap direction points up and back; the forward edge sets the hairline
+    let h,t,h2,t2;
+    if(ht==='short'){h=[.06,-.4,.92];t=.11;h2=[0,-1,-.12];t2=.3}
+    else if(ht==='bun'){h=[0,-.4,.92];t=.14;h2=[0,-1,-.1];t2=.25}
+    else{h=[.12,-.36,.92];t=.15;h2=[0,-1,0];t2=ht==='bob'?-.26:-.32}
+    const hf=lin(S(hw(-8,0,10)),S(hw(8,-2,-8)),[HH,H0,H0,H1]);
+    // hair sits on a slightly larger sphere than the skull, so it has volume beyond the outline
+    const HR2=R*(ht==='short'?1.07:ht==='bun'?1.05:1.1);const cr=(hh,tt)=>capRegion(hh,tt,cran,HR2);
+    if(bald){c.save();headShape();c.clip();c.save();capRegion([0,0,-1],-.42,cran,R*1.03);c.clip('evenodd');capRegion([0,-1,0],-.3,cran,R*1.03);c.fillStyle=lin(S(hw(-8,0,4)),S(hw(8,-2,-8)),[HH,H0,H1]);c.fill('evenodd');c.restore();c.restore()}
+    else{
+      cr(h2,t2);c.fillStyle=H1;c.fill('evenodd');
+      cr(h,t);c.fillStyle=hf;c.fill('evenodd');c.strokeStyle=v2rgba(shade2(H0,-.32),.55);c.lineWidth=.8;c.stroke();
+      // strands from the crown, a parting, and a soft highlight
+      c.save();cr(h,t);c.clip('evenodd');c.strokeStyle=v2rgba(shade2(H0,-.3),.4);c.lineWidth=.8;
+      for(let k=-5;k<=5;k++){const a=S(hw(2.4+k*.5,-3,12.2)),b=S(hw(k*2,6.2,8.6-Math.abs(k)*.45));c.beginPath();c.moveTo(a[0],a[1]);c.quadraticCurveTo((a[0]+b[0])/2+k*.8,(a[1]+b[1])/2-2.5,b[0],b[1]);c.stroke()}
+      c.strokeStyle=v2rgba(shade2(H0,.4),.4);c.lineWidth=1.6;const q=S(hw(-3,1,12.2)),q2=S(hw(2,5.5,10));c.beginPath();c.moveTo(q[0],q[1]);c.quadraticCurveTo((q[0]+q2[0])/2-1,(q[1]+q2[1])/2-3,q2[0],q2[1]);c.stroke();
+      c.strokeStyle=v2rgba(shade2(H0,-.4),.45);c.lineWidth=.9;const pa=S(hw(2.6,-1,12.6)),pb=S(hw(3,5.8,10.2));c.beginPath();c.moveTo(pa[0],pa[1]);c.lineTo(pb[0],pb[1]);c.stroke();c.restore()}
+    if(bald&&faceOn>-.2){const q=S(hw(-2.5,1.5,11));c.fillStyle='rgba(255,255,255,.22)';c.beginPath();c.ellipse(q[0],q[1],5,2.6,-.3,0,6.283);c.fill()}
+    if(ht==='bun'){const b=S(hw(0,-6.8,9.6));c.beginPath();c.arc(b[0],b[1],4.4*V2S,0,6.283);fillPath(lin([b[0]-7,b[1]-7],[b[0]+7,b[1]+7],[HH,H0,H1]));
+}
+    if(p.quiff&&ht==='short'){const a=S(hw(-5,5,10.4)),b=S(hw(5,6.5,9.6)),m=S(hw(0,7,12.4));c.beginPath();c.moveTo(a[0],a[1]);c.quadraticCurveTo(m[0],m[1]-3,b[0],b[1]);c.quadraticCurveTo(m[0],m[1]+2,a[0],a[1]);c.fillStyle=H0;c.fill()}
+    if(p.clip&&(ht==='long'||ht==='bob')){const q=S(hw(-6.6,3.6,7));c.fillStyle=p.clip;c.fillRect(q[0]-3,q[1]-1.2,6,2.4)}};
+  // ---- face features, placed on the head surface
+  const feat=(x,y,z)=>{const n=v2norm([x,y-1.9*(z<-2?1:0),z]);return{s:S(hw(x,y,z)),v:vis(...n)}};
+  const drawFace=()=>{
+    if(faceOn<-.3)return;
+    const lookV=spk?[.7071,.7071]:look;const lat=v2dot([lookV[0],lookV[1],0],FH.x),pup=Math.max(-1,Math.min(1,lat*1.6))*1.1*V2S;
+    const blink=animT<(p.blinkUntil||0),smile=(p.mood==='smile'||p.mood==='smirk')&&!p.talking,frown=p.mood==='frown',wide=!!p.brows;
+    const EYE=p.eyes||'#4E5F6E',bc=p.browCol||shade(H0,-.25);
+    // cheek warmth and form shading on the lower face
+    const ck=feat(0,6.6,-2);if(ck.v>0){const g=c.createRadialGradient(ck.s[0],ck.s[1]+2,1,ck.s[0],ck.s[1]+2,10*V2S);g.addColorStop(0,v2rgba(shade2(S0,-.12),.0));g.addColorStop(1,v2rgba(shade2(S0,-.25),.0));}
+    [-1,1].forEach(sd=>{const cp=feat(sd*4.8,6.6,-2);if(cp.v>.15){const g=c.createRadialGradient(cp.s[0],cp.s[1],0,cp.s[0],cp.s[1],3.6*V2S);g.addColorStop(0,`rgba(220,110,100,${fem?.14:.07})`);g.addColorStop(1,'rgba(220,110,100,0)');c.fillStyle=g;c.fillRect(cp.s[0]-6,cp.s[1]-6,12,12)}});
+    // eyes: almond shapes, lids, iris; foreshortened with the turn of the head
+    [-1,1].forEach(sd=>{const e=feat(sd*3.1,7.3,.9);if(e.v<.12)return;const k=Math.min(1,e.v*1.15),w=2.15*V2S*(.35+.65*k),hgt=(wide?1.25:smile?.8:1.02)*V2S,x=e.s[0],y=e.s[1];
+      if(blink){c.strokeStyle='#2A1E19';c.lineWidth=1.3;c.beginPath();c.moveTo(x-w,y);c.quadraticCurveTo(x,y+1.2,x+w,y);c.stroke();return}
+      c.beginPath();c.moveTo(x-w,y);c.quadraticCurveTo(x,y-hgt*1.55,x+w,y-.2);c.quadraticCurveTo(x,y+hgt*1.2,x-w,y);c.closePath();c.fillStyle='#F4EFE8';c.fill();
+      c.save();c.clip();const ix=x+pup*k,iy=y+(down?.8:0);c.beginPath();c.arc(ix,iy,hgt*1.2,0,6.283);c.fillStyle=EYE;c.fill();c.beginPath();c.arc(ix,iy,hgt*.55,0,6.283);c.fillStyle='#16110F';c.fill();
+      c.fillStyle='rgba(255,255,255,.85)';c.beginPath();c.arc(ix-hgt*.35,iy-hgt*.4,hgt*.28,0,6.283);c.fill();
+      c.fillStyle=v2rgba(shade2(S0,-.35),.35);c.fillRect(x-w,y-hgt*1.6,w*2,hgt*.7);c.restore();
+      c.strokeStyle='#2B1F1A';c.lineWidth=fem?1.35:1.1;c.beginPath();c.moveTo(x-w-.3,y+.2);c.quadraticCurveTo(x,y-hgt*1.6,x+w+.3,y-.1);c.stroke();
+      c.strokeStyle=v2rgba(shade2(S0,-.3),.5);c.lineWidth=.6;c.beginPath();c.moveTo(x-w*.8,y+hgt*.9);c.quadraticCurveTo(x,y+hgt*1.35,x+w*.8,y+hgt*.8);c.stroke();
+      if(fem){c.strokeStyle='#2B1F1A';c.lineWidth=.8;c.beginPath();c.moveTo(x+sd*w,y-.1);c.lineTo(x+sd*(w+1.4),y-1.1);c.stroke()}
+      if(age>=55){c.strokeStyle=v2rgba(shade2(S0,-.3),.4);c.lineWidth=.55;c.beginPath();c.moveTo(x+sd*(w+.8),y+.3);c.lineTo(x+sd*(w+2.4),y+1.2);c.moveTo(x+sd*(w+.8),y-.5);c.lineTo(x+sd*(w+2.3),y-1.3);c.stroke()}
+      // brow
+      const b=feat(sd*3.3,7.6,3.4);if(b.v>0){const bw=w*1.2,up=wide?-1.4:0,inner=frown?1.2:0;c.strokeStyle=bc;c.lineWidth=(p.bushy?2.1:1.35)*(fem?.85:1);c.beginPath();
+        c.moveTo(b.s[0]-bw,b.s[1]+up+(sd<0?0:inner));c.quadraticCurveTo(b.s[0],b.s[1]+up-1.4,b.s[0]+bw,b.s[1]+up+(sd<0?inner:0));c.stroke()}});
+    // nose: a soft shadow on the side away from the light, and the tip
+    const nt=feat(0,9.4,-2.2),nb=feat(0,7.9,1.3);if(nt.v>0){const sideS=Math.sign(nt.s[0]-S(cran)[0])||1;
+      c.strokeStyle=v2rgba(shade2(S0,-.32),.55);c.lineWidth=1;c.beginPath();c.moveTo(nb.s[0]+1.2,nb.s[1]);c.quadraticCurveTo(nt.s[0]+2.6,nt.s[1]-1,nt.s[0]+1.2,nt.s[1]+1.4);c.stroke();
+      c.fillStyle=v2rgba(shade2(S0,-.35),.45);[-1,1].forEach(sd=>{const n2=feat(sd*1.1,8.3,-3);if(n2.v>.2){c.beginPath();c.ellipse(n2.s[0],n2.s[1],.9,.55,0,0,6.283);c.fill()}});
+      c.fillStyle='rgba(255,255,255,.12)';c.beginPath();c.ellipse(nt.s[0]-.5,nt.s[1]-.6,.7,.9,0,0,6.283);c.fill();
+      // profile: the nose tip breaks the outline
+      if(Math.abs(Vl[0])>.55&&faceOn>-.1){const tip=S(hw(0,9.8,-2.3)),root=S(hw(0,7.9,1.2)),base=S(hw(0,8.7,-3.3));c.beginPath();c.moveTo(root[0],root[1]);c.lineTo(tip[0],tip[1]);c.lineTo(base[0],base[1]);c.closePath();c.fillStyle=S0;c.fill()}}
+    // beard, moustache, stubble
+    if(p.beard){const bf=lin(S(hw(-6,6,-4)),S(hw(6,6,-12)),[HH,H0,H1]);capRegion([0,.3,-.95],-.05,jawC,JR*1.06);c.fillStyle=bf;c.fill('evenodd');c.strokeStyle=v2rgba(shade2(H0,-.3),.45);c.lineWidth=.7;c.stroke();
+      c.save();capRegion([0,.3,-.95],-.05,jawC,JR*1.06);c.clip('evenodd');c.strokeStyle=v2rgba(shade2(H0,-.28),.4);c.lineWidth=.7;for(let k=-4;k<=4;k++){const a=S(hw(k*1.5,7.4,-5.2)),b=S(hw(k*1.8,6.8,-11));c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}c.restore();
+      [-1,1].forEach(sd=>{const a=feat(sd*.4,8.9,-3.9),b=feat(sd*3.3,8,-5.8),m=feat(sd*2,8.7,-4.1);if(m.v>.1){c.beginPath();c.moveTo(a.s[0],a.s[1]);c.quadraticCurveTo(m.s[0],m.s[1]-1,b.s[0],b.s[1]);c.quadraticCurveTo(m.s[0],m.s[1]+2,a.s[0],a.s[1]+1.5);c.fillStyle=H0;c.fill()}});
+      }
+    else if(p.moustache){const m=feat(0,8.4,-4.4);if(m.v>0){c.fillStyle=H0;c.beginPath();c.ellipse(m.s[0],m.s[1],3.4*V2S*Math.max(.4,m.v),1*V2S,0,0,6.283);c.fill()}}
+    if(p.stubble&&!p.beard){c.save();headShape();c.clip();capRegion([0,.25,-.97],-.25,jawC,JR);c.fillStyle='rgba(70,52,40,.17)';c.fill('evenodd');c.restore()}
+    if(p.freckles)[[-3.6,7.4,-1.4],[-4.4,7,-2.2],[3.6,7.4,-1.4],[4.4,7,-2.2],[-2.2,8,-.8],[2.2,8,-.8]].forEach(q=>{const f=feat(...q);if(f.v>.2){c.fillStyle=v2rgba(shade2(S0,-.35),.6);c.beginPath();c.arc(f.s[0],f.s[1],.5,0,6.283);c.fill()}});
+    // mouth
+    const mo=feat(0,8,-5.6);if(mo.v>.08){const k=Math.min(1,mo.v*1.2),w=2.6*V2S*(.4+.6*k),x=mo.s[0],y=mo.s[1],lip=p.lips||shade2(S0,-.25),lipD=shade(lip,-.35);
+      if(p.talking){const fr=Math.floor(animT*11+p.id*3)%4,o=fr===2?1.8:fr%2?1:.2;c.beginPath();c.ellipse(x,y+o*.4,w*.8,Math.max(.3,o),0,0,6.283);c.fillStyle='#4A1C1B';c.fill();if(o>.9){c.fillStyle='rgba(255,255,255,.8)';c.fillRect(x-w*.5,y-o*.5,w,o*.45)}c.fillStyle=v2rgba(lip,.8);c.beginPath();c.ellipse(x,y+o*1.25,w*.55,.7,0,0,6.283);c.fill()}
+      else{const cv2=smile?1.4:frown?-1.2:.25;c.strokeStyle=lipD;c.lineWidth=1.05;c.beginPath();c.moveTo(x-w,y-cv2*.4);c.quadraticCurveTo(x,y+cv2,x+w,y-cv2*.4);c.stroke();
+        c.fillStyle=v2rgba(lip,fem?.75:.45);c.beginPath();c.moveTo(x-w*.8,y+.3);c.quadraticCurveTo(x,y+2.2+cv2*.3,x+w*.8,y+.3);c.quadraticCurveTo(x,y+.9,x-w*.8,y+.3);c.fill();
+        if(smile&&p.mood!=='smirk'){c.strokeStyle=v2rgba(shade2(S0,-.3),.5);c.lineWidth=.6;[-1,1].forEach(sd=>{c.beginPath();c.moveTo(x+sd*(w+.6),y-1.6);c.quadraticCurveTo(x+sd*(w+1.4),y-.2,x+sd*(w+.5),y+.8);c.stroke()})}}}
+    if(age>=58){const f1=feat(0,7.4,5.8);if(f1.v>.2){c.strokeStyle=v2rgba(shade2(S0,-.3),.35);c.lineWidth=.6;c.beginPath();c.moveTo(f1.s[0]-4,f1.s[1]);c.quadraticCurveTo(f1.s[0],f1.s[1]-.8,f1.s[0]+4,f1.s[1]);c.stroke()}
+      [-1,1].forEach(sd=>{const n1=feat(sd*2.1,8.3,-3.2),n2=feat(sd*3.3,7.6,-6.4);if(n1.v>.2&&n2.v>.2){c.strokeStyle=v2rgba(shade2(S0,-.3),.35);c.lineWidth=.7;c.beginPath();c.moveTo(n1.s[0],n1.s[1]);c.quadraticCurveTo(n1.s[0]+sd*1.5,(n1.s[1]+n2.s[1])/2,n2.s[0],n2.s[1]);c.stroke()}})}
+    // glasses
+    if(p.glasses){const GC=p.glassCol||'#2B2F33';const L=feat(-3.1,8.2,.9),Rr=feat(3.1,8.2,.9);c.strokeStyle=GC;c.lineWidth=.95;
+      [L,Rr].forEach(e=>{if(e.v<.1)return;const k=Math.min(1,e.v*1.15),w=2.8*V2S*(.35+.65*k),hh=2*V2S;c.beginPath();if(p.roundGlasses)c.ellipse(e.s[0],e.s[1],w,hh*1.1,0,0,6.283);else c.roundRect?c.roundRect(e.s[0]-w,e.s[1]-hh,w*2,hh*2,2):c.rect(e.s[0]-w,e.s[1]-hh,w*2,hh*2);c.fillStyle='rgba(200,225,240,.12)';c.fill();c.stroke()});
+      if(L.v>.1&&Rr.v>.1){const kL=Math.min(1,L.v*1.15),kR=Math.min(1,Rr.v*1.15);c.beginPath();c.moveTo(L.s[0]+2.8*V2S*(.35+.65*kL),L.s[1]-.8);c.lineTo(Rr.s[0]-2.8*V2S*(.35+.65*kR),Rr.s[1]-.8);c.stroke()}
+      [-1,1].forEach(sd=>{const a=feat(sd*5.6,7,1.3),b=feat(sd*8.2,1,1.2);if(b.v>.05&&a.v>.05){c.lineWidth=.8;c.beginPath();c.moveTo(a.s[0],a.s[1]);c.lineTo(b.s[0],b.s[1]);c.stroke()}})}
+  };
+  const ears=()=>{[-1,1].forEach(sd=>{const e=feat(sd*8.2,.4,.3);const sideV=vis(sd,0,0);if(sideV<-.05)return;if(ht==='long'||ht==='bob')return;
+    const k=Math.max(.35,Math.min(1,sideV*1.3));c.beginPath();c.ellipse(e.s[0],e.s[1],2*V2S*k,3.2*V2S,0,0,6.283);fillPath(S1,.8);
+    c.strokeStyle=v2rgba(shade2(S0,-.35),.5);c.lineWidth=.8;c.beginPath();c.ellipse(e.s[0],e.s[1],1.1*V2S*k,2.1*V2S,0,sd>0?-1.2:1.9,sd>0?1.3:4.4);c.stroke();
+    if(p.ear){const col={gold:'#E3BD62',silver:'#D7DCE0',pearl:'#F7F3EA'}[p.ear]||'#E3BD62';c.fillStyle=col;c.beginPath();c.arc(e.s[0],e.s[1]+3.3*V2S,1.3,0,6.283);c.fill()}})};
+  const earringsLong=()=>{if(!p.ear||(ht!=='long'&&ht!=='bob'))return;[-1,1].forEach(sd=>{if(vis(sd,0,0)<.1)return;const e=S(hw(sd*8,.4,-3.4));c.fillStyle={gold:'#E3BD62',silver:'#D7DCE0',pearl:'#F7F3EA'}[p.ear]||'#E3BD62';c.beginPath();c.arc(e[0],e[1],1.4,0,6.283);c.fill()})};
+  const drawHead=()=>{
+    // neck, with the shadow the jaw casts on it
+    cap(v2w(FU,0,0,zh+53),headPJ(hw(0,-.4,-6.5)),5,4.7,S1,null,true);
+    PJ=headPJ;
+    ears();
+    headShape(.6);c.fillStyle=shade(S0,-.24);c.fill('nonzero');headShape();c.fillStyle=skinFill();c.fill('nonzero');
+    c.save();headShape();c.clip();const a=S(cran),j=S(jawC);const g=c.createLinearGradient(a[0]-R*V2S,0,a[0]+R*V2S,0);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.62,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(90,40,20,.18)');c.fillStyle=g;c.fillRect(a[0]-R*V2S-2,a[1]-R*V2S-2,R*V2S*2+4,R*V2S*2+30);
+      c.fillStyle='rgba(90,40,20,.10)';c.beginPath();c.ellipse(j[0],j[1]+6.5*V2S,8*V2S,3*V2S,0,0,6.283);c.fill();c.restore();
+    drawFace();
+    hairCap();
+    earringsLong();
+    PJ=v2scr;
+  };
+  // ---- the clothed torso with its front details
+  const drawTorso=()=>{
+    torsoPath();const tl=S(v2w(FU,-shW,0,zh+30)),tr=S(v2w(FU,shW,0,zh+30));fillPath(lin(tl,tr,[JH,J0,J0,J1]),1);
+    c.save();torsoPath();c.clip();
+    const top=S([0,0,zh+57]),bot=S([0,0,zh-12]);const g2=c.createLinearGradient(0,top[1],0,bot[1]);g2.addColorStop(0,'rgba(255,255,255,.07)');g2.addColorStop(.55,'rgba(0,0,0,0)');g2.addColorStop(1,'rgba(0,0,0,.16)');c.fillStyle=g2;c.fillRect(-90,top[1]-10,180,bot[1]-top[1]+20);
+    if(p.cloth==='pin'){c.strokeStyle='rgba(255,255,255,.12)';c.lineWidth=.7;for(let x=-18;x<=18;x+=2.6){line3([front(x,zh+54,.1),front(x,zh-10,.1)],.7,'rgba(255,255,255,.12)')}}
+    if(p.cloth==='check'){for(let x=-18;x<=18;x+=4)line3([front(x,zh+54,.1),front(x,zh-10,.1)],1.4,'rgba(0,0,0,.1)');for(let z=zh-8;z<zh+55;z+=4)line3([front(-18,z,.1),front(0,z,.2),front(18,z,.1)],1.4,'rgba(0,0,0,.1)')}
+    if(p.cloth==='knit'){for(let z=zh-6;z<zh+54;z+=3.2)line3([front(-17,z,.1),front(0,z,.2),front(17,z,.1)],.6,'rgba(0,0,0,.12)')}
+    if(p.cloth==='tweed'){c.fillStyle='rgba(255,255,255,.08)';for(let k=0;k<120;k++){const q=S(front(((k*37)%34)-17,zh-8+((k*53)%62),.1));c.fillRect(q[0],q[1],1,1)}}
+    c.restore();
+    const fv=upFacing;
+    if(fv>-.15){
+      // shirt opening, collar, tie
+      const nz=zh+56.2;
+      if(p.turtle){cap(v2w(FU,0,0,zh+55),v2w(FU,0,.4,zh+61),6.4,6,IN,shade(IN,.1))}
+      else if(jacket||p.vest){
+        const vz=zh+(p.pads?24:27);poly3([front(-5.6,nz,.2),front(5.6,nz,.2),front(0,vz,.25)],lin(S(front(-5,nz)),S(front(5,nz)),[IN,IN,IN1]),.6);
+        // collar points
+        poly3([front(-5.6,nz+.4,.4),front(-1.2,nz-.6,.6),front(-3.2,nz-4.6,.5)],IN,.6);poly3([front(5.6,nz+.4,.4),front(1.2,nz-.6,.6),front(3.2,nz-4.6,.5)],IN1,.6);
+        if(p.tie){const t=p.tie;poly3([front(-1.3,nz-.4,.8),front(1.3,nz-.4,.8),front(1,nz-3.2,.8),front(-1,nz-3.2,.8)],shade(t,-.15),.5);
+          poly3([front(-1,nz-3.2,.8),front(1,nz-3.2,.8),front(2.1,zh+22,.8),front(0,zh+19.5,.8),front(-2.1,zh+22,.8)],lin(S(front(-2,zh+40)),S(front(2,zh+40)),[shade(t,.12),t,shade(t,-.12)]),.5)}
+        if(p.scarf){}
+        if(p.necklace){const ph=[];for(let k=-5;k<=5;k++)ph.push(front(k*.9,nz-4.5+Math.abs(k)*.35-Math.cos(k/5*1.57)*1.6,.9));line3(ph,.9,p.ear==='pearl'?'#F7F3EA':'#D9B460')}
+        if(jacket){// lapels: broad folds either side of the opening
+          const lap=(sd)=>poly3([front(sd*5.6,nz,.6),front(sd*9.8,nz-5,1),front(sd*8.2,nz-9.5,1.2),front(sd*10.4,nz-12.5,1.2),front(0,vz-.6,1)],sd<0?shade(J0,.04):J1,.9);
+          lap(-1);lap(1);
+          [zh+16,zh+5].forEach(z=>{const q=S(front(.8,z,.8));c.fillStyle=J2;c.beginPath();c.arc(q[0],q[1],1.25,0,6.283);c.fill()});
+          line3([front(.5,vz-1,.6),front(.6,zh-9,.6)],.9,v2rgba(shade2(J0,-.4),.6));
+          line3([front(-15,zh+4,.4),front(-7,zh+4,.5)],1,v2rgba(shade2(J0,-.35),.6));line3([front(15,zh+4,.4),front(7,zh+4,.5)],1,v2rgba(shade2(J0,-.35),.6));
+          line3([front(-14,zh+36,.4),front(-8,zh+36,.5)],.9,v2rgba(shade2(J0,-.35),.6));
+          if(p.pocket)poly3([front(-13.6,zh+36.2,.6),front(-9,zh+36.2,.7),front(-10,zh+38.4,.7),front(-11.6,zh+37.6,.7),front(-12.8,zh+38.6,.6)],p.pocket,.5);
+          if(p.lapelPin){const q=S(front(-9,nz-8,1.2));c.fillStyle=p.lapelPin;c.beginPath();c.arc(q[0],q[1],1.5,0,6.283);c.fill()}}
+        if(p.vest&&!jacket){}
+      }else{
+        // casual: open collar and a placket; cardigans open down the front
+        poly3([front(-4.2,nz,.2),front(4.2,nz,.2),front(0,nz-7,.25)],v2rgba(S0,1),.5);
+        poly3([front(-4.8,nz+.3,.4),front(-.8,nz-6.6,.6),front(-5.8,nz-4.2,.5)],p.cardigan?IN:shade(J0,.06),.6);poly3([front(4.8,nz+.3,.4),front(.8,nz-6.6,.6),front(5.8,nz-4.2,.5)],p.cardigan?IN1:J1,.6);
+        if(p.cardigan){poly3([front(-2.4,nz-6.5,.3),front(2.4,nz-6.5,.3),front(2.2,zh-4,.3),front(-2.2,zh-4,.3)],IN,.5);[zh+30,zh+20,zh+10,zh].forEach(z=>{const q=S(front(2.9,z,.5));c.fillStyle=shade(J0,.3);c.beginPath();c.arc(q[0],q[1],1.1,0,6.283);c.fill()})}
+        else{line3([front(.6,nz-7,.4),front(.6,zh-4,.4)],.8,v2rgba(shade2(J0,-.3),.7));[zh+32,zh+22,zh+12].forEach(z=>{const q=S(front(1.2,z,.5));c.fillStyle=shade(J0,.25);c.beginPath();c.arc(q[0],q[1],.9,0,6.283);c.fill()})}
+        if(p.necklace){const ph=[];for(let k=-5;k<=5;k++)ph.push(front(k*.9,nz-4+Math.abs(k)*.3-Math.cos(k/5*1.57)*1.8,.9));line3(ph,.9,p.ear==='pearl'?'#F7F3EA':'#D9B460')}
+      }
+      if(p.vest){poly3([front(-5,zh+50,.8),front(0,zh+26,.9),front(0,zh-2,.9),front(-13,zh-2,.7),front(-12,zh+40,.7)],shade(p.vest,.06),.7);poly3([front(5,zh+50,.8),front(0,zh+26,.9),front(0,zh-2,.9),front(13,zh-2,.7),front(12,zh+40,.7)],shade(p.vest,-.1),.7)}
+    }else{
+      // back: collar band and the centre seam
+      cap(back3(-5,zh+56),back3(5,zh+56),1.6,1.6,J1,null,true);line3([back3(0,zh+54),back3(0,zh-8)],.9,v2rgba(shade2(J0,-.35),.6));
+      if(!p.turtle&&jacket){const q=S(back3(0,zh+57.5));c.fillStyle=IN;c.fillRect(q[0]-6,q[1]-1.5,12,2.2)}
+    }
+    if(p.scarf){const SC=p.scarf;cap(v2w(FU,-5.5,0,zh+57),v2w(FU,5.5,0,zh+57),3.2,3.2,SC,shade(SC,.12));if(fv>-.15){poly3([front(-4,zh+55,1.5),front(-.5,zh+55,1.6),front(-1.5,zh+28,1.6),front(-5.5,zh+29,1.5)],shade(SC,.06),.6);poly3([front(.8,zh+55,1.6),front(4,zh+55,1.5),front(4.6,zh+33,1.5),front(1.4,zh+32,1.6)],shade(SC,-.1),.6)}}
+  };
+  // ---- props held in the hand
+  const drawProp=()=>{if(!prop)return;
+    if(prop==='mug'){const h=S(AR[2]);c.fillStyle='#F2F0EC';c.strokeStyle=OUTC;c.lineWidth=.8;c.beginPath();c.roundRect?c.roundRect(h[0]-5,h[1]-13,10,12,1.5):c.rect(h[0]-5,h[1]-13,10,12);c.fill();c.stroke();c.fillStyle=p.mug||'#3F6E73';c.fillRect(h[0]-5,h[1]-9,10,3);
+      for(let k=0;k<2;k++){const t=(animT*18+k*7)%14;c.strokeStyle=`rgba(255,255,255,${(.55-t/26).toFixed(2)})`;c.lineWidth=1;c.beginPath();c.moveTo(h[0]-2+k*4,h[1]-15-t);c.quadraticCurveTo(h[0]+k*4+Math.sin(animT*3+k)*2,h[1]-18-t,h[0]-1+k*4,h[1]-21-t);c.stroke()}}
+    if(prop==='phone'){const a=S(AL[2]),b=S(AR[2]);const m=[(a[0]+b[0])/2,(a[1]+b[1])/2-3];c.fillStyle='#1A1D22';c.fillRect(m[0]-5,m[1]-8,10,14);c.fillStyle='#8FC6E4';c.fillRect(m[0]-4,m[1]-7,8,12)}
+    if(prop==='pen'||prop==='penv'){const h=S(AR[2]);c.strokeStyle='#1E2A3A';c.lineWidth=1.8;c.beginPath();c.moveTo(h[0]-2,h[1]-6);c.lineTo(h[0]+5,h[1]+2);c.stroke()}};
+  // ---- paint in depth order
+  const depT=v2dep([0,0,zh+30]);
+  const armBehind=A=>v2dep(A[1])+v2dep(A[2])<2*depT-1;              // elbow and hand farther than the chest
+  const legsFront=facing>.05;
+  if(faceOn<0&&false)longMass(false);
+  if(faceOn>=0)longMass(true);
+  if(!legsFront&&!p.seated){drawLeg(LL);drawLeg(LR)}   // seated with the back to us: legs are under the table, behind the chair
+  const back=[],fr=[];[[AL,-1,openL],[AR,1,openR]].forEach(a=>(armBehind(a[0])?back:fr).push(a));
+  back.forEach(a=>drawArm(...a));
+  drawSkirt();drawTorso();
+  if(legsFront){[LL,LR].sort((a,b)=>v2dep(a[2])-v2dep(b[2])).forEach(drawLeg);drawSkirt()}
+  const late=[];fr.forEach(a=>{if(nearFace&&a[1]>0&&faceOn>0)late.push(a);else drawArm(...a)});
+  drawHead();
+  if(faceOn<0&&ht==='long')longMass(false);
+  late.forEach(a=>drawArm(...a));
+  drawProp();
+  c.restore();
+  const hs=HCs;p.headW=[X+hs[0]*.5,Y+hs[1]*.5];
+  const top=S([0,0,zh+84]);p.hitW=[X-14,Y+top[1]*.5,X+14,p.seated?GY:Y+2];
+}
+
 function drawPerson(p){
-  if(!p.child)return drawPersonCore(p);
+  const core=FIG==='v2'?drawPersonV2:drawPersonCore;
+  if(!p.child)return core(p);
   // children sit on a cushion, a little higher, so they are seen above the chair back
   const k=.66,z0=p.seated?p.seatZ:0,[X,Y]=P(p.x,p.y,z0),L=p.seated?9:0;
-  ctx.save();ctx.translate(X,Y-L);ctx.scale(k,k);ctx.translate(-X,-Y);drawPersonCore(p);ctx.restore();
+  ctx.save();ctx.translate(X,Y-L);ctx.scale(k,k);ctx.translate(-X,-Y);core(p);ctx.restore();
   if(p.headW)p.headW=[X+(p.headW[0]-X)*k,Y-L+(p.headW[1]-Y)*k];
   if(p.hitW)p.hitW=[X+(p.hitW[0]-X)*k,Y-L+(p.hitW[1]-Y)*k,X+(p.hitW[2]-X)*k,p.hitW[3]];
 }
@@ -1812,7 +2190,7 @@ const L_QUESTIONS=['How did Hans run this meeting, and whose voice did the proce
 const byId=id=>people.find(p=>p.cid===id);
 const L_METERS=[['voice','Freya’s voice'],['board','Board quality'],['trust','Family trust']];
 
-function makeScene(role){hideMuninn();if(typeof CASE!=='undefined'&&CASE&&CASE.room&&RS!==ROOMSTYLES[CASE.room])applyRoomStyle(CASE.room);{const cc=document.getElementById('cutCard');if(cc&&cc.style)cc.style.opacity='0'}if(typeof Voice!=='undefined')Voice.hush();{const mc=document.getElementById('meetCard');if(mc)mc.style.display='none'}
+function makeScene(role){hideMuninn();hideStartPick();if(typeof CASE!=='undefined'&&CASE&&CASE.room&&RS!==ROOMSTYLES[CASE.room])applyRoomStyle(CASE.room);{const cc=document.getElementById('cutCard');if(cc&&cc.style)cc.style.opacity='0'}if(typeof Voice!=='undefined')Voice.hush();{const mc=document.getElementById('meetCard');if(mc)mc.style.display='none'}
   Object.values(SP).forEach(s=>s.occ=null);
   LIFTS.forEach(e=>{e.riders=[];e.arrivals=[];e.calls=[];e.boarded=[];e.plan=[];e.open=0;e.phase='idle'});
   meeting=null;selected=null;simMin=hm(...((CASE&&CASE.clock)||{start:[8,58]}).start);
@@ -1926,7 +2304,7 @@ function sceneUpdate(g){
   scene.t+=g;simMin=hm(...((CASE&&CASE.clock)||{start:[8,58]}).start)+scene.t*.3;lifeUpdate();
   if(scene.phase==='arrive'){
     people.forEach(p=>{if(!p.started&&scene.t>=p.delay){p.started=true;p.visible=true;goTo(p,SP[p.seatId],0)}});
-    if(people.every(p=>p.started&&!p.path.length)){if(scene.met){scene.phase='script';nextBeat()}else startMeet()}
+    if(people.every(p=>p.started&&!p.path.length)){if(scene.met){scene.phase='script';nextBeat()}else showStartPick()}
   }else if(scene.phase==='meet'){
     if(scene.meetWait){scene.meetT+=speed>0?g/Math.max(1,speed):0;if(scene.meetT>scene.meetEst)scene.meetWait=false}
     else{scene.meetLeft-=g;if(scene.meetLeft<=0)nextMeet()}
@@ -3216,6 +3594,15 @@ function meetCard(){let el=document.getElementById('meetCard');if(!el){el=docume
   el.innerHTML='<div style="display:flex;align-items:baseline;gap:10px"><div id="meetName" style="font-size:23px;font-weight:800;color:#2F6E73"></div><div id="meetRole" style="font-size:13px;opacity:.8"></div><div id="meetStep" style="margin-left:auto;font-size:12px;opacity:.6"></div></div><div id="meetLine" style="font-size:15px;line-height:1.4;margin-top:6px"></div><div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end"><button id="meetNext" style="font:inherit;font-size:13px;padding:4px 10px;background:#EEF2F1;color:#22282B;border:none;border-radius:12px;cursor:pointer">Next ▸</button><button id="meetSkip" style="font:inherit;font-size:13px;padding:4px 10px;background:#58C26B;color:#FFFFFF;border:none;border-radius:12px;cursor:pointer">Start the meeting</button></div>';
   document.body.appendChild(el);document.getElementById('meetNext').onclick=e=>{e.stopPropagation();skipBeat()};document.getElementById('meetSkip').onclick=e=>{e.stopPropagation();endMeet()}}
   return el}
+function hideStartPick(){const el=document.getElementById('startPick');if(el&&el.style)el.style.display='none'}
+function showStartPick(){scene.phase='pick';focusBoardroom(true);let el=document.getElementById('startPick');
+  if(!el||!el.style){el=document.createElement('div');el.id='startPick';el.className='startpick';document.body.appendChild(el)}
+  el.innerHTML='';const t=document.createElement('div');t.className='sptitle';t.textContent=(CASE.parts&&CASE.parts[scene.role]&&CASE.parts[scene.role].title)||CASE.company.split(':')[0];
+  const row=document.createElement('div');row.className='sprow';
+  const mk=(label,sub,cls,fn)=>{const b=document.createElement('button');b.className=cls;b.innerHTML='<strong></strong><span></span>';b.querySelector('strong').textContent=label;b.querySelector('span').textContent=sub;b.onclick=e=>{e.stopPropagation();hideStartPick();fn()};row.appendChild(b)};
+  mk('People in the room','Meet each person first','spmeet',()=>startMeet());
+  mk('Start the case','Go straight to the meeting','spgo',()=>{scene.met=true;scene.phase='script';nextBeat()});
+  el.append(t,row);el.style.display=''}
 function startMeet(){scene.back=null;scene.phase='meet';scene.met=true;scene.meetI=-1;scene.meetP=null;meetCard().style.display='';nextMeet()}
 function nextMeet(){
   if(scene.meetP){const q=scene.meetP;q.gesture=null;q.mood=q._mood||q.mood;q.react=null}
@@ -3475,7 +3862,21 @@ function flashMeter(k,v){setTimeout(()=>{const e=document.getElementById('md_'+k
 const MUNINN={name:'Leif Muninn',sub:'CeFEO’s literature desk',img:'data:image/webp;base64,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',
  src:{spotlight:'Spotlight by CeFEO',ffi:'FFI Practitioner',fborg:'FamilyBusiness.org'},
  readings:{"lindqvist": {"say": "Leif Muninn, literature desk. The field calls this board process: who is heard, and whose analysis counts. Five pieces.", "items": [{"s": "spotlight", "t": "How does family involvement shape what actually happens inside the boardroom?", "u": "https://spotlight.cefeo.se/articles/how-family-involvement-shapes-the-boardroom", "n": "Four family boardrooms, observed directly. Family habits imprint the meeting; role clarity and power balance decide who is heard."}, {"s": "fborg", "t": "Four Things that the Best Family Business Boards Do Well", "u": "https://familybusiness.org/content/four-things-that-the-best-family-business-boards-do-well", "n": "Board practice. Family directors out of their depth go silent or turn defiant; candour has to be built."}, {"s": "ffi", "t": "Balancing Representation with Qualification on Family Business Boards", "u": "https://ffipractitioner.org/balancing-representation-with-qualification-on-family-business-boards/", "n": "Family seats against qualified seats, with a shareholder forum as the pressure valve."}, {"s": "fborg", "t": "Developing Competent Owners and Stewards for a Lasting Family Business", "u": "https://familybusiness.org/content/developing-competent-owners-and-stewards-for-a-lasting-family-bu", "n": "Ownership competence. Owners are asked to rule on acquisitions without having been prepared for it."}, {"s": "spotlight", "t": "Does the board really run a family firm, or do the functions happen elsewhere?", "u": "https://spotlight.cefeo.se/articles/does-the-board-really-run-a-family-firm-or-do-the-functions-happen-elsewhere", "n": "Four Swedish firms. Most board functions happen outside the boardroom. Narrower than the first."}]}, "stenberg": {"say": "Leif Muninn, literature desk. Successor selection: family or not, and what fair means between siblings. Five pieces.", "items": [{"s": "ffi", "t": "Leadership Succession: Selecting an internal or external successor?", "u": "https://ffipractitioner.org/leadership-succession-selecting-an-internal-or-external-successor/", "n": "Selection as a process: requirements, independent assessment, a committee. Internal and external candidates side by side."}, {"s": "fborg", "t": "Why Does EOS/Traction Work So Well for Family Businesses?", "u": "https://familybusiness.org/content/why-does-eostraction-work-so-well-for-family-businesses", "n": "Three siblings and one seat. Functions are defined before names are placed in them."}, {"s": "fborg", "t": "Helping Daughters Become Successful Family Business Leaders", "u": "https://familybusiness.org/content/helping-daughters-become-successful-family-business-leaders", "n": "Daughter succession. Why the bar sits higher, and eight conditions that lower it."}, {"s": "spotlight", "t": "What if family ties didn’t just influence succession, but shaped every career decision inside and around the family firm?", "u": "https://spotlight.cefeo.se/articles/what-if-family-ties-didnt-just-influence-succession--but-shaped-every-career-decision-inside-and-around-the-family-firm", "n": "Family embeddedness of careers. Succession signals begin in childhood."}, {"s": "spotlight", "t": "How does a family's collective sense of ‘ours’ shape the succession process?", "u": "https://spotlight.cefeo.se/articles/how-does-a-familys-collective-sense-of-ours-shape-the-succession-process", "n": "Collective psychological ownership. Nine Spanish firms; transfer as collaboration or as crisis."}]}, "sjostrand": {"say": "Leif Muninn, literature desk. The cousin consortium, and strategy decided away from the boardroom. Five pieces.", "items": [{"s": "ffi", "t": "Cousins in Charge: Managing Conflicts and Driving Success in Multi-Generational Family Enterprises", "u": "https://ffipractitioner.org/cousins-in-charge-managing-conflicts-and-driving-success-in-multi-generational-family-enterprises/", "n": "The cousin consortium. Diverging risk appetites, and the governance that has to follow."}, {"s": "spotlight", "t": "Does the board really run a family firm, or do the functions happen elsewhere?", "u": "https://spotlight.cefeo.se/articles/does-the-board-really-run-a-family-firm-or-do-the-functions-happen-elsewhere", "n": "Informal governance. Decisions made in kitchens and on family trips, and why that is not always a fault."}, {"s": "spotlight", "t": "How do family firms balance long-term sustainability goals with short-term crises?", "u": "https://spotlight.cefeo.se/articles/how-do-family-firms-balance-long-term-sustainability-goals-with-short-term-crises", "n": "Green transformation under uncertainty. Long-term orientation helps and hinders at the same time."}, {"s": "ffi", "t": "Summary 2: Financial Decision Making in Family Firms", "u": "https://ffipractitioner.org/summary-2-financial-decision-making-in-family-firms-an-adaptation-of-the-theory-of-planned-behaviour/", "n": "Financing preferences. Family norms about debt outlive the people who set them."}, {"s": "fborg", "t": "Family Firms: Building Resilience Across Generations", "u": "https://familybusiness.org/content/family-firms-building-resilience-across-generations", "n": "Low leverage and reserves as a family-firm habit. The other side of the debt argument."}]}, "solberg": {"say": "Leif Muninn, literature desk. Next-generation voice, and knowledge that does not travel upward. Five pieces.", "items": [{"s": "spotlight", "t": "How do emotional bonds, trust, and conflict shape innovation across generations?", "u": "https://spotlight.cefeo.se/articles/how-do-emotional-bonds-trust-and-conflict-shape-innovation-across-generations", "n": "Knowledge internalization. Close families that do not absorb each other’s expertise do not innovate."}, {"s": "ffi", "t": "Transforming Legacy Family Enterprises for Sustainable Development", "u": "https://ffipractitioner.org/transforming-legacy-family-enterprises-for-sustainable-development/", "n": "Sustainable development in long-lived family firms. Control, commitment, continuity."}, {"s": "fborg", "t": "A Family's Non-Financial Values Shape Its Sustainability Strategy", "u": "https://familybusiness.org/content/a-familys-non-financial-values-shape-its-sustainability-strategy", "n": "Socioemotional wealth and sustainability. Forward-looking families formalise it; backward-looking ones do not."}, {"s": "fborg", "t": "Ready to Lead: Building Confidence Across Generations", "u": "https://familybusiness.org/content/ready-to-lead-building-confidence-across-generations", "n": "Parallel readiness. Seniors who hide their early mistakes make the next generation cautious."}, {"s": "ffi", "t": "Three Communication Skills for Breaking Through Impenetrable Barriers", "u": "https://ffipractitioner.org/three-communication-skills-for-breaking-through-impenetrable-barriers/", "n": "Communication technique, including a conversation about the conversation. Narrower than the others."}]}, "sorensen": {"say": "Leif Muninn, literature desk. Trust, and the development path of successors. Five pieces.", "items": [{"s": "ffi", "t": "Family Governance at Work: Organizing for new product development in family SMEs", "u": "https://ffipractitioner.org/family-governance-at-work-organizing-for-new-product-development-in-family-smes/", "n": "New product development in family SMEs. A family champion and a technical leader, rarely the same person."}, {"s": "ffi", "t": "The Challenge of Developing Next Generation Leadership Presence in a Family Business", "u": "https://ffipractitioner.org/the-challenge-of-developing-next-generation-leadership-presence-in-a-family-business/", "n": "Leadership presence. The incumbent’s confidence is the slowest to earn."}, {"s": "fborg", "t": "Ready to Lead: Building Confidence Across Generations", "u": "https://familybusiness.org/content/ready-to-lead-building-confidence-across-generations", "n": "Parallel readiness. Readiness grows through real responsibility, even small projects."}, {"s": "spotlight", "t": "What kinds of entrepreneurs are next-generation family business successors?", "u": "https://spotlight.cefeo.se/articles/successor-profiles-transgenerational-entrepreneurship-italian-family-firms", "n": "Five successor profiles. Families often judge successors with a single yardstick."}, {"s": "fborg", "t": "When entrepreneurs raise entrepreneurs", "u": "https://familybusiness.org/content/When-entrepreneurs-raise-entrepreneurs", "n": "Successors who build their own ventures, and the legitimacy that brings back."}]}, "rosenholm": {"say": "Leif Muninn, literature desk. Crisis succession. The field's term is emergency succession planning. Five pieces.", "items": [{"s": "fborg", "t": "Your Family Needs An Emergency Succession Plan", "u": "https://familybusiness.org/content/your-family-needs-an-emergency-succession-plan", "n": "Emergency succession. Interim leadership, a support team, and what has to be settled in advance."}, {"s": "ffi", "t": "Live Wires in the Family Enterprise", "u": "https://ffipractitioner.org/live-wires-in-the-family-enterprise/", "n": "A leader disabled by a stroke, as a scenario. How sibling rivalry grows in the gap."}, {"s": "spotlight", "t": "What happens when a nonfamily CEO steps into the shoes of the family leader?", "u": "https://spotlight.cefeo.se/articles/what-happens-when-a-nonfamily-ceo-steps-into-the-shoes-of-the-family-leader", "n": "A non-family CEO after the family leader. Four tensions, managed rather than resolved."}, {"s": "fborg", "t": "The Making of Successful Female Family-Enterprise Leaders", "u": "https://familybusiness.org/content/the-making-of-successful-female-family-enterprise-leaders", "n": "Forty-six daughter successors. Legitimacy and sibling rivalry recur."}, {"s": "ffi", "t": "Stronger Family Bonds and Better Strategic Decisions: Mediation in a Second-Generation Family Business", "u": "https://ffipractitioner.org/stronger-family-bonds-and-better-strategic-decisions-mediation-in-a-second-generation-family-business/", "n": "Mediation after a leader’s death. Relational repair tied to board reform."}]}, "nygaard": {"say": "Leif Muninn, literature desk. Next-generation entry, and governance that is never written down. Five pieces.", "items": [{"s": "fborg", "t": "Are the ‘Best Practices’ All Wrong for Your Family Business?", "u": "https://familybusiness.org/content/are-the-best-practices-all-wrong-for-your-family-business", "n": "Informal governance. Unwritten rules as scaffolding rather than as a gap."}, {"s": "fborg", "t": "Thicker Than Water: Balancing Individual Career Goals and the Family Business", "u": "https://familybusiness.org/content/thicker-than-water-balancing-individual-career-goals-and-the-fam", "n": "Swedish business families. Entry as the default option; individual careers neglected."}, {"s": "spotlight", "t": "Can young family business members innovate outside the family firm without breaking ties?", "u": "https://spotlight.cefeo.se/articles/can-young-family-business-members-innovate-outside-the-family-firm-without-breaking-ties", "n": "Ventures outside the core firm. Three routes: imitation, evolution, separation."}, {"s": "ffi", "t": "How to Keep a Business Family Alive: Families that fuel next generation family business leaders", "u": "https://ffipractitioner.org/how-to-keep-a-business-family-alive-families-that-fuel-next-generation-family-business-leaders/", "n": "Four family types. How the rising generation is informed decides whether it joins."}, {"s": "spotlight", "t": "What makes later-generation family members choose the family business?", "u": "https://spotlight.cefeo.se/articles/what-makes-later-generation-family-members-choose-the-family-business", "n": "Successor commitment. Identity and career fit matter more than obligation."}]}, "eriksson": {"say": "Leif Muninn, literature desk. Ownership governance in a growing family: who votes, and on what. Five pieces.", "items": [{"s": "ffi", "t": "The Two Pillars of Governance in Family Enterprises", "u": "https://ffipractitioner.org/the-two-pillars-of-governance-in-family-enterprises-a-straightforward-understanding-of-complex-systems/", "n": "An enterprise pillar and a family pillar. A voice in the family is not the same as a vote in the firm."}, {"s": "fborg", "t": "Family Firms Prosper When Shareholders Think Like Trustees", "u": "https://familybusiness.org/content/family-firms-prosper-when-shareholders-think-like-trustees", "n": "Large owner groups. Giving small and inactive shareholders a voice keeps them attached."}, {"s": "ffi", "t": "Future-Ready Shareholders Agreements to Help Family Enterprises Navigate Turbulent Times", "u": "https://ffipractitioner.org/future-ready-shareholders-agreements-to-help-family-enterprises-navigate-turbulent-times/", "n": "Decision thresholds and deadlock provisions. The mechanics of a family vote."}, {"s": "spotlight", "t": "Can too much family involvement in governance hurt your firm’s success, especially in high-tech sectors?", "u": "https://spotlight.cefeo.se/articles/can-too-much-family-involvement-in-governance-hurt-your-firms-success--especially-in-high-tech-sectors", "n": "Overembeddedness. More family directors, weaker performance where technology moves fast."}, {"s": "fborg", "t": "Your Investment Strategy Should Reflect Your Family Values and Goals", "u": "https://familybusiness.org/content/your-investment-strategy-should-refect-your-family-values-and-go", "n": "Family investment policy. Divergent risk appetites, written down before the next deal."}]}, "sjostrom": {"say": "Leif Muninn, literature desk. The trustee's duty to account. Five pieces.", "items": [{"s": "ffi", "t": "On Accounting to the Beneficiary", "u": "https://ffipractitioner.org/on-accounting-to-the-beneficiary/", "n": "The duty to account, and why a trust without it is not really a trust."}, {"s": "ffi", "t": "Trust Owned Family Enterprises: Pitfalls and practical suggestions when naming trustees who also serve on Board of Directors", "u": "https://ffipractitioner.org/trust-owned-family-enterprises-pitfalls-and-practical-suggestions-when-naming-trustees-who-also-serve-on-board-of-directors-a-case-study/", "n": "Trustees who withhold information from beneficiaries. Which hat is worn, and when."}, {"s": "fborg", "t": "Punishment, Reward, Control: How Money Shows Up in the Business Family", "u": "https://familybusiness.org/content/punishment-reward-control-how-money-shows-up-in-the-business-fam", "n": "Money scripts. Money used to reward, punish and control inside a family."}, {"s": "spotlight", "t": "What is the role of money education in strengthening business families?", "u": "https://spotlight.cefeo.se/articles/are-your-kids-ready-to-manage-the-family-fortune", "n": "Money education. Financial disputes often stand in for other ones."}, {"s": "fborg", "t": "Let's Talk About Money, and Trauma", "u": "https://familybusiness.org/content/lets-talk-about-money-and-trauma", "n": "Talking about money across generations. The older generation is expected to go first."}]}, "bixa": {"say": "Leif Muninn, literature desk. Owner exit, and what a sale means to each owner. Five pieces.", "items": [{"s": "spotlight", "t": "Letting go, moving forward: What happens to psychological ownership when a family sells the business?", "u": "https://spotlight.cefeo.se/articles/letting-go-moving-forward-what-happens-to-psychological-ownership-when-a-family-sells-the-business", "n": "A Scandinavian exit followed over ten years: a majority-owner father and two minority sons. Ownership meanings shift; grief follows."}, {"s": "fborg", "t": "How to Weigh the Consequences of Selling the Family Business", "u": "https://familybusiness.org/content/how-to-weigh-the-consequences-of-selling-the-family-business", "n": "Approval of a decision versus ownership of it. The same sale means different things to each member."}, {"s": "ffi", "t": "Exiting the Family Business Is as Tricky as Leaving Your Lover", "u": "https://ffipractitioner.org/exiting-the-family-business-is-as-tricky-as-leaving-your-lover/", "n": "Exit paths and the emotions under them. Leaving the business is not leaving the family."}, {"s": "fborg", "t": "Can a Family Stay a Business Family After Selling the Business?", "u": "https://familybusiness.org/content/can-a-family-stay-a-business-family-after-selling-the-business", "n": "Life after the sale. Shared identity fades unless something carries it."}, {"s": "spotlight", "t": "Why do family business owners leave ownership change so poorly regulated?", "u": "https://spotlight.cefeo.se/articles/why-do-family-business-owners-leave-ownership-change-so-poorly-regulated", "n": "The ownership contract. Swedish and Danish owners leave the hard cases unregulated."}]}}};
-function hideMuninn(){const el=document.getElementById('muninn');if(el&&el.remove)el.remove()}
+function hideMuninn(){['muninn','muninnBtn'].forEach(id=>{const el=document.getElementById(id);if(el&&el.remove)el.remove()})}
+function showMuninnBtn(){if(!MUNINN.readings[CASE.id])return;const b=document.createElement('button');b.id='muninnBtn';b.className='muninnbtn';b.setAttribute('aria-label','Ask Leif Muninn for readings');
+  b.innerHTML='<img alt=""><span><strong>Ask Muninn</strong><em>Readings on this case</em></span>';b.querySelector('img').src=muninnFace();
+  b.onclick=e=>{e.stopPropagation();b.remove();showMuninn()};document.getElementById('stage').appendChild(b)}
+// Muninn drawn in the same style as the people in the cases, rendered once per figure style
+const MUNINN_P={id:977,cid:'muninn_p',first:'Leif',last:'Muninn',age:68,skin:'#DDB59A',hair:'#D4CFC6',hairType:'short',beard:true,bushy:true,browCol:'#8E877C',eyes:'#5E7584',shirt:'#34393E',inner:'#2B2F33',turtle:'#2B2F33',casual:true,cloth:'knit',trous:'#2A2D30',mood:'neutral'};
+const MUNFACE={};
+function muninnFace(){if(MUNFACE[FIG])return MUNFACE[FIG];const cv2=document.createElement('canvas');cv2.width=cv2.height=192;const k=cv2.getContext('2d');
+  if(!k||!k.createRadialGradient)return MUNINN.img;
+  const bg=k.createRadialGradient(96,70,10,96,96,130);bg.addColorStop(0,'#5E6A70');bg.addColorStop(1,'#1F2629');k.fillStyle=bg;k.fillRect(0,0,192,192);
+  const q=Object.assign({},MUNINN_P,{x:0,y:0,visible:true,seated:false,seatZ:0,moving:false,phase:0,fx:1,fy:1,talking:false,gesture:null,react:null,idle:null,blinkUntil:0,gaze:null,_gm:null});
+  const old=ctx,draw=FIG==='v2'?drawPersonV2:drawPersonCore;ctx=k;try{
+    const o=P(0,0,0);k.setTransform(1,0,0,1,0,0);k.save();draw(q);k.restore();const hx=q.headW[0]-o[0],hy=q.headW[1]-o[1];
+    k.fillStyle=bg;k.fillRect(0,0,192,192);const sc=FIG==='v2'?6.4:4.6;k.setTransform(sc,0,0,sc,96-(o[0]+hx)*sc,84-(o[1]+hy)*sc);draw(q)}catch(e){}finally{ctx=old;k.setTransform(1,0,0,1,0,0)}
+  try{MUNFACE[FIG]=cv2.toDataURL('image/png')}catch(e){return MUNINN.img}return MUNFACE[FIG]}
 function muninnBody(r,compact){const w=document.createElement('div');
   const ol=document.createElement('ol');ol.className='mlist';
   r.items.slice(0,5).forEach(it=>{const li=document.createElement('li');const a=document.createElement('a');a.href=it.u;a.target='_blank';a.rel='noopener';a.textContent=it.t;
@@ -3485,7 +3886,7 @@ function muninnBody(r,compact){const w=document.createElement('div');
 function showMuninn(){const r=MUNINN.readings[CASE.id];if(!r)return;hideMuninn();
   const el=document.createElement('div');el.id='muninn';el.className='card muninn';el.setAttribute('role','dialog');el.setAttribute('aria-label','Readings from Leif Muninn');
   const hd=document.createElement('div');hd.className='mhead';
-  hd.innerHTML='<img alt="Leif Muninn" src="'+MUNINN.img+'"><div><strong>'+MUNINN.name+'</strong><span>'+MUNINN.sub+'</span></div>';
+  hd.innerHTML='<img alt="Leif Muninn" src="'+muninnFace()+'"><div><strong>'+MUNINN.name+'</strong><span>'+MUNINN.sub+'</span></div>';
   const x=document.createElement('button');x.className='mclose';x.setAttribute('aria-label','Close');x.textContent='×';x.onclick=()=>{Voice.hush();hideMuninn()};hd.appendChild(x);
   const say=document.createElement('p');say.className='msay';say.textContent=r.say;
   el.appendChild(hd);el.appendChild(say);el.appendChild(muninnBody(r,false));
@@ -3513,7 +3914,7 @@ function endScene(){Voice.hush();
     else addTx('cap','Watch the other perspectives too. After all three, you will see where the versions disagree.')}
   if(part)addTx('cap','Press Start over to choose the next part.');
   tx.scrollTop=tx.scrollHeight;
-  const tok=scene;setTimeout(()=>{if(scene===tok&&scene.phase==='end')showMuninn()},2600);
+  const tok=scene;setTimeout(()=>{if(scene===tok&&scene.phase==='end')showMuninnBtn()},1200);
 }
 function boardZoom(){const minX=-7*HW-20,maxX=10*HW+20,minY=-BACK_H*ZS-40,maxY=17*HH+40;const topPad=vw<760?70:90,botPad=vw<760?60:80;
   return Math.max(.12,Math.min(2.6,Math.min(vw/(maxX-minX),(vh-topPad-botPad)/(maxY-minY))*.92))}
@@ -3658,6 +4059,8 @@ document.getElementById('castBtn').onclick=()=>replayMeet();
  let c0=false;try{c0=localStorage.getItem('fbsim.ctl')==='closed'}catch(e){}set(c0);
  tg.onclick=e=>{e.stopPropagation();set(!box.classList.contains('collapsed'))}}
 document.getElementById('camBtn').onclick=e=>{closeups=!closeups;e.target.classList.toggle('on',closeups);if(!closeups)focusBoardroom(true)};
+{const fb=document.getElementById('figBtn');const sync=()=>{fb.classList.toggle('on',FIG==='v2');fb.textContent=FIG==='v2'?'New figures':'Classic figures'};sync();
+  fb.onclick=()=>{FIG=FIG==='v2'?'v1':'v2';try{localStorage.setItem('fbsim.fig',FIG)}catch(e){}people.forEach(p=>p._gm=null);sync()}}
 document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.classList.toggle('on',thoughtsOn);if(!thoughtsOn)people.forEach(p=>p.thought=null)};
 
 window.addEventListener('keydown',e=>{if(mode==='scene'&&(e.key===' '||e.key==='ArrowRight')&&document.activeElement.tagName!=='INPUT'){e.preventDefault();skipBeat()}});
