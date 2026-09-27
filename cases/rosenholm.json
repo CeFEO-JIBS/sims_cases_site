@@ -4,7 +4,7 @@
   {
    "pack": true,
    "path": "voices/rosenholm.vpk",
-   "size": 1000526,
+   "size": 1942894,
    "enc": "",
    "n": 72
   }
@@ -27,11 +27,11 @@
    "lamp_standing": "models/props/lamp_standing.glb.gz",
    "chair_large_red": "models/props/chair_large_red.glb.gz",
    "chair_large_brown": "models/props/chair_large_brown.glb.gz",
+   "chair_large_blue": "models/props/chair_large_blue.glb.gz",
    "large_nordic_window": "models/props/large_nordic_window.glb.gz",
    "door_light_oak": "models/props/door_light_oak.glb.gz",
    "coffee_mug": "models/props/coffee_mug.glb.gz",
-   "laptop": "models/props/laptop.glb.gz",
-   "nordic_lounge_chair": "models/props/nordic_lounge_chair.glb.gz"
+   "laptop": "models/props/laptop.glb.gz"
   },
   "images": {},
   "clips": [
@@ -87,6 +87,10 @@
     "size": 33983
    },
    {
+    "path": "models/props/chair_large_blue.glb.gz",
+    "size": 33928
+   },
+   {
     "path": "models/props/large_nordic_window.glb.gz",
     "size": 1162
    },
@@ -101,10 +105,6 @@
    {
     "path": "models/props/laptop.glb.gz",
     "size": 834
-   },
-   {
-    "path": "models/props/nordic_lounge_chair.glb.gz",
-    "size": 1443
    },
    {
     "path": "models/clips/meeting.glb.gz",

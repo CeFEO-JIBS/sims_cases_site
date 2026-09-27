@@ -953,7 +953,8 @@ export function create(stage){
       const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
       const m = new THREE.Mesh(new THREE.PlaneGeometry(.34, .22), new THREE.MeshBasicMaterial({map:t})); m.position.set(3.91, 1.33, .605); room.add(m) }
     // two armchairs at the engine's seats: b_h1 facing +x, b_n0 facing +y; the low table
-    place('nordic_lounge_chair', 1.62, 3.5, -Math.PI/2, 0, 1.05); place('nordic_lounge_chair', 3.5, 2.42, Math.PI, 0, 1.05);
+    // wingbacks: the Nordic lounge chair's armrests cut through a seated arm
+    place('chair_large_blue', 1.62, 3.5, Math.PI/2, 0, .54); place('chair_large_blue', 3.5, 2.42, 0, 0, .54);
     slab(2.1, 3.0, 2.7, 3.6, 0, .41, '#E6EAEA', .6);
     place('coffee_mug', 2.3, 3.2, 0, .41, .8);
     plant(9.2, .8, .8, '#9AA6A8');
@@ -1066,7 +1067,7 @@ export function create(stage){
   ROOMS.home = (RS) => {
     ROOMS.board(RS);
     rug(1.0, 1.9, 4.4, 4.9, '#C98A6A');
-    place('nordic_lounge_chair', 1.62, 3.5, -Math.PI/2, 0, 1.05); place('nordic_lounge_chair', 3.5, 2.42, Math.PI, 0, 1.05);
+    place('chair_large_brown', 1.62, 3.5, Math.PI/2, 0, .54); place('chair_large_blue', 3.5, 2.42, 0, 0, .54);
     slab(2.1, 2.9, 3.0, 3.8, 0, .28, '#6E5A44', .6); slab(2.08, 2.88, 3.02, 3.82, .28, .3, '#7A6450', .5);
     place('coffee_mug', 2.4, 3.2, 0, .3, .8); place('coffee_mug', 2.7, 3.5, 0, .3, .8);
     place('lamp_standing', 1.0, 2.5, 0, 0, KK);
@@ -1159,9 +1160,9 @@ export function create(stage){
       const own = {}; g.animations.forEach(c => own[c.name] = c);
       const base = own.Sit_Chair_Idle ? mx.clipAction(own.Sit_Chair_Idle) : null;
       if(base){ base.play(); base.setEffectiveWeight(1) }
-      let head = null; root.traverse(n=>{ if(n.isBone && n.name==='head') head = n });
+      let head = null, hands = []; root.traverse(n=>{ if(n.isBone && n.name==='head') head = n; if(n.isBone && /^hand\.[lr]$/.test(n.name)) hands.push(n) });
       const ms = faces(root);
-      const a = {p, root, mats, fade:1, ch, mx, own, base, baseW:1, baseWant:1, head, ms,
+      const a = {p, root, mats, fade:1, ch, hands, mx, own, base, baseW:1, baseWant:1, head, ms,
         mouthMeshes: ms.filter(n=>/Mouth/.test(n.name)), eyes: ms.filter(n=>/Eye/.test(n.name)),
         cur:null, clipKey:'', expr:'Neutral', exprFrom:'Neutral', exprT:1, yaw:0, mouth:0,
         lastX:p.x, lastY:p.y, heading:0, react:null};
@@ -1205,7 +1206,9 @@ export function create(stage){
     const D = 40, h = vh / z;
     return {az:Math.PI/4, el:EL, dist:D, t:tgt, fov: 2*Math.atan(h/2/D)*180/Math.PI};
   }
+  let shotArgs = null, handAimT = 0;
   function shot(sp, to, cam, vw, vh){
+    shotArgs = [sp, to, cam, vw, vh];
     const a = sp && actors[sp.id];
     if(!a){                                 // back to the room: ease out, then hand over to ortho
       if(persActive){ Object.assign(shotWant, wideEquivalent(cam, vw, vh)); returning = true }
@@ -1225,7 +1228,7 @@ export function create(stage){
     if(look){ let d = Math.atan2(look[0]-hp.x, look[1]-hp.z) - a.heading;
       while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; az += Math.max(-.7, Math.min(.7, d)) * .8 }
     else az += .12;
-    portrait = a;
+    portrait = a; a._aimHand = a.clipKey.startsWith('hand');
     // The lens has to stand inside the room. Facing a wall (Ingrid at the painting), swing round the speaker
     // to the nearest angle that fits: a three-quarter view or a profile. If none does, come closer and widen
     // the lens so the frame stays the same.
@@ -1246,8 +1249,21 @@ export function create(stage){
         if(found!==null) az = found;
         else { while(dist > 1.2 && !inside(az, dist)) dist -= .1 } }
     }
-    const fov = 2*Math.atan(Math.tan(F*Math.PI/360)*D/dist)*180/Math.PI;          // same frame from nearer
+    let fov = 2*Math.atan(Math.tan(F*Math.PI/360)*D/dist)*180/Math.PI;            // same frame from nearer
+    // A raised hand: frame from the chin to above the hand, and swing a little to the raised arm's side
+    // so the hand is not hidden behind the head.
+    const up = a.clipKey.startsWith('hand') && a.hands.length ? a.hands.map(h => h.getWorldPosition(new THREE.Vector3())).sort((u, v) => v.y - u.y)[0] : null;
+    if(up && up.y > hp.y - .2){
+      const hb = new THREE.Vector3(); a.head.getWorldPosition(hb);
+      const right = new THREE.Vector3(Math.cos(az), 0, -Math.sin(az));                // the frame's right, seen from the lens
+      const side = Math.sign(up.clone().sub(hb).dot(right)) || 1;
+      const az2 = az + side*.35; if(inside(az2, dist)) az = az2;
+      const top = up.y + .18, bottom = hb.y - .12, need = (top - bottom) / .78;         // the controls take the top fifth
+      hp.set((hb.x + up.x)/2, (top + bottom)/2 + need*.08, (hb.z + up.z)/2);
+      fov = Math.max(fov, 2*Math.atan(need/2/dist)*180/Math.PI);
+    }
     Object.assign(shotWant, {az, el:.14, dist, t:hp, fov});
+    return !!up;
   }
   // a raised hand needs room above the head; everything else is head and shoulders
   // (measured once settled: the head runs from the bone to ~0.75 above it, the controls cover the top fifth)
@@ -1308,6 +1324,9 @@ export function create(stage){
     syncOrtho(cam, vw, vh);
     if(persActive) easePersp(Math.min(dt,.4), vw, vh);
     const camera = persActive ? persp : ortho;
+    // a hand that goes up during a close-up: re-aim once the pose has settled
+    if(persActive && portrait && !returning && shotArgs){ const h = portrait.clipKey.startsWith('hand');
+      if(h !== !!portrait._aimHand){ handAimT += dt; if(handAimT > .5){ handAimT = 0; portrait._aimHand = h; shot(...shotArgs) } } else handAimT = 0 }
     if(nearWalls){ const c = persp.position;
       nearWalls.visible = persActive && c.x > .05 && c.x < 9.9 && c.z > .05 && c.z < 6.9 }
     const dtA = Math.min(dt, .05);

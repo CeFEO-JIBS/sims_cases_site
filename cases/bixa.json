@@ -4,7 +4,7 @@
   {
    "pack": true,
    "path": "voices/bixa.vpk",
-   "size": 1649463,
+   "size": 3787210,
    "enc": "",
    "n": 103
   }
@@ -37,6 +37,7 @@
    "chair_large_brown": "models/props/chair_large_brown.glb.gz",
    "train_locomotive": "models/props/train_locomotive.glb.gz",
    "train_wagon": "models/props/train_wagon.glb.gz",
+   "chair_large_blue": "models/props/chair_large_blue.glb.gz",
    "chair_large_green": "models/props/chair_large_green.glb.gz",
    "large_nordic_window": "models/props/large_nordic_window.glb.gz",
    "door_light_oak": "models/props/door_light_oak.glb.gz",
@@ -46,7 +47,6 @@
    "woven_basket": "models/props/woven_basket.glb.gz",
    "slim_floor_lamp": "models/props/slim_floor_lamp.glb.gz",
    "serving_trolley": "models/props/serving_trolley.glb.gz",
-   "nordic_lounge_chair": "models/props/nordic_lounge_chair.glb.gz",
    "compact_sofa": "models/props/compact_sofa.glb.gz",
    "rectangular_dining_table_6": "models/props/rectangular_dining_table_6.glb.gz"
   },
@@ -144,6 +144,10 @@
     "size": 41913
    },
    {
+    "path": "models/props/chair_large_blue.glb.gz",
+    "size": 33928
+   },
+   {
     "path": "models/props/chair_large_green.glb.gz",
     "size": 34044
    },
@@ -178,10 +182,6 @@
    {
     "path": "models/props/serving_trolley.glb.gz",
     "size": 2012
-   },
-   {
-    "path": "models/props/nordic_lounge_chair.glb.gz",
-    "size": 1443
    },
    {
     "path": "models/props/compact_sofa.glb.gz",
