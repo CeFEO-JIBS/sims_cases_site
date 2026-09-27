@@ -671,8 +671,8 @@ export function create(stage){
     candle(7.2, .42, 4.3);
     slab(7.6, 4.15, 7.95, 4.45, .42, .46, '#3F6E73', .6);                             // a book
     place('nordic_lounge_chair', 8.55, 2.9, Math.PI/2, 0, 1.1);
-    place('lamp_standing', 9.2, 2.25, 0, 0, KK);                    // behind the armchair, clear of the view
-    const lampL = new THREE.PointLight(0xffd9a0, 1.2, 3.5, 1.8); lampL.position.set(9.2, 1.25, 2.25); room.add(lampL);
+    place('lamp_standing', 8.3, 2.15, 0, 0, KK);                    // beside the armchair: clear of the view and of the path along the wall
+    const lampL = new THREE.PointLight(0xffd9a0, 1.2, 3.5, 1.8); lampL.position.set(8.3, 1.25, 2.15); room.add(lampL);
     // the plants
     plant(9.45, .55, 1.0, '#E9E4DA'); plant(.55, 5.45, 1.1, '#E9E4DA');
     // the table: mugs, kanelbullar, two candles, a bouquet of summer flowers, papers
@@ -1160,7 +1160,7 @@ export function create(stage){
       const own = {}; g.animations.forEach(c => own[c.name] = c);
       const base = own.Sit_Chair_Idle ? mx.clipAction(own.Sit_Chair_Idle) : null;
       if(base){ base.play(); base.setEffectiveWeight(1) }
-      let head = null, hands = []; root.traverse(n=>{ if(n.isBone && n.name==='head') head = n; if(n.isBone && /^hand\.[lr]$/.test(n.name)) hands.push(n) });
+      let head = null, hands = []; root.traverse(n=>{ if(n.isBone && n.name==='head') head = n; if(n.isBone && /^hand\.?[lr]$/.test(n.name)) hands.push(n) });
       const ms = faces(root);
       const a = {p, root, mats, fade:1, ch, hands, mx, own, base, baseW:1, baseWant:1, head, ms,
         mouthMeshes: ms.filter(n=>/Mouth/.test(n.name)), eyes: ms.filter(n=>/Eye/.test(n.name)),
@@ -1250,15 +1250,15 @@ export function create(stage){
         else { while(dist > 1.2 && !inside(az, dist)) dist -= .1 } }
     }
     let fov = 2*Math.atan(Math.tan(F*Math.PI/360)*D/dist)*180/Math.PI;            // same frame from nearer
-    // A raised hand: frame from the chin to above the hand, and swing a little to the raised arm's side
-    // so the hand is not hidden behind the head.
+    // A raised hand: frame from the shoulders to above the hand, and swing away from the raised arm so the
+    // hand, which comes up in front of the body, stands clear of the face.
     const up = a.clipKey.startsWith('hand') && a.hands.length ? a.hands.map(h => h.getWorldPosition(new THREE.Vector3())).sort((u, v) => v.y - u.y)[0] : null;
-    if(up && up.y > hp.y - .2){
+    if(up){
       const hb = new THREE.Vector3(); a.head.getWorldPosition(hb);
       const right = new THREE.Vector3(Math.cos(az), 0, -Math.sin(az));                // the frame's right, seen from the lens
       const side = Math.sign(up.clone().sub(hb).dot(right)) || 1;
-      const az2 = az + side*.35; if(inside(az2, dist)) az = az2;
-      const top = up.y + .18, bottom = hb.y - .12, need = (top - bottom) / .78;         // the controls take the top fifth
+      for(const sw of [.55, .4, .25]){ const az2 = az - side*sw; if(inside(az2, dist)){ az = az2; break } }   // away from the arm: the hand clears the face
+      const top = Math.max(up.y, hb.y + .5) + .2, bottom = hb.y - .45, need = (top - bottom) / .78;   // shoulders to above the hand; the controls take the top fifth
       hp.set((hb.x + up.x)/2, (top + bottom)/2 + need*.08, (hb.z + up.z)/2);
       fov = Math.max(fov, 2*Math.atan(need/2/dist)*180/Math.PI);
     }
@@ -1310,7 +1310,7 @@ export function create(stage){
     for(const id in actors){ const a = actors[id]; if(a===portrait || !a.root.visible) continue;
       const p = new THREE.Vector3(); a.head.getWorldPosition(p);
       const t = p.clone().sub(c).dot(dir), off = p.distanceTo(c.clone().add(dir.clone().multiplyScalar(t)));
-      if((t>.3 && t<len-.25 && off<.75) || p.distanceTo(c) < 1.1) a.root.visible = false }   // on the line, or at the lens
+      if((t>.3 && t<len-.25 && off<.75) || (t>.3 && t<len-1 && off<1.15) || p.distanceTo(c) < 1.1) a.root.visible = false }   // on the line, well in front, or at the lens
   }
 
   // ------------------------------------------------ per frame

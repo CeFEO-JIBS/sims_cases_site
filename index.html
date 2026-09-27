@@ -676,7 +676,8 @@ function bunPlate(px,py,z){custom(px-.2,py-.2,px+.2,py+.2,z,z+4,()=>{const c=P(p
 function flowers(px,py,z){box(px-.05,py-.05,px+.05,py+.05,z,z+10,'#BFD7E0',{alpha:.7});custom(px-.12,py-.12,px+.12,py+.12,z+10,z+24,()=>{const c=P(px,py,z+10);ctx.save();ctx.strokeStyle='#6E8A4E';ctx.lineWidth=.8;
   const F=[[-6,-14,'#F4F1EA'],[-2,-18,'#E9C54A'],[3,-15,'#8E7CC3'],[6,-12,'#F4F1EA'],[0,-11,'#D96A5A'],[-4,-9,'#8E7CC3']];F.forEach(([dx,dy])=>{ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.quadraticCurveTo(c[0]+dx*.4,c[1]+dy*.5,c[0]+dx,c[1]+dy);ctx.stroke()});
   F.forEach(([dx,dy,col])=>{ctx.fillStyle=col;ctx.beginPath();ctx.arc(c[0]+dx,c[1]+dy,1.9,0,6.283);ctx.fill();ctx.fillStyle='#E9C54A';ctx.beginPath();ctx.arc(c[0]+dx,c[1]+dy,.6,0,6.283);ctx.fill()});ctx.restore()})}
-function fireplace(){box(.08,2.35,.62,4.65,0,68,'#ECE7DE',{after(){onX(.62,4.65,68,()=>{
+function fireplace(){for(let y=2;y<=4;y++)block(0,y);   // nobody walks through the hearth
+  box(.08,2.35,.62,4.65,0,68,'#ECE7DE',{after(){onX(.62,4.65,68,()=>{
     ctx.fillStyle='#D9D2C6';ctx.fillRect(0,0,73.6,6);ctx.fillStyle='#2A2220';ctx.beginPath();ctx.moveTo(22,68);ctx.lineTo(22,40);ctx.quadraticCurveTo(37,28,52,40);ctx.lineTo(52,68);ctx.closePath();ctx.fill();
     ctx.fillStyle='#6B4A30';ctx.fillRect(26,62,22,3);ctx.fillRect(28,59,18,3);
     for(let k=0;k<5;k++){const f=Math.sin(animT*8+k*1.7)*1.6,x=27+k*5;const g=ctx.createLinearGradient(0,60,0,46+f);g.addColorStop(0,'#FFD27A');g.addColorStop(.6,'#F28B3C');g.addColorStop(1,'rgba(230,80,40,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x-3,61);ctx.quadraticCurveTo(x-2,52,x+f*.5,45+f);ctx.quadraticCurveTo(x+2,52,x+3,61);ctx.closePath();ctx.fill()}
