@@ -292,6 +292,9 @@ export function create(stage){
     else if(kind==='port'){ [[0,'#5A6772'],[.42,'#96A2AA'],[.52,'#A6B0B6'],[.53,'#3E464E'],[.6,'#4A535B'],[.61,'#566E7E'],[1,'#2C4252']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
     else if(kind==='night'){ [[0,'#101830'],[.6,'#23305A'],[.78,'#3A4468'],[.8,'#1A2030'],[1,'#141A26']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
     else if(kind==='tall'){ [[0,'#5E6F98'],[.45,'#C99A8E'],[.68,'#F2B98A'],[.72,'#F6CFA2'],[.73,'#56627A'],[1,'#3E4E68']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
+    else if(kind==='rain'){ [[0,'#8A96A0'],[.55,'#AEB8BE'],[.56,'#6E787E'],[.7,'#7E888E'],[.71,'#5E686E'],[1,'#4E585E']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
+    else if(kind==='nyc'){ [[0,'#3E4A78'],[.45,'#B87A8A'],[.7,'#F0A26E'],[1,'#F6C98E']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
+    else if(kind==='fields'){ [[0,'#8EBBDD'],[.5,'#E6EEEA'],[.55,'#EDEFE0'],[.56,'#7E9460'],[.59,'#7E9460'],[.6,'#E3C94E'],[.76,'#D2B444'],[.77,'#9AB05A'],[1,'#7E9A4E']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
     else if(kind==='snow'){ [[0,'#1A2440'],[.7,'#34466A'],[.8,'#E8EEF4'],[1,'#F6F8FA']].forEach(([o,cl]) => gr.addColorStop(o, cl)) }
     else { gr.addColorStop(0,'#9CCBE2'); gr.addColorStop(1,'#DCEEF6') }
     g.fillStyle = gr; g.fillRect(0,0,64,128);
@@ -310,6 +313,18 @@ export function create(stage){
       for(let i=0;i<9;i++){ const w = 4 + (i*7)%6, h = 6 + (i*13)%14; g.fillRect(i*7.4, 92 - h, w, h) }
       g.fillStyle = '#3A4458'; g.fillRect(40, 70, 2, 22); g.fillRect(34, 70, 16, 2); g.fillRect(52, 76, 2, 16); g.fillRect(48, 76, 12, 2);
       g.fillStyle = 'rgba(255,220,160,.8)'; for(let i=0;i<10;i++) g.fillRect((i*17)%60 + 2, 80 + (i*7)%10, 1.5, 1.5) }
+    if(kind==='rain'){ g.fillStyle = '#5E686E';                                  // the works across the yard, and rain on the glass
+      g.fillRect(4, 58, 22, 14); g.fillRect(30, 62, 30, 10); g.fillRect(12, 44, 3, 14);
+      g.strokeStyle = 'rgba(235,242,246,.5)'; g.lineWidth = .6; for(let i=0;i<30;i++){ const x = (i*37)%64, y = (i*53)%120; g.beginPath(); g.moveTo(x, y); g.lineTo(x-1.5, y+7); g.stroke() } }
+    if(kind==='nyc'){                                                          // Manhattan at dusk: towers, one spire, lit windows
+      let x = 0, k = 0; while(x < 64){ const w = 5 + (k*7)%7, h = 30 + (k*23)%46; g.fillStyle = k%2 ? '#2A2E3E' : '#343A4E'; g.fillRect(x, 128 - h, w, h);
+        g.fillStyle = 'rgba(255,214,150,.75)'; for(let i=0;i<5;i++) g.fillRect(x + 1 + (i*3)%Math.max(1, w-2), 128 - h + 4 + (i*11)%Math.max(1, h-6), 1, 1);
+        x += w + 1; k++ }
+      g.fillStyle = '#23273A'; g.fillRect(40, 40, 7, 88); g.fillRect(42, 30, 3, 10); g.fillRect(43, 20, 1, 10) }
+    if(kind==='fields'){ g.fillStyle = '#5E7A48';                                 // the Skåne plain: willows and a red barn
+      for(let i=0;i<6;i++){ g.beginPath(); g.ellipse(4 + i*11, 70, 4, 3.4, 0, 0, 6.283); g.fill() }
+      g.fillStyle = '#9A3A2E'; g.fillRect(34, 64, 16, 8); g.fillStyle = '#4A3A34'; g.beginPath(); g.moveTo(33, 64); g.lineTo(42, 58); g.lineTo(51, 64); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,255,255,.25)'; for(let i=0;i<8;i++) g.fillRect((i*23)%60 + 2, 82 + (i*7)%14, 6, 1) }
     if(kind==='snow'){ g.fillStyle = 'rgba(255,255,255,.85)';                      // falling snow
       for(let i=0;i<40;i++){ const x = (i*37)%64, y = (i*53)%96; g.beginPath(); g.arc(x, y, .8 + (i%3)*.4, 0, 6.283); g.fill() } }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.userData.keep = true; return views[kind] = t;
@@ -604,10 +619,16 @@ export function create(stage){
     place('pictureframe_standing_B', 6.1, .3, -.25, CT, KK*.55);
     place('book_set', 5.55, .36, 0, CT + .25*KK*.5, KK*.5);
     place('cactus_small_A', 4.45, .36, 0, CT, KK*.5);
-    if(o.photo) smithy(4.3, 5.7); else painting(4.1, 5.9, .92, 2.25);                  // 4.1..5.9, z 36..88
+    if(o.photo) smithy(4.3, 5.7); else if(o.art!==false) painting(4.1, 5.9, .92, 2.25);                  // 4.1..5.9, z 36..88
     // the screen on the left wall (y 2.55..4.45, z 36..66)
     slab(.02,2.55,.08,4.45, .92,1.68, '#2E3338', .4);
     slab(.08,2.62,.085,4.38, .96,1.64, '#1C2226', .15);
+    if(RS.slide){                                      // what is on the screen, drawn by the classic room's code (Bergström's options)
+      const w = (4.4-2.6)*32, h = 26, S = 10, c = document.createElement('canvas'); c.width = w*S; c.height = h*S;
+      const g = c.getContext('2d'); g.scale(S, S); RS.slide(g, w, h);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(4.4-2.6, h/39.2), new THREE.MeshBasicMaterial({map:t}));
+      m.rotation.y = Math.PI/2; m.position.set(.087, (38+64)/2/39.2, 3.5); room.add(m) }
     // under the screen (enhanced): a slim bench with a basket, a plant and a book; above it a wall clock
     for(const z of [3.05, 3.95]) place('cabinet_small', .19, z, Math.PI/2, 0, [.9, .45, .36]);
     place('woven_basket', .2, 2.85, 0, .45, .55); place('cactus_small_B', .2, 4.2, 0, .45, KK*.45);
@@ -1122,6 +1143,173 @@ export function create(stage){
     wallClock(.02, 5.2, 1.7, .16);
     plant(.7, .8, 1.2, '#B8AA92'); plant(9.3, 5.6, 1.0, '#B8AA92');
   };
+
+  // Case 11: the Rosenholm villa near the harbour at dusk, the classic 'villa': the long dining table set for
+  // dinner, the sideboard under the freighter picture, the sofa corner, the harbour through the windows.
+  ROOMS.villa = (RS) => {
+    ROOMS.board(RS, {view:'tall'});
+    rug(1.1, 1.55, 8.9, 5.45, '#5E6E78');
+    const TOP = KK;
+    for(const x of [3.6, 6.4]) place('table_medium_long', x, 3.5, 0, 0, [KK*1.197, KK, KK]);   // 2.2..7.8 x 2.72..4.28
+    slab(2.18, 2.7, 7.82, 4.3, TOP-.02, TOP+.003, '#6E4A32', .35);
+    chairName = 'chair_A_wood'; chairCushion = '#3E4A52';
+    const T = TOP + .003;
+    // dinner for ten: a plate and a glass of red at every place, two candles, flowers; (enhanced) a runner,
+    // a carafe of water, bread, a salad and the main dish
+    slab(2.5, 3.38, 7.5, 3.62, T, T+.004, '#E9E2D2', .9);
+    for(const x of [3.5, 4.5, 5.5, 6.5]){ plate(x, T, 2.95); glogg(x+.18, T, 2.85); plate(x, T, 4.05); glogg(x-.18, T, 4.15) }
+    plate(2.2+.25, T, 3.5); glogg(2.5, T, 3.25); plate(7.8-.25, T, 3.5); glogg(7.5, T, 3.75);
+    candle(3.9, T, 3.5); candle(6.1, T, 3.5);
+    bouquet(5.0, T, 3.5, ['#F4F1EA','#E9C54A','#8E7CC3','#F4F1EA','#D96A5A']);
+    { const g = new THREE.Mesh(new THREE.CylinderGeometry(.055,.06,.3,20), new THREE.MeshStandardMaterial({color:'#DCEBF0', transparent:true, opacity:.5, roughness:.05, depthWrite:false}));
+      g.position.set(4.4, T+.15, 3.5); room.add(g) }
+    heap(5.6, bowl(5.6, T, 3.5, .13), 3.5, 12, .03, .08, '#6E9A4E', .6);                             // salad
+    { const y = T; const p = new THREE.Mesh(new THREE.CylinderGeometry(.2,.17,.02,28), mat('#FBFAF6', .35)); p.scale.z = .6; p.position.set(4.7, y+.01, 3.5); room.add(p);
+      const f = new THREE.Mesh(new THREE.CapsuleGeometry(.05,.2,4,10), mat('#E89A7A', .6)); f.rotation.z = Math.PI/2; f.position.set(4.7, y+.05, 3.5); room.add(f) }   // the salmon
+    // the sideboard (3.1..6.9, 0.12..0.55, 26 up): candles and two bottles; the picture above is shared with the classic room
+    slab(3.1, .12, 6.9, .55, .06, .66, '#6E4A32', .45); slab(3.08, .1, 6.92, .57, .66, .7, '#7A5236', .4);
+    for(const x of [3.73, 4.37, 5.0, 5.63, 6.27]) slab(x-.3, .545, x+.3, .55, .12, .6, '#5E3E28', .5);
+    candle(3.4, .7, .34); candle(6.6, .7, .34);
+    for(const [x, c] of [[4.56,'#3A5A3A'],[4.81,'#6E2A2A']]){ const b = new THREE.Mesh(new THREE.CylinderGeometry(.04,.045,.3,14), mat(c, .2)); b.position.set(x, .85, .28); b.castShadow = true; room.add(b);
+      const n = new THREE.Mesh(new THREE.CylinderGeometry(.015,.025,.08,10), mat(c, .2)); n.position.set(x, 1.04, .28); room.add(n) }
+    // the sofa corner by the near wall: sofa facing the room, a low table, a floor lamp
+    place('compact_sofa', 7.8, 6.2, 0, 0, [1.2, 1, 1.05]);
+    slab(7.1, 4.9, 8.5, 5.4, 0, .28, '#7A5236', .45);
+    place('coffee_mug', 7.5, 5.1, 0, .28, .8);
+    place('slim_floor_lamp', 9.3, 5.4, 0, 0, 1);
+    const l = new THREE.PointLight(0xffd9a0, 1.0, 3.5, 1.8); l.position.set(9.3, 1.4, 5.4); room.add(l);
+    for(const x of [3.9, 6.1]){ const c = new THREE.PointLight(0xffc27a, .7, 2.8, 1.8); c.position.set(x, 1.3, 3.5); room.add(c) }
+    plant(9.45, .55, 1.2, '#E6E0D6'); plant(.55, 6.3, 1.0, '#E6E0D6');
+  };
+  // Case 12: the Stjernholm farm kitchen near Ystad at Midsummer, the classic 'farm': the long scrubbed table
+  // with a Midsummer supper for four, the counter and plate rack on the back wall, the wood stove on the
+  // left wall, a kitchen settle, a milk churn and a crate of vegetables, birch branches in a pail.
+  ROOMS.farm = (RS) => {
+    ROOMS.board(RS, {view:'fields'});
+    rug(1.1, 1.55, 8.9, 5.45, '#8A9EB0'); rug(6.5, 5.0, 9.1, 5.65, '#B5696A');
+    const TOP = KK;
+    for(const x of [3.6, 6.4]) place('table_medium_long', x, 3.5, 0, 0, [KK*1.197, KK, KK]);   // 2.2..7.8 x 2.72..4.28
+    slab(2.18, 2.7, 7.82, 4.3, TOP-.03, TOP+.003, '#E2CDA4', .8);                          // scrubbed pine
+    chairName = 'chair_A_wood'; chairCushion = '#6E8A96';
+    const T = TOP + .003;
+    // supper for four: plates and snaps glasses; herring, new potatoes with dill, the strawberry cake,
+    // a bowl of strawberries, bread and butter, a jug of wild flowers, and a flower crown
+    const snapsGlass = (x, z) => { const g = new THREE.Mesh(new THREE.CylinderGeometry(.022,.014,.06,12), new THREE.MeshStandardMaterial({color:'#EBF0F5', transparent:true, opacity:.5, roughness:.1, depthWrite:false}));
+      g.position.set(x, T+.03, z); room.add(g); const a = new THREE.Mesh(new THREE.CylinderGeometry(.018,.013,.035,12), mat('#F0E1AA', .3)); a.position.set(x, T+.02, z); room.add(a) };
+    for(const [x, z, gx, gz] of [[2.45,3.5,2.47,3.26],[3.5,2.95,3.7,2.85],[4.5,2.95,4.7,2.85],[3.5,4.05,3.7,4.15]]){ plate(x, T, z); snapsGlass(gx, gz) }
+    { const y = flatPlate(3.2, T, 3.5, .2, .62);
+      for(const [dx, c] of [[-.1,'#E9E2CC'],[0,'#D9A6A8'],[.1,'#E9D9A8']]){ const m = new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.04,14), mat(c, .6)); m.position.set(3.2+dx, y+.02, 3.5); room.add(m) } }
+    heap(4.15, bowl(4.15, T, 3.55, .15), 3.55, 16, .042, .1, '#E8D29A', .85);
+    heap(4.15, T+.13, 3.55, 7, .012, .08, '#5E8A3E', 1, 3);
+    { const jug = new THREE.Mesh(new THREE.CylinderGeometry(.06,.075,.2,18), mat('#F4F0E6', .4)); jug.position.set(5.0, T+.1, 3.5); jug.castShadow = true; room.add(jug);
+      bouquet(5.0, T+.02, 3.5, ['#F4F1EA','#E9C54A','#5E7EC9','#F4F1EA','#D9302C','#E9C54A','#8E7CC3'], '#F4F0E6') }
+    { const y = flatPlate(5.9, T, 3.5, .17);
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.12,28), mat('#FFFBF0', .6)); c.position.set(5.9, y+.06, 3.5); c.castShadow = true; room.add(c);
+      for(let i=0;i<9;i++){ const a = i*.7, d = i ? .075 : 0; const b = new THREE.Mesh(new THREE.SphereGeometry(.022, 10, 8), mat('#D2302C', .45)); b.scale.y = 1.25;
+        b.position.set(5.9 + Math.cos(a)*d, y+.14, 3.5 + Math.sin(a)*d); room.add(b) } }
+    heap(6.75, bowl(6.75, T, 3.35, .13), 3.35, 16, .024, .08, '#C9302C', 1.2);
+    { const l = new THREE.Mesh(new THREE.CapsuleGeometry(.06,.14,4,10), mat('#8A5A34', .8)); l.rotation.z = Math.PI/2; l.position.set(7.15, T+.06, 3.8); l.castShadow = true; room.add(l);
+      slab(6.9, 3.68, 7.4, 3.94, T, T+.02, '#B98A5A', .6); slab(7.3, 3.55, 7.45, 3.65, T, T+.04, '#F2DC8A', .6) }
+    { const r = new THREE.Mesh(new THREE.TorusGeometry(.1,.012,6,28), mat('#5E8A3E', .8)); r.rotation.x = Math.PI/2; r.position.set(4.0, T+.015, 3.12); room.add(r);
+      ['#F4F1EA','#E9C54A','#8E7CC3','#D96A5A'].forEach((c, k) => { for(let j=0;j<3;j++){ const a = (k*3+j)/12*6.283;
+        const f = new THREE.Mesh(new THREE.SphereGeometry(.018, 8, 6), mat(c, .7)); f.position.set(4.0 + Math.cos(a)*.1, T+.03, 3.12 + Math.sin(a)*.1); room.add(f) } }) }
+    // the counter (3.1..6.9, 0.12..0.6, 34 up), grey-green doors, a sink, a tap, jars and a bread board;
+    // the plate rack above is shared with the classic room
+    const CT = 34/39.2;
+    slab(3.1, .12, 6.9, .6, 0, CT-.04, '#8FA8A2', .8); slab(3.08, .1, 6.92, .62, CT-.04, CT, '#D9C9A8', .6);
+    for(const x of [3.58, 4.53, 5.48, 6.43]) slab(x-.4, .6, x+.4, .605, .1, CT-.1, '#7E9892', .7);
+    slab(4.35, .2, 5.05, .5, CT-.002, CT+.004, '#9AA4A8', .3);
+    { const t = new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.22,10), mat('#B8BEC2', .2)); t.position.set(4.7, CT+.11, .17); room.add(t);
+      const s = new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.12,10), mat('#B8BEC2', .2)); s.rotation.x = Math.PI/2; s.position.set(4.7, CT+.21, .23); room.add(s) }
+    for(const [x, h, c] of [[3.45, .2, '#E9DFC8'],[3.7, .15, '#B8733E']]){ const j = new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,h,16), mat(c, .5)); j.position.set(x, CT+h/2, .34); j.castShadow = true; room.add(j) }
+    slab(5.5, .22, 6.1, .5, CT, CT+.04, '#B98A5A', .6);
+    place('coffee_mug', 6.4, .35, 0, CT, .8); place('coffee_mug', 6.6, .4, 0, CT, .8);
+    // the cast-iron wood stove on the left wall (x .08..0.72, y 2.5..3.5, 30 up), a copper kettle, the pipe
+    const SH = 30/39.2, IRON = '#2A2A2C';
+    slab(.08, 2.5, .72, 3.5, 0, SH, IRON, .5); slab(.06, 2.48, .74, 3.52, SH-.03, SH, '#3A3A3E', .4);
+    slab(.72, 2.62, .725, 3.05, .2, .55, '#1E1E20', .5); slab(.72, 3.12, .725, 3.4, .45, .62, '#1E1E20', .5);
+    slab(.725, 2.55, .74, 3.45, SH-.1, SH-.08, '#C9A55A', .3);
+    { const p = new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,2.65-SH,14), mat(IRON, .5)); p.position.set(.3, (SH+2.65)/2, 3.0); room.add(p);
+      const k = new THREE.Mesh(new THREE.SphereGeometry(.12, 16, 12), mat('#B8733E', .3)); k.scale.y = .8; k.position.set(.52, SH+.1, 2.72); k.castShadow = true; room.add(k);
+      const sp = new THREE.Mesh(new THREE.CylinderGeometry(.012,.02,.14,8), mat('#B8733E', .3)); sp.rotation.z = -.9; sp.position.set(.65, SH+.14, 2.72); room.add(sp);
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(.13,.12,.1,18), mat('#3A3A3E', .5)); pot.position.set(.45, SH+.05, 3.32); room.add(pot) }
+    // a basket of firewood beside it
+    place('woven_basket', .45, 3.95, 0, 0, .7);
+    for(const dz of [-.06, .06]){ const l = new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.4,10), mat('#7A5A3E'));
+      l.rotation.x = Math.PI/2; l.position.set(.45 + dz, .28, 3.95); room.add(l) }
+    // the kitchen settle by the near wall, facing the room, and a rag rug in front (above)
+    slab(6.7, 5.8, 8.9, 6.4, .3, .4, '#6E8A96', .7); slab(6.7, 6.4, 8.9, 6.6, 0, .95, '#62808C', .7);
+    slab(6.56, 5.8, 6.7, 6.6, 0, .62, '#62808C', .7); slab(8.9, 5.8, 9.04, 6.6, 0, .62, '#62808C', .7);
+    slab(6.72, 5.82, 8.88, 6.38, 0, .3, '#5A7680', .8);
+    slab(6.85, 5.85, 8.75, 6.35, .4, .46, '#E9DFC8', .9);
+    place('throw_blanket_folded', 8.2, 6.1, .2, .46, 1);
+    // the corner by the back window: a milk churn, a crate of vegetables from the fields
+    { const c = new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.5,20), mat('#B8C2C6', .3)); c.position.set(9.45, .25, .55); c.castShadow = true; room.add(c);
+      const n = new THREE.Mesh(new THREE.CylinderGeometry(.09,.15,.12,20), mat('#B8C2C6', .3)); n.position.set(9.45, .56, .55); room.add(n);
+      const l = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.04,20), mat('#C9D0D2', .3)); l.position.set(9.45, .64, .55); room.add(l) }
+    slab(9.05, 1.35, 9.75, 1.95, 0, .28, '#A8804E', .8);
+    heap(9.3, .28, 1.6, 10, .045, .14, '#E07A3A', 1, 2);
+    heap(9.55, .28, 1.75, 8, .05, .12, '#C9B06A', .9, 4);
+    heap(9.5, .3, 1.5, 6, .04, .08, '#5E8A3E', 1.4, 5);
+    // birch branches in a pail, the Midsummer custom, by the left window
+    { const p = new THREE.Mesh(new THREE.CylinderGeometry(.16,.13,.32,18), mat('#7A868A', .4)); p.position.set(.55, .16, 5.45); p.castShadow = true; room.add(p);
+      const lm = [mat('#8AB05A', .8), mat('#6E9A48', .8)];
+      for(let i=0;i<5;i++){ const a = i*1.3, lean = .25, h = 1.3 + (i%3)*.2;
+        const st = new THREE.Mesh(new THREE.CylinderGeometry(.008,.014,h,6), mat('#EDE8DC', .8)); st.position.set(.55 + Math.cos(a)*lean*h/2, .3 + h/2, 5.45 + Math.sin(a)*lean*h/2);
+        st.rotation.z = -Math.cos(a)*lean; st.rotation.x = Math.sin(a)*lean; room.add(st);
+        for(let k=0;k<9;k++){ const f = .35 + k*.075, lf = new THREE.Mesh(new THREE.IcosahedronGeometry(.05, 0), lm[(i+k)%2]);
+          lf.position.set(.55 + Math.cos(a)*lean*h*f + Math.sin(k*2.3)*.07, .3 + h*f, 5.45 + Math.sin(a)*lean*h*f + Math.cos(k*1.7)*.07); lf.scale.set(1, .6, 1.3); room.add(lf) } } }
+  };
+  // Case 13: Martinsson AB's boardroom, the default layout in its own colours; the brake-disc drawing on the
+  // back wall is shared with the classic room, so the painting stays off.
+  ROOMS.martinsson = (RS) => ROOMS.boardroom(RS, {rug:'#5A2E2E', top:'#2B2B2E', chair:'chair_A', cushion:'#6E2A2A', art:false});
+  // Isabel's hotel room at night, after the classic 'hotel': the armchair at the engine's seat (b_h1) by a low
+  // table, the bed against the back wall between two bedside lamps, the desk with her papers, a suitcase,
+  // a floor lamp, the city at night through the windows.
+  ROOMS.hotel = (RS) => {
+    ROOMS.board(RS, {view:'night'});
+    rug(1.0, 1.9, 4.4, 4.9, '#4A5666');
+    place('chair_large_brown', 1.62, 3.5, Math.PI/2, 0, .54);
+    slab(2.1, 3.05, 2.7, 3.65, 0, .36, '#4A3A2E', .5);
+    place('coffee_mug', 2.3, 3.25, 0, .36, .8);
+    slab(2.45, 3.35, 2.6, 3.5, .36, .375, '#1A1D22', .3);                                   // a notebook
+    // the bed: headboard, frame, mattress, duvet, pillows
+    slab(5.6, .08, 8.4, .24, 0, .77, '#5A4A3E', .7);
+    slab(5.6, .24, 8.4, 2.5, 0, .28, '#3A3F46', .7);
+    slab(5.65, .26, 8.35, 2.45, .28, .41, '#F4F2EE', .9);
+    slab(5.62, 1.1, 8.38, 2.48, .41, .45, '#C9BBAA', .9);
+    slab(5.62, 2.44, 8.38, 2.48, .2, .45, '#C9BBAA', .9);
+    for(const x of [6.35, 7.65]){ const pl = new THREE.Mesh(new THREE.CapsuleGeometry(.12, .6, 4, 10), mat('#FFFFFF', .9)); pl.rotation.z = Math.PI/2; pl.scale.set(1, 1, .6); pl.position.set(x, .5, .52); room.add(pl) }
+    // bedside tables and lamps, lit
+    for(const x of [5.2, 8.8]){ slab(x-.25, .15, x+.25, .6, 0, .46, '#4A3A2E', .6);
+      place('lamp_table', x, .38, 0, .46, KK*.6);
+      const l = new THREE.PointLight(0xffd9a0, .9, 3, 1.8); l.position.set(x, .95, .5); room.add(l) }
+    // the desk under the window, her papers and laptop, a chair turned to it
+    slab(2.2, .1, 4.0, .6, .6, .64, '#4A3A2E', .6);
+    for(const [x, z] of [[2.24,.14],[3.96,.14],[2.24,.56],[3.96,.56]]) slab(x-.02, z-.02, x+.02, z+.02, 0, .6, '#3A2E24', .6);
+    slab(2.5, .25, 2.9, .45, .64, .652, '#FBFBF8', .9); slab(3.1, .22, 3.5, .48, .64, .652, '#FBFBF8', .9);
+    place('laptop', 3.6, .35, 0, .64, 1);
+    place('chair_A_wood', 3.1, 1.0, Math.PI, 0);
+    // the suitcase by the door, a floor lamp, a plant
+    slab(4.4, 5.3, 5.0, 5.6, 0, .41, '#2F3A4A', .5); slab(4.62, 5.4, 4.78, 5.5, .41, .47, '#1E2630', .4);
+    place('slim_floor_lamp', 1.0, 5.6, 0, 0, 1);
+    { const l = new THREE.PointLight(0xffd9a0, .8, 3.5, 1.8); l.position.set(1.0, 1.4, 5.6); room.add(l) }
+    plant(9.3, 5.4, .9, '#E6E0D6');
+  };
+  // Case 14: the Bellucci Group's boardroom in New York at dusk, the default layout with a mahogany table and
+  // black leather seats; the 1958 photo and the sketches are shared with the classic room; a tailor's dummy.
+  ROOMS.bellucci = (RS) => {
+    ROOMS.boardroom(RS, {rug:'#3A3F4A', top:'#5A2418', chair:'chair_A', cushion:'#2B2B2E', art:false});
+    const x = 9.35, z = 4.6;
+    { const b = new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,.03,20), mat('#2B2B2E', .4)); b.position.set(x, .015, z); room.add(b) }
+    slab(x-.015, z-.015, x+.015, z+.015, 0, .95, '#2B2B2E', .4);
+    { const t = new THREE.Mesh(new THREE.CylinderGeometry(.17,.13,.55,16), mat('#2B3440', .8)); t.scale.z = .7; t.position.set(x, 1.22, z); t.castShadow = true; room.add(t);
+      const sh = new THREE.Mesh(new THREE.SphereGeometry(.17, 16, 10, 0, 6.283, 0, 1.2), mat('#2B3440', .8)); sh.scale.set(1, .5, .7); sh.position.set(x, 1.48, z); room.add(sh);
+      const n = new THREE.Mesh(new THREE.CylinderGeometry(.04,.05,.1,12), mat('#C9B79A', .7)); n.position.set(x, 1.57, z); room.add(n);
+      slab(x-.12, z-.04, x-.1, z+.04, 1.05, 1.47, '#F4F2EE', .6); slab(x-.125, z-.01, x-.12, z+.01, 1.2, 1.44, '#6E2A2A', .6) }
+  };
+  // Case 15: Bergström Industries, the default layout in steel grey and birch on a rainy day; the tools and the slide are shared
+  ROOMS.bergstrom = (RS) => ROOMS.boardroom(RS, {rug:'#4E5A62', top:'#D9C9A8', chair:'chair_A', cushion:'#3A4046', art:false});
   ROOMS.board_items = (SP, CF) => {
     // a chair at every boardroom seat the engine defines, turned the way the engine turns it.
     // A seat's facing lives in CHAIRFACE: the engine lays the chairs out after it creates the seats.

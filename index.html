@@ -150,6 +150,16 @@ aside{width:300px; background:var(--panel); border-left:1px solid var(--line); d
 .pickcase em{font-style:normal;font-size:12.5px;color:var(--muted)}
 .pickcase .d{font-size:13px;line-height:1.4;font-weight:400;margin-top:2px}
 .pickcase.last{border-color:#2F6E73 !important}
+.casesearch{position:relative;margin:2px 0 8px}
+.casesearch input{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--chip,transparent);color:inherit;border-radius:12px;padding:10px 36px 10px 14px;font:inherit;font-size:14.5px}
+.casesearch input:focus{outline:2px solid #2F6E73;outline-offset:0;border-color:#2F6E73}
+.casesearch input::-webkit-search-cancel-button{display:none}
+.csclear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:none !important;background:transparent !important;color:var(--muted);font-size:18px;line-height:1;padding:0 !important;cursor:pointer}
+.topics button.tmore{border-style:dashed;color:var(--muted)}
+.casenav{display:flex;align-items:center;justify-content:center;gap:14px;margin:-8px 0 16px;font-size:13px;color:var(--muted)}
+.casenav button{width:36px;height:32px;border-radius:10px;padding:0 !important;font-size:20px;line-height:1}
+.casenav button:disabled{opacity:.35;cursor:default}
+.casenone{grid-column:1/-1;padding:14px;color:var(--muted);font-size:14px;text-align:center}
 .caselab{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .casepick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:18px}
 .casechip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:10px 12px;min-height:54px;text-align:left;min-width:0}
@@ -602,6 +612,39 @@ ROOMSTYLES.home={...ROOMSTYLES.scandi,floor:'#D9C4A0',wall:['#F4EFE6','#FAF6EF',
   stage:'radial-gradient(ellipse at 50% 40%,#6A5E50 0%,#3E362E 60%,#221E1A 100%)'};
 ROOMSTYLES.therapy={...ROOMSTYLES.scandi,floor:'#CDB89A',wall:['#E8DCCB','#F2E8DA','#DDD0BC','#CFC0AA'],wains:null,rugs:[[1.0,1.9,4.4,4.9,'#8A9A7A']],props:'therapy',light:'day',decor:'therapy',
   stage:'radial-gradient(ellipse at 50% 40%,#5E6656 0%,#363C32 60%,#1E221C 100%)'};
+ROOMSTYLES.villa={...ROOMSTYLES.scandi,floor:'#C9A67A',tex:'wood',wall:['#F2EEE8','#FAF7F2','#E6E0D6','#D6CEC2'],base:['#CFC6B8','#C2B8A8'],wains:null,
+  rugs:[[1.1,1.55,8.9,5.45,'#5E6E78']],top:'#6E4A32',leg:'#3A2A1E',chair:'#3E4A52',glass:'#C9D6DE',win:'port',light:'dusk',decor:'villa',props:'villa',
+  stage:'radial-gradient(ellipse at 50% 40%,#5E5A5E 0%,#34313A 60%,#1E1C22 100%)'};
+// the villa's picture above the sideboard: a North Sea freighter at dusk, drawn in wall units by both rooms
+ROOMSTYLES.villa.backArt=[{x0:4.1,x1:5.9,z0:44,z1:88,draw(g,w,h){g.fillStyle='#2E2A26';g.fillRect(0,0,w,h);
+  const x0=3,y0=3,pw=w-6,ph=h-6,sk=g.createLinearGradient(0,y0,0,y0+ph*.6);sk.addColorStop(0,'#5E6A86');sk.addColorStop(1,'#E9A77A');g.fillStyle=sk;g.fillRect(x0,y0,pw,ph*.6);
+  const sea=g.createLinearGradient(0,y0+ph*.6,0,y0+ph);sea.addColorStop(0,'#46586E');sea.addColorStop(1,'#26334A');g.fillStyle=sea;g.fillRect(x0,y0+ph*.6,pw,ph*.4);
+  const hy=y0+ph*.6;g.fillStyle='#1E2230';g.beginPath();g.moveTo(x0+pw*.28,hy-1);g.lineTo(x0+pw*.74,hy-1);g.lineTo(x0+pw*.7,hy+3);g.lineTo(x0+pw*.31,hy+3);g.closePath();g.fill();
+  g.fillRect(x0+pw*.62,hy-6,pw*.07,5);['#A0453A','#2F5A7A','#C9A55A','#3E6A5A','#8A8E90'].forEach((c,i)=>{g.fillStyle=c;g.fillRect(x0+pw*(.33+i*.055),hy-4,pw*.05,3)});
+  g.fillStyle='rgba(255,220,170,.5)';g.fillRect(x0+pw*.3,hy+4,pw*.4,.8)}}];
+// Case 12: the Stjernholm farm kitchen in Skåne at Midsummer: limewashed walls over a grey-green dado,
+// the long scrubbed table, the counter and plate rack on the back wall, the wood stove on the left, the
+// plains and a red barn through the windows.
+ROOMSTYLES.farm={...ROOMSTYLES.scandi,floor:'#C8A474',tex:'wood',wall:['#F3EBD6','#F8F2E2','#E9DFC6','#DCD0B2'],base:['#5E7A76','#526C68'],wains:['#8FA8A2','rgba(40,64,60,.38)'],
+  rugs:[[1.1,1.55,8.9,5.45,'#8A9EB0'],[6.5,5.0,9.1,5.65,'#B5696A']],top:'#E2CDA4',leg:'#8A6A48',chair:'#6E8A96',glass:'#D6E4EC',win:'fields',light:'day',decor:'farm',props:'farm',
+  stage:'radial-gradient(ellipse at 50% 40%,#7A8A6A 0%,#46503A 60%,#262C1E 100%)'};
+// the plate rack above the counter, and on the left wall the tiles behind the stove and an old photo
+// of the farm. Drawn in wall units by both rooms.
+ROOMSTYLES.farm.backArt=[{x0:4.1,x1:5.9,z0:46,z1:92,draw(g,w,h){
+  g.fillStyle='#6E8A86';g.fillRect(0,0,w,h);g.fillStyle='#F3EBD6';g.fillRect(2.5,2.5,w-5,h-5);
+  g.fillStyle='#6E8A86';g.fillRect(0,h*.52,w,2.2);g.fillRect(0,h-4,w,4);g.fillRect(0,0,w,3);
+  for(let k=0;k<6;k++){const x=6+k*(w-12)/5;g.fillStyle='#FBFAF6';g.beginPath();g.arc(x,h*.52-7.5,7,0,6.283);g.fill();
+    g.strokeStyle='#2F5A8A';g.lineWidth=1.1;g.beginPath();g.arc(x,h*.52-7.5,5.2,0,6.283);g.stroke();g.fillStyle='#2F5A8A';g.beginPath();g.arc(x,h*.52-7.5,1.6,0,6.283);g.fill()}
+  [['#E9DFC8',7],['#B8733E',9],['#E9DFC8',7],['#7A9A5A',8],['#C9A55A',6],['#E9DFC8',7]].forEach(([c,hh],k)=>{const x=5+k*(w-10)/6;g.fillStyle=c;g.fillRect(x,h-4-hh,6,hh);g.fillStyle='rgba(0,0,0,.18)';g.fillRect(x,h-4-hh,6,1.2)})}}];
+ROOMSTYLES.farm.leftArt=[
+ {y0:2.45,y1:3.55,z0:30,z1:66,draw(g,w,h){g.fillStyle='#F8F6F0';g.fillRect(0,0,w,h);g.strokeStyle='rgba(47,90,138,.35)';g.lineWidth=.6;
+   for(let x=0;x<=w;x+=5.5){g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke()}for(let y=0;y<=h;y+=5.5){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
+   g.fillStyle='#2F5A8A';for(let x=2.75;x<w;x+=11)for(let y=2.75;y<h;y+=11){g.beginPath();g.arc(x,y,1,0,6.283);g.fill()}}},
+ {y0:3.95,y1:4.75,z0:52,z1:80,draw(g,w,h){g.fillStyle='#4A3424';g.fillRect(0,0,w,h);g.fillStyle='#E4D6BA';g.fillRect(2.5,2.5,w-5,h-5);
+   const s=g.createLinearGradient(0,3,0,h*.6);s.addColorStop(0,'#D9CBAE');s.addColorStop(1,'#C9B894');g.fillStyle=s;g.fillRect(3,3,w-6,h*.55);
+   g.fillStyle='#A8966E';g.fillRect(3,h*.58,w-6,h*.42-3);g.fillStyle='#6E5A40';g.fillRect(5,h*.34,10,h*.26);g.beginPath();g.moveTo(3.5,h*.36);g.lineTo(10,h*.2);g.lineTo(16.5,h*.36);g.closePath();g.fill();
+   g.fillRect(18,h*.4,w-22,h*.2);g.beginPath();g.moveTo(17,h*.42);g.lineTo((18+w-4)/2,h*.28);g.lineTo(w-3,h*.42);g.closePath();g.fill();
+   g.strokeStyle='rgba(70,56,36,.5)';g.lineWidth=.5;for(let k=0;k<5;k++){g.beginPath();g.moveTo(3,h*.66+k*2.2);g.lineTo(w-3,h*.62+k*2.6);g.stroke()}}}];
 ROOMSTYLES.eriksson={...ROOMSTYLES.scandi,floor:'#7A5A40',tex:'wood',wall:['#C3CACE','#D2D8DB','#B6BEC3','#A4AEB4'],base:['#3A4148','#2E343A'],wains:['#56626A','rgba(30,40,46,.45)'],
   rugs:[[1.1,1.55,8.9,5.45,'#2F4A5A']],top:'#4A3424',leg:'#2B2F33',chair:'#2B3A44',glass:'#8FA3B0',win:'port',light:'day',
   stage:'radial-gradient(ellipse at 50% 40%,#4E5E6A 0%,#2A3640 60%,#172027 100%)'};
@@ -631,6 +674,70 @@ ROOMSTYLES.scandi.leftArt=[
      g.fillStyle=['#7E9B77','#9DB09A','#688862'][i];
      for(let k=0;k<4;k++){const y=bot-4-k*4.2,d=k%2?1:-1;g.beginPath();g.ellipse(cx+d*2.6,y,2.8,1.2,d*.5,0,6.283);g.fill()}
      g.fillStyle=['#C4927A','#D2A64F','#8DA3B2'][i];g.beginPath();g.arc(cx,top+2.5,2.2,0,6.283);g.fill()}}}];
+// Case 13: Martinsson AB's boardroom, the default layout in the automotive supplier's colours (navy dado, black
+// table, oxblood seats) with a technical drawing of a brake disc where the painting hangs; and the hotel
+// room where Isabel spends the night: an armchair by a low table, the bed, a desk, the city at night.
+ROOMSTYLES.martinsson={...ROOMSTYLES.scandi,floor:'#6E5440',tex:'wood',wall:['#E4E0D8','#EEEBE5','#D8D3CA','#C8C2B8'],base:['#26303A','#1E2830'],wains:['#2E3A46','rgba(20,26,32,.45)'],
+  rugs:[[1.1,1.55,8.9,5.45,'#5A2E2E']],top:'#2B2B2E',leg:'#1E1E20',chair:'#6E2A2A',glass:'#9AAAB6',win:'city',light:'day',decor:'martinsson',
+  stage:'radial-gradient(ellipse at 50% 40%,#5A626A 0%,#30363C 60%,#1A1E22 100%)'};
+ROOMSTYLES.martinsson.backArt=[{x0:4.1,x1:5.9,z0:36,z1:88,draw(g,w,h){
+  g.fillStyle='#2B2F33';g.fillRect(0,0,w,h);g.fillStyle='#1F3A5F';g.fillRect(2,2,w-4,h-4);
+  g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=.3;for(let x=2;x<w-2;x+=4){g.beginPath();g.moveTo(x,2);g.lineTo(x,h-2);g.stroke()}for(let y=2;y<h-2;y+=4){g.beginPath();g.moveTo(2,y);g.lineTo(w-2,y);g.stroke()}
+  const cx=w*.4,cy=h*.46,R=h*.3;g.strokeStyle='#EAF0F6';g.lineWidth=.8;
+  [R,R*.8,R*.42,R*.2].forEach(r=>{g.beginPath();g.arc(cx,cy,r,0,6.283);g.stroke()});
+  for(let k=0;k<5;k++){const a=k/5*6.283-1.57;g.beginPath();g.arc(cx+Math.cos(a)*R*.31,cy+Math.sin(a)*R*.31,1.4,0,6.283);g.stroke()}
+  g.lineWidth=.4;for(let k=0;k<18;k++){const a=k/18*6.283;g.beginPath();g.moveTo(cx+Math.cos(a)*R*.5,cy+Math.sin(a)*R*.5);g.lineTo(cx+Math.cos(a)*R*.78,cy+Math.sin(a)*R*.78);g.stroke()}
+  g.setLineDash([2,1.5]);g.beginPath();g.moveTo(cx-R-4,cy);g.lineTo(cx+R+4,cy);g.moveTo(cx,cy-R-4);g.lineTo(cx,cy+R+4);g.stroke();g.setLineDash([]);
+  const sx=w*.82;g.lineWidth=.8;g.strokeRect(sx-2.5,cy-R,5,R*2);g.strokeRect(sx-4,cy-R*.42,8,R*.84);
+  g.lineWidth=.4;g.beginPath();g.moveTo(cx-R,h-7);g.lineTo(cx+R,h-7);g.moveTo(cx-R,h-9);g.lineTo(cx-R,h-5);g.moveTo(cx+R,h-9);g.lineTo(cx+R,h-5);g.stroke();
+  g.fillStyle='#EAF0F6';g.font='3px sans-serif';g.textAlign='center';g.fillText('Ø 320',cx,h-8);g.textAlign='left';g.fillText('MARTINSSON AB',4,6.5);
+  g.fillRect(w-18,h-7,14,.4);g.fillRect(w-18,h-4.5,14,.4)}}];
+ROOMSTYLES.hotel={...ROOMSTYLES.scandi,leftBlank:false,leftArt:null,floor:'#7A6E66',tex:null,wall:['#E2D8CC','#ECE4DA','#D6CABC','#C8BBAA'],base:['#8A7A6A','#7A6A5A'],wains:null,
+  rugs:[[1.0,1.9,4.4,4.9,'#4A5666']],glass:'#22304C',win:'night',light:'evening',decor:'hotel',props:'hotel',
+  glows:[[5.2,.4,20,70,.3],[8.8,.4,20,70,.3],[1.0,5.6,40,70,.22]],
+  stage:'radial-gradient(ellipse at 50% 40%,#3A3A48 0%,#20202A 60%,#121218 100%)'};
+ROOMSTYLES.hotel.backArt=[{x0:6.3,x1:7.9,z0:52,z1:84,draw(g,w,h){g.fillStyle='#C9A36B';g.fillRect(0,0,w,h);g.fillStyle='#F4F0E8';g.fillRect(2,2,w-4,h-4);
+  g.fillStyle='#4A5666';g.fillRect(8,8,w*.35,h-16);g.fillStyle='#C98A6A';g.beginPath();g.arc(w*.62,h*.45,h*.22,0,6.283);g.fill();g.fillStyle='#D2A64F';g.fillRect(w*.5,h*.72,w*.36,2)}}];
+// Case 14: the Bellucci Group's boardroom in New York at dusk: the default layout with a mahogany table and
+// black leather seats, a 1958 photo of Giuseppe's tailor shop in Little Italy, fashion sketches, a tailor's
+// dummy in a suit, and the Manhattan skyline through the windows.
+ROOMSTYLES.bellucci={...ROOMSTYLES.scandi,floor:'#5A4436',tex:'wood',wall:['#EDE6DC','#F4EEE6','#E0D8CC','#D0C6B8'],base:['#3A2A24','#2E211C'],wains:['#4A3228','rgba(30,18,12,.45)'],
+  rugs:[[1.1,1.55,8.9,5.45,'#3A3F4A']],top:'#5A2418',leg:'#2E1810',chair:'#2B2B2E',glass:'#3E4A6A',win:'nyc',light:'dusk',decor:'bellucci',dummy:true,
+  stage:'radial-gradient(ellipse at 50% 40%,#4A4658 0%,#2A2834 60%,#16151C 100%)'};
+ROOMSTYLES.bellucci.backArt=[{x0:4.1,x1:5.9,z0:36,z1:88,draw(g,w,h){                 // Little Italy, 1958
+  g.fillStyle='#1E1E20';g.fillRect(0,0,w,h);g.fillStyle='#F2EEE6';g.fillRect(2.5,2.5,w-5,h-5);
+  const x0=5,y0=5,pw=w-10,ph=h-14,s=g.createLinearGradient(0,y0,0,y0+ph);s.addColorStop(0,'#CFCAC0');s.addColorStop(1,'#8E8A82');g.fillStyle=s;g.fillRect(x0,y0,pw,ph);
+  g.fillStyle='#4A4844';g.fillRect(x0,y0,pw,ph*.3);g.fillStyle='#6E6A64';for(let i=0;i<4;i++)g.fillRect(x0+4+i*pw/4.2,y0+3,pw/7,ph*.18);
+  g.fillStyle='#2E2C2A';g.fillRect(x0,y0+ph*.34,pw,ph*.1);g.fillStyle='#E8E4DC';g.font='bold 3.4px serif';g.textAlign='center';g.fillText('G. BELLUCCI · SARTO',x0+pw/2,y0+ph*.42);
+  g.fillStyle='#3A3836';g.beginPath();g.moveTo(x0,y0+ph*.44);g.lineTo(x0+pw,y0+ph*.44);g.lineTo(x0+pw-3,y0+ph*.52);g.lineTo(x0+3,y0+ph*.52);g.closePath();g.fill();
+  g.fillStyle='#B8B4AC';g.fillRect(x0+4,y0+ph*.54,pw*.42,ph*.36);g.fillStyle='#5A5652';g.fillRect(x0+pw*.58,y0+ph*.54,pw*.2,ph*.46);
+  g.fillStyle='#3A3836';g.beginPath();g.arc(x0+pw*.25,y0+ph*.64,2.2,0,6.283);g.fill();g.fillRect(x0+pw*.25-2.4,y0+ph*.67,4.8,ph*.2);
+  g.fillStyle='#2A2826';g.beginPath();g.arc(x0+pw*.86,y0+ph*.62,2.4,0,6.283);g.fill();g.fillRect(x0+pw*.86-2.6,y0+ph*.66,5.2,ph*.34);
+  g.fillStyle='#3A3836';g.font='italic 3px serif';g.fillText('Little Italy, 1958',w/2,h-4)}}];
+ROOMSTYLES.bellucci.leftArt=[
+ {y0:.4,y1:1.6,z0:40,z1:82,draw(g,w,h){g.fillStyle='#1E1E20';g.fillRect(0,0,w,h);g.fillStyle='#F6F2EA';g.fillRect(2,2,w-4,h-4);      // swatch card
+   ['#2B3440','#6E2A2A','#8A8A86','#C9B79A','#3E5A48','#1E1E20','#B8A27E','#5A4A6E','#D9D2C6'].forEach((c,i)=>{g.fillStyle=c;g.fillRect(5+(i%3)*(w-10)/3,5+Math.floor(i/3)*(h-12)/3,(w-14)/3,(h-16)/3)})}},
+ {y0:5.1,y1:6.9,z0:54,z1:88,draw(g,w,h){const fw=(w-8)/3;                                                                       // three croquis
+   for(let i=0;i<3;i++){const x=i*(fw+4);g.fillStyle='#1E1E20';g.fillRect(x,0,fw,h);g.fillStyle='#FBF8F1';g.fillRect(x+1.2,1.2,fw-2.4,h-2.4);
+     const cx=x+fw/2;g.strokeStyle='#2B2B2E';g.lineWidth=.5;g.beginPath();g.arc(cx,6,2,0,6.283);g.moveTo(cx,8);g.lineTo(cx-3,20);g.lineTo(cx-2,h-5);g.moveTo(cx,8);g.lineTo(cx+3,20);g.lineTo(cx+2,h-5);g.stroke();
+     g.fillStyle=['#6E2A2A','#2B3440','#C9B79A'][i];g.beginPath();g.moveTo(cx-3.5,10);g.lineTo(cx+3.5,10);g.lineTo(cx+5+i,h-8);g.lineTo(cx-5-i,h-8);g.closePath();g.fill()}}}];
+// Case 15: Bergström Industries' boardroom on a rainy day: the default layout in steel grey and birch, a
+// shadow box of the firm's tools on the back wall, Sofia's slide of the three options on the screen, rain on
+// the glass. Drawn by both rooms.
+ROOMSTYLES.bergstrom={...ROOMSTYLES.scandi,floor:'#B8A68A',tex:'wood',wall:['#E6E8E8','#EEF0F0','#DADDDE','#CACED0'],base:['#4A5258','#3E464C'],wains:['#5E686E','rgba(30,36,40,.4)'],
+  rugs:[[1.1,1.55,8.9,5.45,'#4E5A62']],top:'#D9C9A8',leg:'#3A4046',chair:'#3A4046',glass:'#9AA8B2',win:'rain',light:'day',decor:'bergstrom',
+  stage:'radial-gradient(ellipse at 50% 40%,#5E6870 0%,#343C42 60%,#1C2226 100%)',
+  slide(g,w,h){g.fillStyle='#F6F7F8';g.fillRect(0,0,w,h);g.fillStyle='#2F4A5A';g.fillRect(0,0,w,5);
+    g.fillStyle='#FFFFFF';g.font='bold 3px sans-serif';g.fillText('THREE STRATEGIC OPTIONS',3,3.7);
+    [['Platform partnerships','#3F6E73'],['E-commerce','#C9A55A'],['AI-integrated production','#8A4A3A']].forEach(([t,c],i)=>{const x=3+i*(w-6)/3,bw=(w-12)/3;
+      g.fillStyle=c;g.fillRect(x,8,bw,h-12);g.fillStyle='#FFFFFF';g.font='bold 2.4px sans-serif';const ws=t.split(' ');ws.forEach((wd,k)=>g.fillText(wd,x+1.5,12+k*3.2));
+      g.fillStyle='rgba(255,255,255,.55)';for(let k=0;k<3;k++)g.fillRect(x+1.5,h-10+k*2.2,bw-3-(k%2)*3,.8)})}};
+ROOMSTYLES.bergstrom.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){                       // the tools, in a shadow box
+  g.fillStyle='#3A3028';g.fillRect(0,0,w,h);g.fillStyle='#23303A';g.fillRect(3,3,w-6,h-6);
+  g.fillStyle='#B8BEC2';g.save();g.translate(w*.28,h*.5);g.rotate(-.5);g.fillRect(-2,-14,4,24);g.beginPath();g.arc(0,-16,5,0,6.283);g.fill();g.fillStyle='#23303A';g.fillRect(-2,-22,4,7);g.restore();
+  g.fillStyle='#C9A55A';g.save();g.translate(w*.52,h*.48);g.fillRect(-1.2,-14,2.4,26);g.fillStyle='#8A4A3A';g.fillRect(-2,4,4,10);g.restore();
+  g.fillStyle='#B8BEC2';g.save();g.translate(w*.74,h*.5);g.rotate(.4);g.fillRect(-1.5,-12,3,22);g.fillRect(-5,-13,10,3);g.restore();
+  g.fillStyle='#C9A55A';g.fillRect(w/2-12,h-9,24,4);g.fillStyle='#3A3028';g.font='bold 2.4px sans-serif';g.textAlign='center';g.fillText('BERGSTRÖM',w/2,h-6.2)}}];
 ROOMSTYLES.julbord={floor:'#8A6040',tex:'wood',hall:'#7A6A5A',wall:['#EFE3CC','#F6EDDC','#E4D6BC','#D0C0A0'],base:['#2E4436','#263A2E'],wains:['#3E5A48','rgba(20,40,28,.5)'],
   rugs:[[1.1,1.55,8.9,5.45,'#7A2A28'],[.6,7.3,9.4,8.7,'#5E4A3C']],top:'#F6F3EC',leg:'#5A3A26',chair:'#7A2E2A',glass:'#22304C',win:'snow',decor:'julbord',pend:'#C9A55A',props:'julbord',light:'evening',
   glows:[[3.8,3.5,30,90,.3],[6.2,3.5,30,90,.3],[.7,3.5,12,90,.26],[9.1,1.1,40,80,.22],[3.6,3.5,82,70,.14],[5,3.5,82,70,.14],[6.4,3.5,82,70,.14]],
@@ -703,6 +810,41 @@ function candle(px,py,z){box(px-.05,py-.05,px+.05,py+.05,z,z+9,'#F4ECD8');custom
   const g=ctx.createRadialGradient(t[0],t[1]-4,0,t[0],t[1]-4,16);g.addColorStop(0,'rgba(255,200,110,.45)');g.addColorStop(1,'rgba(255,200,110,0)');ctx.fillStyle=g;ctx.fillRect(t[0]-16,t[1]-20,32,32);
   ctx.fillStyle='#FFD27A';ctx.beginPath();ctx.ellipse(t[0]+fl*.4,t[1]-4,1.6,3.6+fl*.3,0,0,6.283);ctx.fill();ctx.fillStyle='#FFF6D8';ctx.beginPath();ctx.ellipse(t[0],t[1]-3,.7,1.6,0,0,6.283);ctx.fill();ctx.restore()})}
 function waterBottle(px,py,z){box(px-.035,py-.035,px+.035,py+.035,z,z+14,'#CFE6F2',{alpha:.6,top:'#E8F4FA'});box(px-.02,py-.02,px+.02,py+.02,z+14,z+16,'#3F7FBF')}
+// the farm kitchen's Midsummer table and furniture (case 12)
+function snaps(px,py,z){custom(px-.03,py-.03,px+.03,py+.03,z,z+5,()=>{const b=P(px,py,z);ctx.save();ctx.fillStyle='rgba(235,240,245,.55)';ctx.beginPath();ctx.moveTo(b[0]-2.2,b[1]-6);ctx.lineTo(b[0]+2.2,b[1]-6);ctx.lineTo(b[0]+1,b[1]);ctx.lineTo(b[0]-1,b[1]);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(240,225,170,.8)';ctx.fillRect(b[0]-1.6,b[1]-4,3.2,2.6);ctx.restore()})}
+function farmBowl(px,py,z,col,top){custom(px-.16,py-.16,px+.16,py+.16,z,z+7,()=>{const c=P(px,py,z+4);ctx.save();ctx.fillStyle='#E9E4DA';ctx.beginPath();ctx.ellipse(c[0],c[1],10,5,0,0,Math.PI);ctx.lineTo(c[0]-10,c[1]);ctx.fill();
+  ctx.fillStyle='#FBFAF6';ctx.beginPath();ctx.ellipse(c[0],c[1],10,5,0,0,6.283);ctx.fill();
+  for(let k=0;k<9;k++){const x=c[0]-6+(k%3)*6,y=c[1]-2+Math.floor(k/3)*2-(k%2);ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y-1,2.4,0,6.283);ctx.fill()}
+  if(top){ctx.fillStyle=top;for(let k=0;k<6;k++){ctx.fillRect(c[0]-5+k*2,c[1]-4+(k%2),1,1.6)}}ctx.restore()})}
+function strawCake(px,py,z){custom(px-.18,py-.18,px+.18,py+.18,z,z+14,()=>{const c=P(px,py,z+1),t=P(px,py,z+10);ctx.save();
+  ctx.fillStyle='#FBFAF6';ctx.beginPath();ctx.ellipse(c[0],c[1],13,6.5,0,0,6.283);ctx.fill();
+  ctx.fillStyle='#F6EFDE';ctx.fillRect(c[0]-9,t[1],18,c[1]-t[1]);ctx.beginPath();ctx.ellipse(c[0],c[1],9,4.5,0,0,Math.PI);ctx.fill();
+  ctx.fillStyle='#FFFDF6';ctx.beginPath();ctx.ellipse(t[0],t[1],9,4.5,0,0,6.283);ctx.fill();
+  [[-5,0],[-1,-2],[3,-1],[6,1],[0,2],[-3,2.5],[4,2.8]].forEach(([dx,dy])=>{ctx.fillStyle='#D2302C';ctx.beginPath();ctx.ellipse(t[0]+dx,t[1]+dy-1,1.8,2.2,0,0,6.283);ctx.fill();ctx.fillStyle='#5E8A3E';ctx.fillRect(t[0]+dx-.8,t[1]+dy-3.4,1.6,.9)});ctx.restore()})}
+function loaf(px,py,z){custom(px-.16,py-.1,px+.16,py+.1,z,z+6,()=>{const c=P(px,py,z);ctx.save();ctx.fillStyle='#B98A5A';ctx.fillRect(c[0]-11,c[1]-2,22,4);ctx.fillStyle='#8A5A34';ctx.beginPath();ctx.ellipse(c[0]-2,c[1]-3,8,3.4,0,0,6.283);ctx.fill();
+  ctx.fillStyle='#E9D6A8';ctx.beginPath();ctx.ellipse(c[0]+7,c[1]-2.2,2.2,2.6,0,0,6.283);ctx.fill();ctx.restore()})}
+function flowerCrown(px,py,z){custom(px-.14,py-.1,px+.14,py+.1,z,z+3,()=>{const c=P(px,py,z+1);ctx.save();ctx.strokeStyle='#5E8A3E';ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(c[0],c[1],8,4,0,0,6.283);ctx.stroke();
+  for(let k=0;k<12;k++){const an=k/12*6.283;ctx.fillStyle=['#F4F1EA','#E9C54A','#8E7CC3','#D96A5A'][k%4];ctx.beginPath();ctx.arc(c[0]+Math.cos(an)*8,c[1]+Math.sin(an)*4-.6,1.5,0,6.283);ctx.fill()}ctx.restore()})}
+function churn(px,py){custom(px-.16,py-.16,px+.16,py+.16,0,30,()=>{const b=P(px,py,0),t=P(px,py,24);ctx.save();const g=ctx.createLinearGradient(b[0]-8,0,b[0]+8,0);g.addColorStop(0,'#D6DCDE');g.addColorStop(.5,'#A8B2B6');g.addColorStop(1,'#7A868A');
+  ctx.fillStyle=g;ctx.fillRect(b[0]-8,t[1],16,b[1]-t[1]);ctx.beginPath();ctx.ellipse(b[0],b[1],8,4,0,0,Math.PI);ctx.fill();ctx.fillRect(t[0]-4.5,t[1]-8,9,8);
+  ctx.fillStyle='#C9D0D2';ctx.beginPath();ctx.ellipse(t[0],t[1]-8,5.5,2.6,0,0,6.283);ctx.fill();ctx.strokeStyle='#6E7A7E';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(t[0],t[1],8,4,0,0,Math.PI);ctx.stroke();ctx.restore()});
+  block(Math.floor(px),Math.floor(py));SHADOWS.push({e:[px,py,.16]})}
+function birchPail(px,py){custom(px-.3,py-.3,px+.3,py+.3,0,64,()=>{const b=P(px,py,0);ctx.save();ctx.fillStyle='#7A868A';ctx.fillRect(b[0]-7,b[1]-12,14,12);ctx.beginPath();ctx.ellipse(b[0],b[1],7,3.4,0,0,Math.PI);ctx.fill();
+  ctx.strokeStyle='#EDE8DC';ctx.lineWidth=1.4;[[-10,-60],[-2,-66],[7,-58],[13,-46],[-14,-44]].forEach(([dx,dy])=>{ctx.beginPath();ctx.moveTo(b[0],b[1]-12);ctx.quadraticCurveTo(b[0]+dx*.3,b[1]+dy*.5,b[0]+dx,b[1]+dy);ctx.stroke()});
+  const rg=mulberry(71);for(let k=0;k<46;k++){const x=b[0]+(rg()-.5)*32,y=b[1]-24-rg()*44;ctx.fillStyle=rg()<.5?'#8AB05A':'#6E9A48';ctx.beginPath();ctx.ellipse(x,y,2.2,1.4,rg()*3,0,6.283);ctx.fill()}ctx.restore()});
+  block(Math.floor(px),Math.floor(py));SHADOWS.push({e:[px,py,.2]})}
+// the cast-iron wood stove on the left wall, a copper kettle on it, its pipe up to the ceiling
+function woodStove(){for(let y=2;y<=3;y++)block(0,y);
+  box(.08,2.5,.72,3.5,0,30,'#2A2A2C',{top:'#3A3A3E',after(){onX(.72,3.5,30,()=>{ctx.fillStyle='#1E1E20';ctx.fillRect(6,8,24,16);ctx.fillRect(38,8,20,9);ctx.fillStyle='#C9A55A';ctx.fillRect(6,5,52,1.4);ctx.fillRect(40,20,16,1.2);
+    ctx.fillStyle='rgba(255,150,70,.35)';ctx.fillRect(9,19,18,3)})}});
+  box(.2,2.9,.4,3.1,30,104,'#2A2A2C');box(.4,2.6,.62,2.82,30,36,'#B8733E',{top:'#C98A52'});box(.48,2.68,.54,2.74,36,39,'#8A5230');box(.3,3.2,.6,3.42,30,33,'#3A3A3E')}
+function lampT(px,py,z){box(px-.05,py-.05,px+.05,py+.05,z,z+10,'#C9A55A');box(px-.12,py-.12,px+.12,py+.12,z+10,z+19,'#F1E9D9')}
+function dummy(px,py){custom(px-.2,py-.2,px+.2,py+.2,0,66,()=>{const b=P(px,py,0),t=P(px,py,62);ctx.save();
+  ctx.fillStyle='#2B2B2E';ctx.beginPath();ctx.ellipse(b[0],b[1],9,4.5,0,0,6.283);ctx.fill();ctx.fillRect(b[0]-1,t[1]+30,2,b[1]-t[1]-30);
+  ctx.fillStyle='#2B3440';ctx.beginPath();ctx.moveTo(t[0]-11,t[1]+6);ctx.quadraticCurveTo(t[0],t[1],t[0]+11,t[1]+6);ctx.lineTo(t[0]+9,t[1]+34);ctx.lineTo(t[0]-9,t[1]+34);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#F4F2EE';ctx.beginPath();ctx.moveTo(t[0]-3,t[1]+3);ctx.lineTo(t[0]+3,t[1]+3);ctx.lineTo(t[0],t[1]+14);ctx.closePath();ctx.fill();ctx.fillStyle='#6E2A2A';ctx.fillRect(t[0]-.8,t[1]+5,1.6,9);
+  ctx.fillStyle='#C9B79A';ctx.fillRect(t[0]-2,t[1]-4,4,5);ctx.restore()});block(Math.floor(px),Math.floor(py));SHADOWS.push({e:[px,py,.2]})}
 function furnish(){
   const d0=D.length,s0=SHADOWS.length,st=RS;CHAIRS=[];TABLEB=null;
   if(st.props==='summer'){
@@ -714,7 +856,7 @@ function furnish(){
     mug(2.6,3.35,25,'#FFFFFF');mug(3.5,3.02,25,'#D9E4EA');mug(4.5,3.02,25,'#F2D9C4');bunPlate(3.95,3.6,25);candle(4.95,3.3,25);candle(4.95,3.75,25);flowers(2.85,3.85,25);papers(3.2,3.85,3.55,4.1,25);
     plant(9.45,.55,1.0,'#E9E4DA');plant(.55,5.45,1.1,'#E9E4DA');
     pendant(3.75,3.5,st.pend);
-  }else if(['study','hospital','lobby','timber','bakery','salon','home','therapy'].includes(st.props)){
+  }else if(['study','hospital','lobby','timber','bakery','salon','home','therapy','farm','hotel'].includes(st.props)){
   }else{
   table(2.2,2.72,7.8,4.28,25,st.top,st.leg);
   [3,4,5,6].forEach(i=>{chair(i+.5,2.42,'+y',st.chair);chair(i+.5,4.58,'-y',st.chair)});
@@ -804,6 +946,35 @@ function furnish(){
     armchair(1.62,3.5,'+x','#7FA3A8');armchair(3.5,2.42,'+y','#9AA6A8');box(2.1,3.0,2.7,3.6,0,16,'#E6EAEA');
     plant(9.2,.8,.8,'#9AA6A8');
   }
+  else if(st.props==='hotel'){
+    armchair(1.62,3.5,'+x','#8A5A4A');box(2.1,3.05,2.7,3.65,0,14,'#4A3A2E',{top:'#5A4838'});mug(2.3,3.25,14,'#FFFFFF');box(2.45,3.35,2.6,3.5,14,15,'#1A1D22');
+    box(5.6,.08,8.4,.24,0,30,'#5A4A3E');box(5.6,.24,8.4,2.5,0,11,'#3A3F46');box(5.65,.26,8.35,2.45,11,16,'#F4F2EE');box(5.65,1.1,8.35,2.45,16,17.5,'#C9BBAA');
+    box(5.9,.3,6.8,.75,16,20,'#FFFFFF');box(7.2,.3,8.1,.75,16,20,'#FFFFFF');for(let x=5;x<=8;x++)for(let y=0;y<=2;y++)block(x,y);
+    box(4.95,.15,5.45,.6,0,18,'#4A3A2E');box(8.55,.15,9.05,.6,0,18,'#4A3A2E');lampT(5.2,.38,18);lampT(8.8,.38,18);
+    box(2.2,.1,4.0,.6,0,25,'#4A3A2E');papers(2.5,.25,2.9,.45,25);papers(3.1,.22,3.5,.48,25);chair(3.1,1.0,'-y','#6E5A4A');
+    box(4.4,5.3,5.0,5.6,0,16,'#2F3A4A');box(4.45,5.35,4.95,5.55,16,17,'#23303C');lamp(1.0,5.6);plant(9.3,5.4,.9,'#E6E0D6');
+  }
+  else if(st.props==='farm'){
+    table(2.2,2.72,7.8,4.28,25,st.top,st.leg);
+    [3,4,5].forEach(i=>{chair(i+.5,2.42,'+y',st.chair);chair(i+.5,4.58,'-y',st.chair)});chair(1.62,3.5,'+x',st.chair);chair(8.38,3.5,'-x',st.chair);
+    [[2.45,3.5],[3.5,2.95],[4.5,2.95],[3.5,4.05]].forEach(([x,y])=>{plate(x,y,25);snaps(x+(x<3?.02:.2),y+(x<3?-.24:y<3.5?-.1:.1),25)});
+    platter(3.2,3.5,25,'herring');farmBowl(4.15,3.55,25,'#E8D29A','#5E8A3E');flowers(5.0,3.5,25);strawCake(5.9,3.5,25);farmBowl(6.75,3.35,25,'#C9302C');loaf(7.15,3.8,25);flowerCrown(4.0,3.12,25);
+    box(3.1,.12,6.9,.6,0,34,'#8FA8A2',{top:'#D9C9A8'});box(4.35,.2,5.05,.5,34,34.6,'#A8B2B6');box(4.66,.13,4.74,.21,34,44,'#B8BEC2');
+    box(3.35,.24,3.55,.44,34,42,'#E9DFC8');box(3.62,.26,3.78,.42,34,40,'#B8733E');box(5.5,.22,6.1,.5,34,35.5,'#B98A5A');mug(6.4,.35,34,'#2F5A8A');mug(6.6,.38,34,'#FFFFFF');
+    woodStove();
+    sofaY(6.7,8.9,5.8,'-y','#6E8A96');
+    churn(9.45,.55);box(9.05,1.35,9.75,1.95,0,11,'#A8804E',{top:'#8A6A40'});block(9,1);farmBowl(9.4,1.65,11,'#E07A3A','#5E8A3E');
+    birchPail(.55,5.45);
+  }
+  else if(st.props==='villa'){
+    table(2.2,2.72,7.8,4.28,25,st.top,st.leg);
+    [3,4,5,6].forEach(i=>{chair(i+.5,2.42,'+y',st.chair);chair(i+.5,4.58,'-y',st.chair)});chair(1.62,3.5,'+x',st.chair);chair(8.38,3.5,'-x',st.chair);
+    [[2.0,3.5],[3.5,2.95],[4.5,2.95],[5.5,2.95],[6.5,2.95],[3.5,4.05],[4.5,4.05],[5.5,4.05],[6.5,4.05],[8.0,3.5]].forEach(([x,y])=>{plate(x+(x<3?.25:x>7.5?-.25:0),y,25);glogg(x+(x<3?.3:x>7.5?-.3:.18),y+(x<3||x>7.5?-.2:0),25)});
+    candle(3.9,3.5,25);candle(6.1,3.5,25);flowers(5.0,3.5,25);
+    box(3.1,.12,6.9,.55,0,26,'#6E4A32',{top:'#7A5236'});candle(3.4,.34,26);candle(6.6,.34,26);box(4.5,.22,4.62,.34,26,40,'#3A5A3A');box(4.75,.22,4.87,.34,26,40,'#6E2A2A');
+    sofaY(6.7,8.9,5.8,'-y','#8A96A0');box(7.1,4.9,8.5,5.4,0,11,'#7A5236');lamp(9.3,5.4);
+    plant(9.45,.55,1.2,'#E6E0D6');plant(.55,6.3,1.0,'#E6E0D6');
+  }
   else if(st.props==='wine'){
     barrel(3.55,.45);barrel(4.25,.45);barrel(5.75,.45);barrel(6.45,.45);box(4.65,.2,5.35,.6,0,24,'#5A3A26');bottle(4.85,.38,24,'#23402E');bottle(5.1,.4,24,'#3A1E22');
     box(.08,2.35,.42,4.65,0,64,'#5A3A26',{after(){onX(.42,4.65,64,()=>{ctx.fillStyle='#3A2618';ctx.fillRect(0,0,73.6,64);for(let j=0;j<7;j++)for(let i=0;i<9;i++){const x=5+i*8,y=6+j*8.6;ctx.fillStyle=(i+j)%3?'#1E3326':'#3A1A1E';ctx.beginPath();ctx.arc(x,y,3,0,6.283);ctx.fill();ctx.fillStyle='rgba(255,255,255,.25)';ctx.beginPath();ctx.arc(x-1,y-1,1,0,6.283);ctx.fill()}})}});
@@ -822,11 +993,12 @@ function furnish(){
     pendant(3.6,3.5,st.pend);pendant(5.0,3.5,st.pend);pendant(6.4,3.5,st.pend);
   }else{
     box(3.1,.12,6.9,.6,0,26,WALNUT);box(3.5,.25,3.75,.45,26,40,'#DCE3E4');box(6.1,.22,6.5,.5,26,30,'#EDE6DA');
-    box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A'});
+    box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A',after(){if(st.slide)onX(.14,4.4,64,()=>st.slide(ctx,(4.4-2.6)*32,26))}});
     plant(9.45,.55,1.1);plant(.55,5.45,.9);
     pendant(3.6,3.5,st.pend);pendant(5.0,3.5,st.pend);pendant(6.4,3.5,st.pend);
     box(2.36,3.22,2.5,3.36,25,31,'#FFFFFF');box(2.38,3.24,2.48,3.34,31,31.5,'#5A3A22');box(6.12,2.84,6.24,2.96,25,35,'#F4E8D8');box(6.11,2.83,6.25,2.97,29,32,'#9C6B3E');box(6.1,2.82,6.26,2.98,35,37,'#3A2A20');box(4.3,3.98,4.7,4.22,25,26.5,'#2E4A5A');box(4.33,4.0,4.67,4.2,26.5,27,'#F4F2EE');laptop(4.5,3.2,25,'-y');laptop(6.5,3.2,25,'-y');box(5.85,.25,6.0,.4,26,40,'#3B4044');box(5.6,.3,5.72,.42,26,30,'#FFFFFF');box(6.25,.3,6.37,.42,26,30,'#FFFFFF');
   }
+  if(st.dummy)dummy(9.35,4.6);
   if(st.bread){bunPlate(4.1,3.5,25);bunPlate(5.9,3.5,25);flowers(5.0,3.5,25)}
   if(st.photo){box(4.3,.04,5.7,.1,40,86,'#3A2618',{after(){onY(.1,4.3,86,()=>{ctx.fillStyle='#3A2618';ctx.fillRect(0,0,44.8,46);const g=ctx.createLinearGradient(0,4,0,42);g.addColorStop(0,'#D9C7A4');g.addColorStop(1,'#A88E66');ctx.fillStyle=g;ctx.fillRect(3,3,38.8,40);
       ctx.fillStyle='#5A4632';ctx.fillRect(8,20,24,20);ctx.beginPath();ctx.moveTo(6,20);ctx.lineTo(20,11);ctx.lineTo(34,20);ctx.fill();ctx.fillRect(27,9,4,9);ctx.fillStyle='#2E2418';ctx.fillRect(17,30,7,10);
@@ -1085,7 +1257,7 @@ function drawWallDecor(w){
       ctx.fillStyle='#3E4A2E';ctx.fillRect(40,12,1.5,10);ctx.beginPath();ctx.ellipse(40.7,11,2,5,0,0,6.283);ctx.fill();});
     return}
   if(RS.decor==='julbord')return;
-  if(RS.decor==='summer')return;
+  if(RS.decor==='summer'||RS.decor==='villa'||RS.decor==='farm'||RS.decor==='martinsson'||RS.decor==='hotel'||RS.decor==='bellucci'||RS.decor==='bergstrom')return;
   if(RS.decor==='glass')return;
   if(w.o==='Y'){
     onY(w.y1,4.1,88,()=>{const u=1.8*32;ctx.fillStyle='#6E5540';ctx.fillRect(0,0,u,52);ctx.fillStyle='#EFE8DA';ctx.fillRect(3,3,u-6,46);
@@ -1124,6 +1296,21 @@ function win(a,b,c,d,seed){if(WINQ.length<80)WINQ.push([a,b,c,d,seed]);
   if(RS.win==='sunset'){const g=ctx.createLinearGradient(d[0],d[1],a[0],a[1]);g.addColorStop(0,'#8C8FB8');g.addColorStop(.45,'#F0A071');g.addColorStop(.72,'#F8D48E');g.addColorStop(.73,'#3E4A3A');g.addColorStop(.78,'#3E4A3A');g.addColorStop(.79,'#5E7E9A');g.addColorStop(1,'#4A6A88');
     ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.closePath();ctx.fill();
     const s1=L(L(a,d,.12),L(b,c,.12),.5),s2=L(L(a,d,.2),L(b,c,.2),.5);ctx.strokeStyle='rgba(255,214,150,.75)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(s1[0]-4,s1[1]);ctx.lineTo(s1[0]+4,s1[1]);ctx.moveTo(s2[0]-2.5,s2[1]);ctx.lineTo(s2[0]+2.5,s2[1]);ctx.stroke()}
+  if(RS.win==='fields'){const g=ctx.createLinearGradient(d[0],d[1],a[0],a[1]);g.addColorStop(0,'#8EBBDD');g.addColorStop(.5,'#E6EEEA');g.addColorStop(.55,'#EDEFE0');g.addColorStop(.56,'#7E9460');g.addColorStop(.59,'#7E9460');g.addColorStop(.6,'#E3C94E');g.addColorStop(.76,'#D2B444');g.addColorStop(.77,'#9AB05A');g.addColorStop(1,'#7E9A4E');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.closePath();ctx.fill();
+    const pt=(u,t)=>L(L(a,d,t),L(b,c,t),u),sd=seed||0;            // the Skåne plain: rapeseed, a line of willows, a red barn now and then
+    ctx.fillStyle='#5E7A48';for(let k=0;k<5;k++){const q=pt(.1+k*.2+(sd%3)*.03,.45);ctx.beginPath();ctx.ellipse(q[0],q[1]-1.5,2.6,2.2,0,0,6.283);ctx.fill()}
+    if(sd%3===1){const q0=pt(.52,.44),q1=pt(.78,.44),q2=pt(.78,.5),q3=pt(.52,.5),r=pt(.65,.55);ctx.fillStyle='#9A3A2E';ctx.beginPath();ctx.moveTo(q0[0],q0[1]);ctx.lineTo(q1[0],q1[1]);ctx.lineTo(q2[0],q2[1]);ctx.lineTo(q3[0],q3[1]);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#4A3A34';ctx.beginPath();ctx.moveTo(q3[0]-1,q3[1]);ctx.lineTo(r[0],r[1]);ctx.lineTo(q2[0]+1,q2[1]);ctx.closePath();ctx.fill()}}
+  if(RS.win==='rain'){const g=ctx.createLinearGradient(d[0],d[1],a[0],a[1]);g.addColorStop(0,'#8A96A0');g.addColorStop(.55,'#AEB8BE');g.addColorStop(.56,'#6E787E');g.addColorStop(.7,'#7E888E');g.addColorStop(.71,'#5E686E');g.addColorStop(1,'#4E585E');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.closePath();ctx.fill();
+    const pt=(u,t)=>L(L(a,d,t),L(b,c,t),u),rg=mulberry((seed||0)*41+3);ctx.strokeStyle='rgba(235,242,246,.45)';ctx.lineWidth=.6;ctx.beginPath();
+    for(let k=0;k<14;k++){const u=rg(),t=.1+rg()*.85,off=(animT*.6+rg())%1;let q=pt(u,(t-off*.3+1)%1);ctx.moveTo(q[0],q[1]);q=pt(u-.02,((t-off*.3+1)%1)-.08);ctx.lineTo(q[0],q[1])}ctx.stroke()}
+  if(RS.win==='nyc'){const g=ctx.createLinearGradient(d[0],d[1],a[0],a[1]);g.addColorStop(0,'#3E4A78');g.addColorStop(.45,'#B87A8A');g.addColorStop(.7,'#F0A26E');g.addColorStop(1,'#F6C98E');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.closePath();ctx.fill();
+    const rg=mulberry((seed||0)*29+11);let u=0;while(u<1){const w=.1+rg()*.16,h=.2+rg()*.5,p1=L(a,b,u),p2=L(a,b,Math.min(1,u+w)),p3=L(L(a,d,h),L(b,c,h),Math.min(1,u+w)),p4=L(L(a,d,h),L(b,c,h),u);
+      ctx.fillStyle=rg()<.5?'#2A2E3E':'#343A4E';ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.lineTo(p3[0],p3[1]);ctx.lineTo(p4[0],p4[1]);ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(255,214,150,.75)';for(let k=0;k<4;k++){const q=L(L(a,d,rg()*h*.9),L(b,c,rg()*h*.9),u+rg()*w);ctx.fillRect(q[0],q[1],1,1)}u+=w+.02}}
   if(RS.win==='tall'){const rg=mulberry((seed||0)*31+7);for(let k=0;k<3;k++){const u0=rg()*.8,u1=Math.min(1,u0+.12+rg()*.25),h=.08+rg()*.32;const p1=L(a,b,u0),p2=L(a,b,u1),p3=L(L(a,d,h),L(b,c,h),u1),p4=L(L(a,d,h),L(b,c,h),u0);
     ctx.fillStyle='rgba(110,135,160,.45)';ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.lineTo(p3[0],p3[1]);ctx.lineTo(p4[0],p4[1]);ctx.closePath();ctx.fill()}}
   if(RS.light==='evening'){ctx.fillStyle='rgba(255,240,200,.7)';const rg=mulberry((seed||0)*17+3);for(let k=0;k<3;k++){const q=L(L(a,d,.4+rg()*.55),L(b,c,.4+rg()*.55),rg());ctx.fillRect(q[0],q[1],1.2,1.2)}}
@@ -2375,13 +2562,15 @@ function playBeat(b){
   if(CASE.bystanders)Object.entries(CASE.bystanders).forEach(([k,v])=>{if((sp&&sp.cid===k)||b.to===k||(sp&&b.to&&sp.cid===v&&b.to===k))return;const q=byId(k),t=byId(v);if(q&&t&&!(sp&&sp.cid===v&&b.to==='table'))q.gaze={p:t}});
   if(b.look)Object.entries(b.look).forEach(([k,v])=>{if(k==='all')people.forEach(p=>{if(p.cid!==v)p.gaze=lookTarget(p,v)});else{const q=byId(k);if(q)q.gaze=lookTarget(q,v)}});
   if(thoughtsOn&&b.think)Object.entries(b.think).forEach(([k,v])=>{const q=byId(k);if(q&&q!==sp&&!q.isPlayer)q.thought=v});
-  if(sp){sp.talking=true;sp.say=b.say;sp.idle=null}else Voice.hush();
+  const off=sp&&!sp.visible;                                     // on the phone, not in the room
+  if(sp){sp.talking=true;sp.say=off?null:b.say;sp.idle=null}else Voice.hush();
   if(sp&&REACT[sp.cid])Object.entries(REACT[sp.cid]).forEach(([k,arr])=>{const q=byId(k);if(!q||q.isPlayer||q===sp||!q.visible)return;const r=pick(arr);if(r==='papers')q.gaze=lookTarget(q,'papers');else setReact(q,r)});
   if(b.react)Object.entries(b.react).forEach(([k,v])=>{const q=byId(k);if(q)setReact(q,v)});
   if(b.cut)doCut(b.cut);
   if(b.appear)b.appear.forEach(id=>{const q=byId(id);if(q){q.visible=true;q.hidden=false}});
+  if(b.goto)Object.entries(b.goto).forEach(([k,[x,y]])=>{const q=byId(k);if(q){if(q.spot)q.spot.occ=null;goTo(q,{px:x,py:y,ax:Math.floor(x),ay:Math.floor(y),z:0,group:'x',room:roomAt(Math.floor(x),Math.floor(y))},0)}});
   if(b.walk){const q=byId(b.walk);q.walkingOut=true;q.seated=false;if(q.spot)q.spot.occ=null;goTo(q,{px:5.5,py:6.8,ax:5,ay:6,z:0,group:'x',room:roomAt(5,6)},0)}
-  setCaption(b.cap||'');
+  setCaption(off?(b.cap?b.cap+' ':'')+sp.first+', on the phone: “'+b.say+'”':b.cap||'');
   if(b.cap)addTx('cap',b.cap);if(sp)addTx('say',b.say,sp);
   const len=(b.say||'').length+(b.cap?b.cap.length*.45:0);
   scene.left=b.dur||(1.3+len*.047);
@@ -2394,7 +2583,7 @@ function playBeat(b){
     if(voiced){scene.speechWait=true;scene.speechEst=b.cap.length*.08+4;scene.speechT=0}
   }
   if(b.em)Object.entries(b.em).forEach(([k,v])=>{const q=byId(k);if(q)setEmote(q,v,Math.max(3.5,scene.left+(scene.speechWait?scene.speechEst*.5:0)))});
-  if(closeups)shot(sp,b.to);
+  if(closeups)off?shot(byId(b.to),null):shot(sp,b.to);
   {const nb=scene.pending[0]||BASE[scene.pos];if(nb){if(nb.say&&nb.who)Clips.warm(nb.who,nb.say);else if(nb.cap)Clips.warm('narrator',nb.cap)}}
 }
 // "55mm" close-up: one speaker in a medium shot, head a little above centre,
@@ -2429,6 +2618,7 @@ function replayBeat(b){
   if(b.cut)doCut(b.cut);
   if(b.appear)b.appear.forEach(id=>{const q=byId(id);if(q){q.visible=true;q.hidden=false}});
   if(b.walk){const q=byId(b.walk);if(q){q.seated=false;if(q.spot)q.spot.occ=null;q.spot=null;q.visible=false;q.path=[]}}
+  if(b.goto)Object.entries(b.goto).forEach(([k,[x,y]])=>{const q=byId(k);if(q){if(q.spot&&q.spot.occ===q)q.spot.occ=null;q.spot=null;q.seated=false;q.moving=false;q.path=[];q.x=x;q.y=y;q.tile=[Math.floor(x),Math.floor(y)]}});
   if(b.cap)addTx('cap',b.cap);if(sp)addTx('say',b.say,sp);
 }
 function prevBeat(){
@@ -3608,6 +3798,11 @@ const CASE_KEYS={
  nygaard:['Two cousins of a shipping family wait in the lobby before a meeting with the older generation.','They have a seat but no vote; the family’s rules of trust are unwritten.','In front of a painting with an empty strip of sky, they ask: inside the family, outside it, or both?','Themes: next-generation roles, unwritten family rules, legacy.'],
  bixa:['A hospital-equipment company, grown from Arthur’s smithy, owned by Anders (60 percent) and his sons Max and Thomas (40 percent).','Part A, 2008: the sons ask for board seats and get them, without a vote.','Parts B, C and D, 2015 to 2018: Anders sells Bixa without telling his sons, told three times: his diary, Max at home with his wife, Thomas in therapy.','Themes: exit and sale, governance between owners, perspective and memory, father–son relationships.'],
  eriksson:['A board meeting at the family group’s headquarters, facing Göteborg’s old harbour.','Mattias proposes a significant investment in a tech startup; his elder brother Niklas, the CEO, sees a major risk.','Niklas also wants to reduce the say of family members who are not active in the company.','Themes: sibling rivalry, risk and innovation, governance of a growing family.'],
+rosenholm2:['A month after a stroke, Henrik, founder, CEO, chairman and 60 percent owner, tells his family at dinner that Emma, the CFO, will be CEO.','Johan, the COO and her step-brother, and Lars, Henrik’s brother on the board, want a broader discussion; Johan and Lars propose an interim CEO from outside.','The board, with four external directors, cannot decide. Lars calls Kristina Berger, a family business advisor.','Themes: succession, ownership and governance, the role of the board, step-siblings, crisis-driven decisions.'],
+ stjernholm:['Kerstin, 68, owns Stjernholm Gård, a fourth-generation farm of more than 400 hectares near Ystad, and wants to hand it on.','Her grandchildren see its future differently: Sara wants to scale it into a green venture, Elin to preserve it as a sanctuary, Leo to sell to a foreign food conglomerate.','At Midsummer, around the kitchen table, there is no governance and no process for deciding together; Kerstin insists on unity.','Themes: ownership logics and socioemotional wealth, intergenerational value conflict, informal governance, the role of the incumbent.'],
+ martinsson:['Jacob, nearly 70 and in declining health, built Martinsson AB into a leading automotive parts supplier, and has never talked about succession.','His signals, business trips and client relationships, point to Marcus, 34, a tech entrepreneur who does not want the role; Isabel, 38, a finance executive, feels sidelined.','At a board meeting Jacob turns to Marcus after Isabel’s strategy; afterwards the siblings finally talk, and that night agree to talk to their father together.','Themes: unspoken expectations, communication, sibling relations, the incumbent’s silence.'],
+ bellucci:['The Bellucci Group grew from a tailor’s shop in Little Italy, founded in 1958, into a global fashion house; much of its production is outsourced to Asia.','At a family board meeting in New York, Sophia and Luca bring evidence that a supplier uses child labour and unsafe conditions, and propose reshoring to the U.S. at 20–30 percent higher cost.','Marco, the COO, and Isabella, head of logistics, defend the status quo; Antonio, 72, asks for a real plan, and asks Luca whether they can afford it.','Themes: business ethics and supply chains, reputation, generational values, strategy and communication to stakeholders.'],
+ bergstrom:['Bergström Industries, a century-old Swedish maker of high-end industrial tools; traditional B2B sales have been stagnant for five years.','Sofia, the new Chief Strategy Officer, presents three options: platform partnerships, e-commerce, AI-integrated production; her father Erik, the CEO, sees a legacy at risk.','Her uncle Anders, the COO, proposes phasing it; then the question becomes who decides: the family council, or the family members active in the company.','Themes: digital transformation, tradition and legacy, governance of active and non-active owners.'],
  sjostrom:['Helena has managed her children’s trusts for years, and nearly emptied them.','She wants two consultants to present the news as a “technical briefing”.','The advisors believe the children must hear it from their mother.','Themes: accountability, the ethics of advising, governance of family trusts.'],
 };
 // ---------------------------------------------------------------- case 8: Eriksson Group, between legacy and innovation
@@ -3692,7 +3887,301 @@ const ERIKSSON={
  prompt:{kind:'family board meeting',lead:'Niklas, Mattias, Kajsa and Hanna are discussing',place:'the Eriksson Group’s headquarters facing the old harbour of Göteborg, Sweden; the boardroom, on a windy afternoon',issue:'a proposed significant investment in a tech startup, and Niklas’s proposal to reduce the say of family members who are not active in the company',dyn:'Niklas, the CEO and elder brother, values caution and stability; his younger brother Mattias is calm but determined to take a calculated risk; decades of rivalry sit between them; Kajsa, Niklas’s daughter, backs her father; Hanna, Mattias’s daughter, has done the due diligence on the startup; nobody raises their voice',voice:'how open the conversation between the brothers is',board:'soundness of the decision process',trust:'trust within the family'},
  place:'Göteborg · real estate and manufacturing',
 };
-const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,SJOSTROM,BIXA];
+// ---------------------------------------------------------------- case 11: Rosenholm Group, passing the helm
+const RH_CAST=[
+ {id:'henrik',cloth:'pin',bushy:true,browCol:'#E2DDD4',tired:true,mug:'#2F4A5A',pocket:'#F4F2EE',age:65,eyes:'#5B7A99',watch:'#D6B25E',first:'Henrik',last:'Rosenholm',role:'Founder, CEO and chairman, 60 percent, 65',fam:true,seat:'b_h1',shirt:'#23303C',trous:'#262B31',skin:'#E8C8B0',hair:'#D6D2CA',hairType:'short',tie:'#6E2A2A',inner:'#F2F4F6',bio:'65. Built Rosenholm Group from scratch forty years ago; CEO, chairman of the board, and owner of 60 percent. Largely absent from his children’s lives, twice divorced, focused on the company. A stroke a month ago has made succession impossible to postpone.'},
+ {id:'emma',pads:true,fem:true,eyes:'#4F7F9F',ear:'pearl',lips:'#9C3F45',necklace:true,mug:'#2F4A5A',age:40,first:'Emma',last:'Rosenholm',role:'CFO, Henrik’s eldest, 10 percent, 40',fam:true,seat:'b_n0',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#6B4A32',hairType:'bun',inner:'#F4F6F8',bio:'40. Henrik’s eldest, from his first marriage; CFO, with the company for more than a decade, and the one who led the financial restructuring. Grew up in boarding schools, apart from her half-brother. Calm, well prepared, and sure she can lead.'},
+ {id:'johan_r',casual:true,cloth:'check',stubble:true,eyes:'#3D2E24',watch:'#2B2B2B',mug:'#2F4A5A',age:34,first:'Johan',last:'Rosenholm',role:'COO, Henrik’s son, 10 percent, 34',fam:true,seat:'b_s0',shirt:'#4A5A6A',trous:'#2E3440',skin:'#E8BE9E',hair:'#4A3A2C',hairType:'short',inner:'#E8ECEF',bio:'34. Henrik’s younger son, from his second marriage; COO, and newer to the business than Emma. Close to his uncle Lars. Wants a proper process, and won’t rubber-stamp a decision he didn’t help shape.'},
+ {id:'lars_r',cloth:'tweed',moustache:true,roundGlasses:true,glasses:true,mug:'#2F4A5A',age:60,eyes:'#6B5A48',watch:'#C9CED2',pocket:'#E8E0D0',first:'Lars',last:'Rosenholm',role:'Henrik’s brother, board member, 20 percent, 60',fam:true,seat:'b_n1',shirt:'#5A4E42',trous:'#2E2A26',skin:'#EBC5A5',hair:'#C9C2B6',hairType:'short',vest:'#6E5A44',inner:'#F4F0E8',bio:'60. Henrik’s brother. Joined ten years after the founding, leaving a non-family executive role in a large family firm; received 20 percent five years later. Sits on the board, which he pushed Henrik to formalise. Never had children; close to Johan, like the son he never had.'},
+ {id:'dir_maria',extra:true,fem:true,pads:true,age:57,eyes:'#5B7A99',ear:'silver',glasses:true,mug:'#2F4A5A',first:'Maria',last:'Lindahl',role:'External director',fam:false,seat:'b_n2',absent:true,shirt:'#5A5E66',trous:'#2B2F36',skin:'#F2D4BC',hair:'#CFC8BE',hairType:'bob',inner:'#F4F4F2',bio:'External director.'},
+ {id:'dir_per',extra:true,cloth:'pin',age:62,eyes:'#4A6B8A',mug:'#2F4A5A',first:'Per',last:'Ekström',role:'External director',fam:false,seat:'b_n3',absent:true,shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#8A7A6A',hairType:'short',tie:'#2F5A7A',inner:'#EEF2F6',bio:'External director.'},
+ {id:'dir_anneli',extra:true,fem:true,age:48,eyes:'#3D2E24',ear:'gold',lips:'#A8454A',mug:'#2F4A5A',first:'Anneli',last:'Sandberg',role:'External director',fam:false,seat:'b_s1',absent:true,shirt:'#6E3A4A',trous:'#2B2F36',skin:'#F6DFCB',hair:'#3E2A1E',hairType:'long',inner:'#F6EFE6',bio:'External director.'},
+ {id:'dir_gustav',extra:true,cloth:'pin',age:54,eyes:'#5B7A99',mug:'#2F4A5A',first:'Gustav',last:'Nyström',role:'External director',fam:false,seat:'b_s2',absent:true,shirt:'#3A3F4A',trous:'#262B31',skin:'#F0CFB4',hair:'#6A5A4A',hairType:'short',tie:'#6E5A2A',inner:'#EEF2F6',bio:'External director.'},
+];
+const RH_DIRS=['dir_maria','dir_per','dir_anneli','dir_gustav'];
+const RH_BASE=[
+ {cap:'The afternoon light fades slowly over the Rosenholm Group’s villa, a modern house near the harbour. Inside, the atmosphere is heavy.',look:{all:'table'},dur:5.6},
+ {cap:'At the long dining table sit Henrik Rosenholm, 65, the company’s founder; his brother Lars, 60; and Henrik’s children, Emma, 40, and Johan, 34.',look:{all:'henrik'},dur:6.4},
+ {cap:'Henrik built the company from scratch forty years ago. He is its CEO, the chairman of the board, and owns sixty percent of the business. Lars joined ten years later and holds twenty percent. Emma and Johan hold ten percent each.',look:{all:'table'},dur:8.6},
+ {cap:'Emma is the CFO, and has been with the company for more than a decade. Johan, Henrik’s younger son from a second marriage, joined more recently and is the COO.',look:{emma:'table',johan_r:'table',henrik:'emma',lars_r:'johan_r'},dur:6.8},
+ {cap:'Three years ago, on Lars’s suggestion, Henrik added four external directors to the board. It has not worked as hoped: meetings are infrequent, and Henrik keeps tight control. Lars sits on the board; Emma and Johan do not.',look:{lars_r:'henrik',henrik:'table'},dur:8.6},
+ {cap:'Emma and Johan are step-siblings. They spent their school years in boarding schools, grew up apart and rarely saw each other. Henrik was largely absent from their lives.',look:{emma:'johan_r',johan_r:'table'},dur:7.4},
+ {cap:'Lars married his high school sweetheart; they never had children. Over time he grew close to Johan, like the son he never had.',look:{lars_r:'johan_r',johan_r:'lars_r'},dur:5.8},
+ {cap:'A month ago, Henrik had a stroke. He has recovered physically, but it shook him. For years he avoided discussing succession. Now it can no longer be postponed.',look:{all:'henrik'},dur:7.4,think:{henrik:'I won’t be at the helm much longer.'}},
+ {cap:'Henrik looks pale and tired. Emma sits to his right, calm and well prepared, listening. Johan sits opposite her, tense and visibly impatient. Lars watches the three of them, his arms crossed.',look:{emma:'henrik',johan_r:'emma',lars_r:'henrik',henrik:'table'},react:{lars_r:'cross'},dur:8.4,mood:{johan_r:'frown'}},
+ {cap:'Henrik breaks the silence.',who:'henrik',say:'I won’t be at the helm much longer. I’ve made a decision. Emma will take over as CEO.',to:'table'},
+ {cap:'There is a pause. Johan stifles a cough, but doesn’t respond.',look:{all:'johan_r',johan_r:'henrik'},dur:3.6,em:{johan_r:'!'}},
+ {cap:'Henrik continues.',who:'henrik',say:'She’s been leading the financial restructuring. She’s ready.',to:'emma',mood:{emma:'neutral'}},
+ {cap:'Johan looks at Emma, his tone firm but not angry.',who:'johan_r',say:'We should talk about this.',to:'emma'},
+ {cap:'Lars speaks next.',who:'lars_r',say:'Henrik, this decision may need board approval. It would help to have a broader discussion. The board exists for a reason.',to:'henrik'},
+ {cap:'Emma keeps her voice steady.',who:'emma',say:'I understand this isn’t easy for anyone. But I’ve worked hard for this company. I want to do this, and I believe I can.',to:'henrik'},
+ {cut:{title:'That evening · Henrik’s study',room:'study',seats:{emma:'b_h1'},hide:['henrik','johan_r','lars_r',...RH_DIRS]},cap:'That evening, Emma walks alone through her childhood home. Henrik is asleep upstairs, his medications lined up beside him like soldiers.',dur:6.4,mood:{emma:'neutral',johan_r:'neutral'}},
+ {cap:'She wanders into his study. The scent of pipe tobacco and cedar hits her like a memory. She sits behind his desk. For years, she had dreamed of sitting here.',look:{emma:'table'},dur:6.8,think:{emma:'But not like this.'}},
+ {cap:'But not like this.',dur:2.6},
+ {cap:'A knock breaks the silence. Johan enters, hesitant.',cut:{seats:{johan_r:'b_n0'}},look:{emma:'johan_r',johan_r:'emma'},dur:3.6},
+ {who:'johan_r',say:'Lars and I spoke. We’re convening an emergency board meeting.',to:'emma'},
+ {cap:'Emma raises an eyebrow.',who:'emma',say:'To what end?',to:'johan_r',brows:{emma:1}},
+ {who:'johan_r',say:'To propose a neutral interim CEO, maybe someone from outside. Give the board time to assess succession.',to:'emma'},
+ {cap:'Emma blinks.',who:'emma',say:'You’d prefer a stranger to your sister?',to:'johan_r',em:{emma:'?'}},
+ {cap:'Johan sighs.',who:'johan_r',say:'I want what’s best for the company. And this process? It feels broken. You and I both know the old man’s judgment is clouded by guilt. He never prepared us for this. He ruled like a king.',to:'emma'},
+ {cap:'She stands.',who:'emma',say:'So we fix it together. Not by undermining each other.',to:'johan_r'},
+ {cap:'Johan answers quietly.',who:'johan_r',say:'Maybe. But I won’t rubber-stamp a decision I didn’t help shape.',to:'emma'},
+ {cut:{title:'Three days later · the board',room:'harbour',seats:{lars_r:'b_h1',emma:'b_n0',johan_r:'b_s0',dir_maria:'b_n1',dir_per:'b_n2',dir_anneli:'b_s1',dir_gustav:'b_s2'},hide:['henrik']},cap:'Three days later, the board gathers again. This time, the external directors are also present.',look:{all:'table'},dur:5.4},
+ {cap:'Lars opens the meeting. There are two options to discuss, he explains: confirm Emma as CEO, or appoint an interim leader from outside.',look:{all:'lars_r',lars_r:'table'},dur:7.2},
+ {cap:'Emma presents her case clearly: the work she has led, the company’s current challenges, and her plan for the next phase.',look:{all:'emma',emma:'table'},gest:{emma:'open'},dur:7},
+ {cap:'Johan responds with concerns. He questions whether Emma has enough operational experience, and warns how the decision might be perceived by employees and clients.',look:{all:'johan_r',johan_r:'emma'},dur:8.2},
+ {cap:'The board does not reach a decision. The discussion is intense, but respectful.',look:{all:'table'},dur:5},
+ {cap:'In the hallway afterwards, people speak quietly in pairs. It is clear the matter is far from settled, and that the final word rests with the family.',look:{dir_maria:'dir_per',dir_per:'dir_maria',dir_anneli:'dir_gustav',dir_gustav:'dir_anneli',emma:'table',johan_r:'table',lars_r:'emma'},dur:7.6},
+ {cut:{title:'Later that night · Lars’s study',room:'anders',seats:{lars_r:'b_h1'},hide:['henrik','emma','johan_r',...RH_DIRS]},cap:'Later that night, back in his study, Lars pours himself a glass of Mackmyra. He looks out of the window, thinking.',look:{lars_r:'window'},dur:6.4},
+ {cap:'He has seen leadership transitions go wrong in other family firms. He doesn’t want that to happen here.',dur:5.4,think:{lars_r:'Not here.'}},
+ {cap:'He takes out his phone and makes a call. A calm voice answers: “Kristina Berger.”',dur:5.2},
+ {who:'lars_r',say:'It’s Lars Rosenholm. I need your help. It’s about the family. And the business.',to:'table'},
+ {cap:'Kristina Berger is an experienced family business advisor, known for her work on ownership and governance transitions in family firms. She has helped other companies through similar situations. Now it is Rosenholm Group’s turn.',dur:8.6}];
+const ROSENHOLM2={
+ id:'rosenholm2',name:'Rosenholm Group',company:'Passing the Helm at Rosenholm Group',sub:'A succession in four scenes: the dinner table, the study, the board, a phone call',
+ blurb:'A month after a stroke, Henrik Rosenholm, 65, founder, CEO, chairman and owner of 60 percent, tells his family at dinner that his daughter Emma, the CFO, will take over as CEO. His son Johan, the COO, and his brother Lars want the board to have its say. Three days later the board cannot decide, and Lars calls an advisor.',
+ arrive:'Dinner at the Rosenholm villa near the harbour.',arriveShort:'Dinner at the Rosenholm villa.',
+ room:'villa',clock:{day:'Evening',start:[17,40]},chair:'henrik',hero:'emma',ally:'johan_r',moods:{emma:'neutral',johan_r:'neutral',henrik:'neutral',lars_r:'neutral'},meetTitle:'Meet the Rosenholms',
+ bystanders:{dir_maria:'dir_per',dir_per:'dir_maria',dir_anneli:'dir_gustav',dir_gustav:'dir_anneli'},
+ roles:[['watch','Watch the case','See the four scenes play out as written in the case.']],
+ cast:RH_CAST,base:RH_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','A sound process'],['trust','Family trust']],
+ idle:{henrik:['sip','glasses'],emma:['sip','pen'],johan_r:['tap','cross'],lars_r:['cross','glasses','sip'],dir_maria:['write'],dir_per:['sip'],dir_anneli:['write'],dir_gustav:['tap']},
+ react:{johan_r:{henrik:['side'],emma:['cross']},emma:{johan_r:['side']},lars_r:{henrik:['side'],johan_r:['nod']}},
+ meet:[[null,'Rosenholm Group. Built from scratch forty years ago by one man. Dinner at the family villa near the harbour. Meet the Rosenholms.','','Meet the Rosenholms'],
+  ['henrik','Henrik Rosenholm, sixty-five. Founder, CEO and chairman, with sixty percent of the shares. A stroke a month ago has shaken him.','Founder · CEO · chairman · 65'],
+  ['emma','Emma, forty. His eldest, from his first marriage. The CFO, with the company for more than a decade.','Daughter · CFO · 40'],
+  ['johan_r','Johan, thirty-four. His younger son, from his second marriage. The COO, and newer to the business.','Son · COO · 34'],
+  ['lars_r','Lars, sixty. Henrik’s brother, with twenty percent of the shares and a seat on the board. Close to Johan.','Brother · board member · 60']],
+ questions:[],
+ endings:{watch:'You are Kristina Berger, the family business advisor Lars has called. Your role is to help the Rosenholms reflect, clarify the situation, and move toward a decision.'},
+ prompt:{kind:'family business succession',lead:'The Rosenholm family is dealing with',place:'Rosenholm Group; a dinner at the family villa near the harbour, Henrik’s study, a board meeting three days later, and Lars’s study that night',issue:'Henrik’s decision, a month after a stroke, to make his daughter Emma CEO, the board’s role in approving it, and the option of an interim CEO from outside',dyn:'Henrik, 65, founder, CEO, chairman and 60 percent owner, decides alone and was largely absent from his children’s lives; Emma, 40, CFO, is calm, prepared and sure she can lead; Johan, 34, COO and her step-brother, wants a proper process; Lars, 60, Henrik’s brother with 20 percent and a board seat, is close to Johan and wants the board involved; four external directors have little influence',voice:'whether everyone at the table is heard',board:'whether the decision follows a sound process',trust:'trust between Emma, Johan, Henrik and Lars'},
+ place:'Harbour villa · succession',
+};
+// ---------------------------------------------------------------- case 12: Stjernholm Gård, the farm dilemma
+const SJ_CAST=[
+ {id:'kerstin_s',casual:true,cloth:'knit',cardigan:true,fem:true,age:68,eyes:'#5B7A99',ear:'pearl',mug:'#2F5A8A',first:'Kerstin',last:'Stjernholm',role:'Owner of the farm, grandmother, 68',fam:true,seat:'b_h1',shirt:'#7A2E3A',trous:'#3A3F46',skin:'#F0CFB4',hair:'#E6E2DA',hairType:'bun',inner:'#F4F0E8',bio:'68. Took over Stjernholm Gård after her husband’s death and has kept it running with long-time farmhands and a tight operational team. Deeply committed to preserving the family land: “We don’t own this place, we borrow it from the next generation.” She wants to hand it on in a way that honours the past and gives the farm a future.'},
+ {id:'sara_s',casual:true,fem:true,age:34,eyes:'#4F7F9F',ear:'silver',mug:'#2F5A8A',first:'Sara',last:'Stjernholm',role:'Agritech consultant, granddaughter, 34',fam:true,seat:'b_n1',shirt:'#3E5A48',trous:'#2E3440',skin:'#F6E0CD',hair:'#B98A5A',hairType:'long',inner:'#EEF2EA',bio:'34. An agritech consultant, educated in Stockholm. Believes the farm could become a model for regenerative agriculture, agri-tourism and green innovation, with startup funding, green certifications and EU partnerships.'},
+ {id:'elin_s',casual:true,cloth:'knit',fem:true,age:31,eyes:'#6B5134',ear:'gold',mug:'#2F5A8A',first:'Elin',last:'Stjernholm',role:'Schoolteacher, granddaughter, 31',fam:true,seat:'b_n0',shirt:'#C9A55A',trous:'#3A3F46',skin:'#F2D4BC',hair:'#8A5A3A',hairType:'bob',inner:'#F6EFE6',bio:'31. A schoolteacher, educated in Gothenburg. To her the farm is a sanctuary, to be preserved, not commercialised. She worries that Sara’s plans would erase the family’s heritage and add debt. “Not everything has to grow.”'},
+ {id:'leo_s',casual:true,stubble:true,eyes:'#4A6B8A',watch:'#C9CED2',mug:'#2F5A8A',age:28,first:'Leo',last:'Stjernholm',role:'Investment analyst, grandson, 28',fam:true,seat:'b_s0',shirt:'#4A5A6A',trous:'#2E3440',skin:'#EBC5A5',hair:'#6B4A32',hairType:'short',inner:'#E8ECEF',bio:'28. An investment analyst, educated in Uppsala. A foreign food conglomerate has offered to buy the land at a premium, and he believes the family should sell, split the proceeds, and perhaps invest in new ventures. “None of us lives here anymore. It’s a frozen asset.”'},
+];
+const SJ_BASE=[
+ {cap:'Midsummer at Stjernholm Gård, on the fertile plains of Skåne near Ystad. The evening light lingers over the fields.',look:{all:'table'},dur:6},
+ {cap:'The Stjernholm family has farmed this land since the early twentieth century: first wheat and sugar beet, later organic vegetables and dairy. The estate spans more than four hundred hectares, with its historical farmhouses, a processing facility and a modest farm shop.',look:{all:'table'},dur:9.4},
+ {cap:'Kerstin Stjernholm, 68, owns the farm. She took over after her husband’s death, and has kept the business running with the help of long-time farmhands and a tight operational team.',look:{all:'kerstin_s',kerstin_s:'table'},dur:7.8},
+ {cap:'She often says it.',who:'kerstin_s',say:'We don’t own this place. We borrow it from the next generation.',to:'table'},
+ {cap:'Her three grandchildren, Sara, Elin and Leo, could be the fifth generation. All three were raised in or near the farm, then left to study in Stockholm, Gothenburg and Uppsala.',look:{sara_s:'kerstin_s',elin_s:'kerstin_s',leo_s:'kerstin_s',kerstin_s:'elin_s'},dur:8.4},
+ {cap:'They are still attached to the place. But they see its future very differently.',look:{sara_s:'leo_s',leo_s:'table',elin_s:'sara_s'},dur:5.4},
+ {cap:'Kerstin has asked the three of them to meet at the farm during Midsummer, and to talk openly.',look:{all:'kerstin_s',kerstin_s:'table'},dur:6},
+ {who:'kerstin_s',say:'I won’t live and run things forever. I want to hand the farm over in a way that honours our past, and gives it a future.',to:'table',mood:{kerstin_s:'neutral'}},
+ {cap:'Sara, 34, is an agritech consultant.',look:{all:'sara_s',sara_s:'kerstin_s'},dur:3.6,think:{sara_s:'A model farm.'}},
+ {who:'sara_s',say:'This farm could be a model. Regenerative agriculture, agri-tourism, green innovation.',to:'kerstin_s',gest:{sara_s:'open'}},
+ {who:'sara_s',say:'With startup funding, green certifications and EU partnerships, it could be a sustainable, high-impact venture.',to:'table'},
+ {cap:'Elin, 31, is a schoolteacher. To her, the farm is a sanctuary.',look:{all:'elin_s',elin_s:'sara_s'},dur:4.6,think:{elin_s:'A sanctuary.'},mood:{elin_s:'frown'}},
+ {who:'elin_s',say:'I want to preserve it, Sara, not commercialise it. Your plan would erase our heritage. And it would mean more debt.',to:'sara_s'},
+ {cap:'She looks around the kitchen.',who:'elin_s',say:'Not everything has to grow.',to:'table'},
+ {cap:'Leo, 28, is an investment analyst. A foreign food conglomerate has offered to buy the land, at a premium.',look:{all:'leo_s',leo_s:'table'},dur:6.2,think:{leo_s:'A frozen asset.'}},
+ {who:'leo_s',say:'None of us lives here anymore.',to:'kerstin_s'},
+ {who:'leo_s',say:'It’s a frozen asset. We sell, we split the proceeds, and perhaps we invest in new ventures with the money.',to:'table'},
+ {cap:'There is a silence. Elin stares at her brother. Kerstin says nothing.',look:{elin_s:'leo_s',sara_s:'kerstin_s',kerstin_s:'table',leo_s:'table'},em:{elin_s:'!'},mood:{elin_s:'frown',kerstin_s:'neutral'},dur:5.4},
+ {cap:'There is no formal governance at Stjernholm, and no structure for making this kind of decision together. Until now, everything has been handled in the kitchen.',look:{all:'table'},dur:8.2},
+ {cap:'Kerstin looks at each of them in turn.',who:'kerstin_s',say:'Whatever we decide, I want us to decide it together. As a family.',to:'table'},
+ {cap:'Scale, sell, or sustain the legacy as it is? Each path has emotional and financial consequences.',look:{sara_s:'elin_s',elin_s:'leo_s',leo_s:'kerstin_s',kerstin_s:'table'},dur:7},
+ {cap:'Kerstin insists on unity. But is that possible without someone sacrificing their dream?',look:{all:'table'},dur:6.4}];
+const STJERNHOLM={
+ id:'stjernholm',name:'Stjernholm Gård',company:'The Stjernholm Farm Dilemma',sub:'A Midsummer conversation in the farm kitchen: scale, sell, or sustain',
+ blurb:'Kerstin Stjernholm, 68, owns a fourth-generation farm in Skåne. At Midsummer she asks her three grandchildren to talk openly about its future. Sara wants to scale it into a green venture, Elin wants to preserve it as it is, and Leo wants to sell to a foreign food conglomerate.',
+ arrive:'Midsummer in the Stjernholm farm kitchen, near Ystad.',arriveShort:'Midsummer at Stjernholm Gård.',
+ room:'farm',clock:{day:'Midsummer Eve',start:[19,10]},chair:'kerstin_s',hero:'elin_s',ally:'sara_s',moods:{kerstin_s:'smile',sara_s:'neutral',elin_s:'neutral',leo_s:'neutral'},meetTitle:'Meet the Stjernholms',
+ roles:[['watch','Watch the case','See the Midsummer conversation play out as written in the case.']],
+ cast:SJ_CAST,base:SJ_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','A shared process'],['trust','Family unity']],
+ idle:{kerstin_s:['sip'],sara_s:['sip','tap'],elin_s:['sip','cross'],leo_s:['tap','cross']},
+ react:{elin_s:{sara_s:['side'],leo_s:['cross']},sara_s:{elin_s:['side'],leo_s:['side']},leo_s:{elin_s:['side']},kerstin_s:{leo_s:['side'],sara_s:['nod'],elin_s:['nod']}},
+ meet:[[null,'Stjernholm Gård. Four generations of farming on the plains of Skåne, near Ystad. Midsummer in the farm kitchen. Meet the Stjernholms.','','Meet the Stjernholms'],
+  ['kerstin_s','Kerstin Stjernholm, sixty-eight. She owns the farm, and has run it since her husband died.','Owner · grandmother · 68'],
+  ['sara_s','Sara, thirty-four. An agritech consultant. She wants to scale.','Granddaughter · agritech consultant · 34'],
+  ['elin_s','Elin, thirty-one. A schoolteacher. She wants to preserve.','Granddaughter · schoolteacher · 31'],
+  ['leo_s','Leo, twenty-eight. An investment analyst. He wants to sell.','Grandson · investment analyst · 28']],
+ questions:['Pick a role. What would you advocate as Sara, Elin, Leo or Kerstin?','What compromise, if any, is possible?','How would you initiate a structured family conversation?'],
+ endings:{watch:'Midsummer night falls, and it barely gets dark. Nothing has been decided. Three visions for one farm, no structure for choosing between them, and a grandmother who wants the family to stay whole.'},
+ prompt:{kind:'family ownership transition',lead:'Kerstin Stjernholm and her grandchildren are discussing',place:'Stjernholm Gård, a fourth-generation farm on the plains of Skåne near Ystad, Sweden; the farm kitchen on Midsummer Eve',issue:'whether to scale the farm into a green venture, sell it to a foreign food conglomerate, or preserve it as it is, and how to transfer ownership from Kerstin',dyn:'Kerstin, 68, owner and grandmother, is committed to the land and insists on unity; Sara, 34, an agritech consultant, wants regenerative agriculture, agri-tourism and green investment; Elin, 31, a schoolteacher, wants to preserve the farm as a sanctuary and fears debt; Leo, 28, an investment analyst, wants to sell and split the proceeds; there is no formal governance, everything has been handled in the kitchen',voice:'whether every grandchild is heard',board:'whether the family has a shared process for deciding',trust:'the unity of the family'},
+ place:'Skåne farm · ownership',
+};
+// ---------------------------------------------------------------- case 13: Martinsson AB, unspoken words
+const MT_CAST=[
+ {id:'jacob_m',cloth:'pin',bushy:true,browCol:'#E2DDD4',tired:true,mug:'#2F4A5A',pocket:'#F4F2EE',age:69,eyes:'#5B7A99',watch:'#D6B25E',first:'Jacob',last:'Martinsson',role:'Founder and CEO, father, nearly 70',fam:true,seat:'b_h1',shirt:'#2B3440',trous:'#23282E',skin:'#EBC5A5',hair:'#DAD6CE',hairType:'short',tie:'#6E2A2A',inner:'#F2F4F6',bio:'Nearly 70. Built Martinsson AB from the ground up into a leading automotive parts supplier; founder and CEO. His health is declining. He has never said who should take over, but over the years he has taken Marcus on business trips and involved him in client relationships.'},
+ {id:'isabel_m',pads:true,fem:true,eyes:'#4F7F9F',ear:'pearl',lips:'#9C3F45',mug:'#2F4A5A',age:38,first:'Isabel',last:'Martinsson',role:'Senior finance executive, daughter, 38',fam:true,seat:'b_n0',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#5A3A26',hairType:'bun',inner:'#F4F6F8',bio:'38. A senior finance executive, successful outside the company. Attends board meetings but has no role in day-to-day operations. Has spent years trying to prove herself to her father, who has never involved her the way he involves Marcus.'},
+ {id:'marcus_m',casual:true,stubble:true,eyes:'#4A6B8A',watch:'#2B2B2B',mug:'#2F4A5A',age:34,first:'Marcus',last:'Martinsson',role:'Tech entrepreneur, son, 34',fam:true,seat:'b_s0',shirt:'#3E4A56',trous:'#2E3440',skin:'#EBC5A5',hair:'#6B4A32',hairType:'short',inner:'#E8ECEF',bio:'34. A tech entrepreneur. Attends board meetings but has no role in day-to-day operations. His father treats him as the natural successor; he does not want to run the company, and has never found a way to say so.'},
+ {id:'bm_karin',extra:true,fem:true,pads:true,age:58,eyes:'#5B7A99',ear:'silver',glasses:true,mug:'#2F4A5A',first:'Karin',last:'Hedlund',role:'Board member',fam:false,seat:'b_n1',shirt:'#5A5E66',trous:'#2B2F36',skin:'#F2D4BC',hair:'#CFC8BE',hairType:'bob',inner:'#F4F4F2',bio:'Board member.'},
+ {id:'bm_goran',extra:true,cloth:'pin',age:63,eyes:'#4A6B8A',mug:'#2F4A5A',first:'Göran',last:'Lund',role:'Board member',fam:false,seat:'b_s1',shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#8A7A6A',hairType:'short',tie:'#2F5A7A',inner:'#EEF2F6',bio:'Board member.'},
+];
+const MT_BASE=[
+ {cap:'Martinsson AB. Jacob Martinsson built it from the ground up, into a leading supplier in the automotive parts industry.',look:{all:'table'},dur:6.4},
+ {cap:'Jacob is nearly seventy, and his health is declining. The question of who will take over hangs heavy. He has never raised it.',look:{all:'jacob_m',jacob_m:'table'},dur:7.2},
+ {cap:'His children are both successful in their careers: Isabel, 38, a senior finance executive, and Marcus, 34, a tech entrepreneur. They attend board meetings, but neither is involved in the company’s day-to-day operations.',look:{isabel_m:'jacob_m',marcus_m:'table',jacob_m:'table'},dur:9.4},
+ {cap:'Over the years Jacob has sent subtle signals: taking Marcus on business trips, involving him more in client relationships. Isabel has never received the same involvement.',look:{jacob_m:'marcus_m',isabel_m:'marcus_m',marcus_m:'table'},dur:8.2},
+ {cap:'At today’s board meeting, Isabel presents a detailed strategy to address rising competition. She has prepared thoroughly, hoping to show her father she could lead the business.',look:{all:'isabel_m',isabel_m:'jacob_m'},gest:{isabel_m:'open'},dur:8.4},
+ {cap:'As soon as she finishes, Jacob turns to Marcus for his thoughts.',look:{jacob_m:'marcus_m',all:'marcus_m',isabel_m:'jacob_m'},dur:4.6,think:{isabel_m:'Marcus. Again.'}},
+ {cap:'Marcus pauses.',who:'marcus_m',say:'I think Isabel’s strategy makes sense. But we should also focus on innovation. Maybe look into new tech partnerships.',to:'jacob_m'},
+ {cap:'Jacob nods.',who:'jacob_m',say:'Good. Let’s move forward.',to:'table',react:{jacob_m:'nod'}},
+ {cap:'For Isabel, it is yet another reminder that her father’s approval always seems to filter through Marcus, even though he has never said that Marcus will take over.',look:{isabel_m:'table',marcus_m:'isabel_m',jacob_m:'papers'},mood:{isabel_m:'frown'},dur:8.2},
+ {cap:'The meeting ends. The board members gather their papers and leave.',walk:'bm_goran',dur:3,look:{all:'bm_goran'}},
+ {walk:'bm_karin',dur:3,look:{all:'bm_karin'}},
+ {cap:'Jacob follows them out.',walk:'jacob_m',dur:4.4,look:{isabel_m:'jacob_m',marcus_m:'jacob_m'}},
+ {cap:'Isabel and Marcus are left alone in the room. The silence between them is thick with unresolved emotions.',look:{isabel_m:'table',marcus_m:'isabel_m'},dur:6.4},
+ {who:'marcus_m',say:'We need to talk to him. This can’t go on like this.',to:'isabel_m'},
+ {cap:'Isabel crosses her arms.',who:'isabel_m',say:'And say what, Marcus? He’s never going to bring it up, and neither have you.',to:'marcus_m',react:{isabel_m:'cross'}},
+ {cap:'Marcus hesitates.',who:'marcus_m',say:'I don’t even want to run the company. It’s not what I want. But how do I tell him that without disappointing him?',to:'isabel_m'},
+ {cap:'Isabel’s frustration rises.',who:'isabel_m',say:'So, you’ve just let him think you’ll take over while I’ve tried to prove myself?',to:'marcus_m',em:{isabel_m:'!'}},
+ {cap:'Marcus shakes his head.',who:'marcus_m',say:'I never asked for this. It’s just how things have always been. He never talked about it, and neither did we.',to:'isabel_m'},
+ {cap:'Marcus doesn’t want the responsibility, but can’t find a way to tell their father. Isabel has worked to show her value, yet Jacob’s gestures have made it clear that he sees Marcus as the natural successor, even if no one has said it aloud.',look:{isabel_m:'table',marcus_m:'table'},dur:10},
+ {cut:{title:'That night · Isabel’s hotel room',room:'hotel',seats:{isabel_m:'b_h1'},hide:['jacob_m','marcus_m','bm_karin','bm_goran']},cap:'That night, Isabel sits alone in her hotel room, thinking about the years of quiet tension.',look:{isabel_m:'window'},dur:6.4,mood:{isabel_m:'neutral'}},
+ {cap:'Jacob has never said who he thinks should lead the company. But his actions have spoken loudly enough. Isabel feels overlooked; Marcus is left with a burden he doesn’t want.',look:{isabel_m:'table'},dur:8.6},
+ {cap:'Finally, she picks up her phone and calls Marcus.',gest:{isabel_m:'phone'},dur:4},
+ {who:'isabel_m',say:'We have to talk to him. Together. We can’t keep waiting for him to start the conversation.',to:'table',gest:{isabel_m:'phone'}},
+ {cap:'Marcus is quiet for a moment.',who:'marcus_m',say:'You’re right. We’ll do it, but I’m unsure how he’ll take it.',to:'isabel_m',gest:{isabel_m:'phone'}},
+ {who:'isabel_m',say:'I don’t know either. But if we don’t, nothing will change.',to:'table',gest:{isabel_m:'phone'}},
+ {cap:'The conversation ahead will be difficult, but both of them know it is necessary. The future of the company, and their relationship with their father, depend on it.',look:{isabel_m:'window'},dur:8}];
+const MARTINSSON={
+ id:'martinsson',name:'Martinsson AB',company:'Martinsson AB: Unspoken Words',sub:'A succession nobody has talked about: the board, the siblings, a phone call at night',
+ blurb:'Jacob Martinsson, nearly 70, built Martinsson AB into a leading automotive parts supplier, and has never said who will take over. His signals point to Marcus, who does not want it; Isabel has spent years trying to prove herself. After a board meeting, the siblings finally talk.',
+ arrive:'A board meeting at Martinsson AB.',arriveShort:'The board of Martinsson AB.',
+ room:'martinsson',clock:{day:'Thursday',start:[14,5]},chair:'jacob_m',hero:'isabel_m',ally:'marcus_m',moods:{jacob_m:'neutral',isabel_m:'neutral',marcus_m:'neutral'},meetTitle:'Meet the Martinssons',
+ bystanders:{bm_karin:'bm_goran',bm_goran:'bm_karin'},
+ roles:[['watch','Watch the case','See the board meeting, the siblings’ talk and the phone call play out as written in the case.']],
+ cast:MT_CAST,base:MT_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','An open succession'],['trust','Family trust']],
+ idle:{jacob_m:['glasses','sip'],isabel_m:['pen','write'],marcus_m:['tap','phone'],bm_karin:['write'],bm_goran:['sip']},
+ react:{isabel_m:{marcus_m:['side'],jacob_m:['side']},marcus_m:{isabel_m:['side']},jacob_m:{marcus_m:['nod'],isabel_m:['side']}},
+ meet:[[null,'Martinsson AB. A leading automotive parts supplier, built from the ground up by one man. Meet the Martinssons.','','Meet the Martinssons'],
+  ['jacob_m','Jacob Martinsson, nearly seventy. Founder and CEO. He has never said who will take over.','Founder · CEO · nearly 70'],
+  ['isabel_m','Isabel, thirty-eight. A senior finance executive. She has spent years trying to prove herself.','Daughter · finance executive · 38'],
+  ['marcus_m','Marcus, thirty-four. A tech entrepreneur. His father sees him as the successor. He does not want it.','Son · tech entrepreneur · 34']],
+ questions:['How does the lack of open communication between Jacob and his children impact both their personal relationships and the future of the family business?','In what ways could emotional intelligence and proactive dialogue help resolve the underlying tensions and foster a smoother succession process at Martinsson AB?'],
+ endings:{watch:'The one conversation that matters most has still not been had. For the first time, Isabel and Marcus mean to have it, together.'},
+ prompt:{kind:'family business succession',lead:'The Martinsson family is dealing with',place:'Martinsson AB, a leading automotive parts supplier in Sweden; a board meeting, the boardroom after it, and Isabel’s hotel room that night',issue:'a succession that has never been discussed: Jacob’s unspoken preference for Marcus, who does not want to lead, and Isabel, who has tried for years to prove she could',dyn:'Jacob, nearly 70, founder and CEO, in declining health, never talks about the future but signals through gestures; Isabel, 38, a senior finance executive, feels sidelined; Marcus, 34, a tech entrepreneur, carries expectations he does not want; neither sibling works in the company; years of silence have left them apart',voice:'whether each of them says what they want',board:'whether succession is discussed openly',trust:'trust between Jacob, Isabel and Marcus'},
+ place:'Automotive parts · succession',
+};
+// ---------------------------------------------------------------- case 14: the Bellucci Group, ethics in global production
+const BL_CAST=[
+ {id:'antonio_b',cloth:'pin',bushy:true,browCol:'#E6E2DA',mug:'#2F4A5A',pocket:'#F4F2EE',age:72,eyes:'#3D2E24',watch:'#D6B25E',first:'Antonio',last:'Bellucci',role:'Chairman, grandfather, 72',fam:true,seat:'b_h1',shirt:'#23262E',trous:'#1E2026',skin:'#E0B894',hair:'#E6E2DA',hairType:'short',tie:'#6E2A2A',inner:'#F2F4F6',bio:'72. Son of Giuseppe Bellucci, the immigrant tailor from Naples who founded the company in Little Italy in 1958. Took over when it was a matter of survival, and has led the Bellucci Group into a global fashion house. Sits at the helm.'},
+ {id:'marco_b',cloth:'pin',mug:'#2F4A5A',age:50,eyes:'#3D2E24',watch:'#C9CED2',first:'Marco',last:'Bellucci',role:'COO, Antonio’s son, 50',fam:true,seat:'b_n0',shirt:'#2E3A46',trous:'#262B31',skin:'#E0B894',hair:'#4A3A2C',hairType:'short',tie:'#2F4A6E',inner:'#EEF2F6',bio:'50. Antonio’s son and the company’s COO. Has long supported the status quo: much of production outsourced to Asia to stay competitive against fast fashion.'},
+ {id:'isabella_b',pads:true,fem:true,eyes:'#4A3A2C',ear:'gold',lips:'#9C3F45',necklace:true,mug:'#2F4A5A',age:48,first:'Isabella',last:'Bellucci',role:'Head of global logistics, Marco’s wife, 48',fam:true,seat:'b_n1',shirt:'#5A2E3A',trous:'#22282E',skin:'#EBC5A5',hair:'#3A2A20',hairType:'bob',inner:'#F4F0EC',bio:'48. Marco’s wife, and head of global logistics. Knows what rebuilding a supply chain would take.'},
+ {id:'sophia_b',pads:true,fem:true,eyes:'#4A3A2C',ear:'silver',lips:'#A8454A',mug:'#2F4A5A',age:30,first:'Sophia',last:'Bellucci',role:'Antonio’s granddaughter, 30',fam:true,seat:'b_s0',shirt:'#2B3440',trous:'#22282E',skin:'#F2D4BC',hair:'#4A3424',hairType:'long',inner:'#F6F2EA',bio:'30. Antonio’s granddaughter. Has uncovered evidence that a supplier is violating labour laws, and wants the company to act on its values.'},
+ {id:'luca_b',cloth:'pin',stubble:true,eyes:'#3D2E24',watch:'#2B2B2B',mug:'#2F4A5A',age:28,first:'Luca',last:'Bellucci',role:'Antonio’s grandson, 28',fam:true,seat:'b_s1',shirt:'#3A3F4A',trous:'#262B31',skin:'#EBC5A5',hair:'#3A2A20',hairType:'short',tie:'#6E5A2A',inner:'#EEF2F6',bio:'28. Antonio’s grandson. Has run the numbers on reshoring production to the U.S., and sees ethics as a strategic opportunity.'},
+];
+const BL_BASE=[
+ {cap:'The Bellucci Group grew from humble beginnings in Little Italy, New York, into a global powerhouse in the fashion industry.',look:{all:'table'},dur:6.4},
+ {cap:'Giuseppe Bellucci, an immigrant tailor from Naples, founded it in 1958 with bespoke suits, before branching into ready-to-wear collections for the runways of Milan, Paris and New York. His son Antonio, 72, now sits at the helm.',look:{all:'antonio_b',antonio_b:'table'},dur:9.6},
+ {cap:'Today the company’s operations stretch across the globe, with much of its production outsourced to Asia to remain competitive in an industry dominated by fast fashion.',look:{all:'table'},dur:7.4},
+ {cap:'Antonio sits at the head of the conference table, surrounded by family. A storm is brewing.',look:{all:'antonio_b',antonio_b:'table'},dur:5.4},
+ {cap:'His son Marco, 50, the COO, and Marco’s wife Isabella, 48, head of global logistics, have long supported the status quo. Across from them, Antonio’s grandchildren, Sophia, 30, and Luca, 28, are determined to challenge the practices that have sustained the company for decades.',look:{marco_b:'sophia_b',isabella_b:'luca_b',sophia_b:'marco_b',luca_b:'antonio_b',antonio_b:'table'},dur:11},
+ {cap:'Sophia breaks the silence, her voice steady but charged with urgency.',who:'sophia_b',say:'We’ve uncovered evidence that our supplier, I’m pretty sure you know which one I’m talking about, is violating labor laws. Child labor, unsafe working conditions, unpaid wages. It’s all documented.',to:'table'},
+ {cap:'She slides a folder across the polished mahogany table.',gest:{sophia_b:'open'},look:{all:'papers',sophia_b:'marco_b'},dur:3.4},
+ {cap:'Luca adds:',who:'luca_b',say:'This isn’t just an operational issue. If this goes public, the Bellucci brand will be dragged through the mud. We’ll lose our reputation, our customers, everything Nonno built.',to:'antonio_b'},
+ {cap:'Marco frowns as he flips through the pages.',who:'marco_b',say:'This is troubling, but let’s not jump to conclusions. These are allegations, not facts. And even if some issues exist, they aren’t unique to us. The entire industry deals with these challenges.',to:'sophia_b',mood:{marco_b:'frown'}},
+ {cap:'Sophia shakes her head, her frustration evident.',who:'sophia_b',say:'That doesn’t excuse us. We’ve always prided ourselves on integrity. How can we claim that while turning a blind eye to this?',to:'marco_b',mood:{sophia_b:'frown'}},
+ {cap:'Antonio’s deep, commanding voice fills the room.',who:'antonio_b',say:'And your solution is to abandon our suppliers and move production back to the U.S.? Do you have any idea what that will cost?',to:'sophia_b'},
+ {cap:'Luca nods, prepared for the argument.',who:'luca_b',say:'We’ve run the numbers. Yes, reshoring will increase costs by 20 to 30 percent, but we can offset that with automation and by focusing on higher-margin luxury lines.',to:'antonio_b'},
+ {cap:'Marco leans back, shaking his head.',who:'marco_b',say:'And what about the competition? While we raise our prices, brands like Versani and Ferruccio will undercut us. Customers will leave, and we’ll be out of business in five years.',to:'luca_b'},
+ {cap:'Isabella chimes in.',who:'isabella_b',say:'Not to mention the logistical nightmare of rebuilding a supply chain. This isn’t something we can fix overnight.',to:'luca_b'},
+ {cap:'Sophia’s gaze doesn’t waver.',who:'sophia_b',say:'This isn’t just about the cost. It’s about our values and the legacy we leave behind. Customers care more than ever about how their clothes are made. If we don’t act, the fallout could destroy us.',to:'antonio_b'},
+ {cap:'Antonio’s eyes narrow as he regards his granddaughter.',who:'antonio_b',say:'You think values alone will keep this company afloat? When I took over from your great-grandfather, it was a matter of survival. Sometimes, you have to make hard choices.',to:'sophia_b'},
+ {cap:'Luca interjects.',who:'luca_b',say:'We’re not saying it’ll be easy, but doing nothing isn’t an option. Reshoring isn’t just the right thing to do; it’s a strategic opportunity. If we lead on ethics, we’ll set ourselves apart.',to:'antonio_b'},
+ {cap:'Marco scoffs.',who:'marco_b',say:'That’s a nice theory, but what happens when the costs pile up, and we can’t compete?',to:'luca_b'},
+ {cap:'Antonio raises a hand, silencing the room.',who:'antonio_b',say:'Enough. I’ve heard both sides. What I need now is a plan. A real plan. Bring me a detailed proposal outlining costs, timelines, and how we communicate this to the public and investors.',to:'table',gest:{antonio_b:'hand'}},
+ {cap:'The meeting ends. The family files out of the room.',walk:'marco_b',dur:2.6,look:{all:'marco_b',antonio_b:'window'}},
+ {walk:'isabella_b',dur:2.6,look:{antonio_b:'window'}},
+ {walk:'sophia_b',dur:2.6,goto:{luca_b:[5.5,6.1]},look:{antonio_b:'window'}},
+ {cap:'Antonio remains seated, staring at the fading New York skyline.',look:{antonio_b:'window',luca_b:'antonio_b'},dur:4.6},
+ {cap:'He stops his grandson at the door.',who:'antonio_b',say:'Luca.',to:'luca_b'},
+ {who:'luca_b',say:'Yes, Nonno?',to:'antonio_b'},
+ {cap:'Antonio’s voice carries the weight of decades of responsibility.',who:'antonio_b',say:'Do you really think we can afford this?',to:'luca_b'},
+ {cap:'Luca hesitates.',who:'luca_b',say:'I think the real question is, can we afford not to?',to:'antonio_b'},
+ {cap:'Antonio nods slowly.',who:'antonio_b',say:'We’ll see.',to:'luca_b',react:{antonio_b:'nod'}}];
+const BELLUCCI={
+ id:'bellucci',name:'The Bellucci Group',company:'The Bellucci Group: Ethics in Global Production',sub:'A family board in New York: a supplier’s abuses, and the cost of doing the right thing',
+ blurb:'Founded in Little Italy in 1958 by a tailor from Naples, the Bellucci Group is now a global fashion house with production in Asia. Antonio’s grandchildren, Sophia and Luca, bring evidence that a supplier uses child labour and propose reshoring; his son Marco and daughter-in-law Isabella defend the status quo.',
+ arrive:'The Bellucci Group’s boardroom in New York, at dusk.',arriveShort:'The Bellucci Group, New York.',
+ room:'bellucci',clock:{day:'Tuesday',start:[17,20]},chair:'antonio_b',hero:'sophia_b',ally:'luca_b',moods:{antonio_b:'neutral',marco_b:'neutral',isabella_b:'neutral',sophia_b:'neutral',luca_b:'neutral'},meetTitle:'Meet the Belluccis',
+ roles:[['watch','Watch the case','See the Bellucci family meeting play out as written in the case.']],
+ cast:BL_CAST,base:BL_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','A real plan'],['trust','Family trust']],
+ idle:{antonio_b:['glasses','sip'],marco_b:['write','tap'],isabella_b:['pen','write'],sophia_b:['pen','sip'],luca_b:['tap','write']},
+ react:{marco_b:{sophia_b:['side'],luca_b:['side']},isabella_b:{luca_b:['side'],marco_b:['nod']},sophia_b:{marco_b:['side']},luca_b:{marco_b:['side'],sophia_b:['nod']},antonio_b:{sophia_b:['side']}},
+ meet:[[null,'The Bellucci Group. From a tailor’s shop in Little Italy in 1958 to a global fashion house. Meet the Belluccis.','','Meet the Belluccis'],
+  ['antonio_b','Antonio Bellucci, seventy-two. The founder’s son, at the helm of the company.','Chairman · grandfather · 72'],
+  ['marco_b','Marco, fifty. Antonio’s son, and the COO.','Son · COO · 50'],
+  ['isabella_b','Isabella, forty-eight. Marco’s wife, and head of global logistics.','Daughter-in-law · global logistics · 48'],
+  ['sophia_b','Sophia, thirty. Antonio’s granddaughter.','Granddaughter · 30'],
+  ['luca_b','Luca, twenty-eight. Antonio’s grandson.','Grandson · 28']],
+ questions:['How should the Bellucci Group balance the financial implications of reshoring production with the ethical and reputational risks of continuing to work with questionable suppliers?','What strategies could the Bellucci family adopt to transition to a more ethical supply chain without jeopardizing their competitive edge?','How do generational perspectives on ethics and business shape the conflict in this case?','What steps can the Bellucci Group take to communicate its values effectively to stakeholders while navigating this crisis?'],
+ endings:{watch:'Antonio has asked for a real plan: costs, timelines, and how to tell the public and investors. Whether the Belluccis can afford to change, or can afford not to, is still open.'},
+ prompt:{kind:'family business board meeting',lead:'The Bellucci family is debating',place:'the Bellucci Group’s conference room in New York, at dusk',issue:'evidence that an Asian supplier uses child labour, unsafe conditions and unpaid wages, and the grandchildren’s proposal to reshore production to the U.S. at 20 to 30 percent higher cost',dyn:'Antonio, 72, the founder’s son, at the helm, remembers when survival meant hard choices; Marco, 50, COO, and his wife Isabella, 48, head of global logistics, defend the status quo and warn of competition and logistics; Sophia, 30, and Luca, 28, the grandchildren, argue for values, reputation and ethics as strategy',voice:'whether the grandchildren are heard',board:'whether the family reaches a real plan',trust:'trust across the three generations'},
+ place:'New York · fashion',
+};
+// ---------------------------------------------------------------- case 15: Bergström Industries, tradition or transformation
+const BG_CAST=[
+ {id:'erik_bg',cloth:'pin',bushy:true,browCol:'#C9C2B6',mug:'#2F4A5A',pocket:'#F4F2EE',age:63,eyes:'#4F8FBF',watch:'#C9CED2',first:'Erik',last:'Bergström',role:'CEO, father, 63',fam:true,seat:'b_h2',shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#C9C2B6',hairType:'short',tie:'#2F4A5A',inner:'#EEF2F6',bio:'63. CEO of Bergström Industries, a century-old Swedish maker of high-end industrial tools that his father and grandfather built on craftsmanship and trust. His experience was forged in factories and on sales floors.'},
+ {id:'sofia_bg',pads:true,fem:true,eyes:'#4F7F9F',ear:'silver',lips:'#A8454A',mug:'#2F4A5A',age:31,first:'Sofia',last:'Bergström',role:'Chief Strategy Officer, Erik’s daughter, 31',fam:true,seat:'b_h1',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#C9A36B',hairType:'long',inner:'#F4F6F8',bio:'31. Erik’s daughter, newly appointed Chief Strategy Officer, and a new MBA graduate bringing a wave of digital enthusiasm.'},
+ {id:'anders_bg',casual:true,cloth:'knit',mug:'#2F4A5A',age:58,eyes:'#5B7A99',watch:'#2B2B2B',first:'Anders',last:'Bergström',role:'COO, Erik’s younger brother, 58',fam:true,seat:'b_n0',shirt:'#8A4A3A',trous:'#2E3440',skin:'#EBC5A5',hair:'#9A8E80',hairType:'short',inner:'#E8ECEF',bio:'58. Erik’s younger brother and the COO; ever the pragmatist, and mindful of the families who have worked in the factories for generations.'},
+ {id:'lena_bg',casual:true,cloth:'knit',fem:true,glasses:true,eyes:'#5B7A99',ear:'pearl',mug:'#2F4A5A',age:52,first:'Lena',last:'Nyström',role:'CFO, 52',fam:false,seat:'b_s0',shirt:'#2F6E73',trous:'#2B2F36',skin:'#F2D4BC',hair:'#B8A48A',hairType:'bob',inner:'#F4F4F2',bio:'52. The CFO. Traditional B2B sales have been stagnant for five years, and she has the numbers.'},
+ {id:'ex_peter',extra:true,cloth:'pin',age:47,eyes:'#4A6B8A',mug:'#2F4A5A',first:'Peter',last:'Holm',role:'Senior executive',fam:false,seat:'b_n2',shirt:'#3A3F4A',trous:'#262B31',skin:'#F0CFB4',hair:'#6A5A4A',hairType:'short',tie:'#6E5A2A',inner:'#EEF2F6',bio:'Senior executive.'},
+ {id:'ex_karin',extra:true,fem:true,pads:true,age:44,eyes:'#3D2E24',ear:'gold',mug:'#2F4A5A',first:'Karin',last:'Åberg',role:'Senior executive',fam:false,seat:'b_s2',shirt:'#5A5E66',trous:'#2B2F36',skin:'#F2D4BC',hair:'#4A3424',hairType:'bun',inner:'#F4F4F2',bio:'Senior executive.'},
+];
+const BG_BASE=[
+ {cap:'Rain drums steadily against the glass façade of Bergström Industries, a century-old Swedish manufacturer of high-end industrial tools.',look:{all:'window'},dur:6.4},
+ {cap:'Inside the sleek but modest boardroom, the air feels charged with anticipation. Erik Bergström, 63, the CEO, sits at the head of the table, his hands folded in front of him.',look:{all:'erik_bg',erik_bg:'table'},dur:8},
+ {cap:'His face, weathered by decades of leadership, stays composed. But his sharp blue eyes betray a storm of uncertainty.',look:{all:'erik_bg',erik_bg:'sofia_bg'},dur:6.2},
+ {cap:'Across from him sits his daughter, Sofia, 31, the newly appointed Chief Strategy Officer. Unlike her father, whose experience was forged in factories and on sales floors, Sofia is a new MBA graduate, bringing a wave of digital enthusiasm.',look:{all:'sofia_bg',sofia_bg:'erik_bg'},dur:10.4},
+ {cap:'Next to her, the COO, Erik’s younger brother Anders, 58, taps his pen impatiently against his notebook. Around the table sit senior executives and the CFO, Lena Nyström, 52.',look:{all:'anders_bg',anders_bg:'table'},react:{anders_bg:'tap'},dur:8.4},
+ {cap:'Sofia clears her throat.',who:'sofia_bg',say:'We need to talk about how we move forward. Bergström Industries has dominated the premium industrial tool market for generations, but the industry is shifting. We have three strategic options, each with different risks and rewards.',to:'table'},
+ {cap:'She clicks to the next slide. A platform-based business model: partnering with global marketplaces like ToolTech Pro and IndustryConnecto to expand distribution and leverage their AI-driven procurement systems. E-commerce: selling directly to customers. And AI-integrated production: investing in machine learning and robotics, reducing costs and boosting efficiency, but potentially disrupting the workforce and company culture.',look:{all:'sofia_bg',sofia_bg:'table'},gest:{sofia_bg:'open'},dur:14},
+ {cap:'Sofia leans forward.',who:'sofia_bg',say:'The market is moving in these directions. If we wait, competitors will pass us by.',to:'erik_bg'},
+ {cap:'Erik exhales, his jaw tightening.',who:'erik_bg',say:'We’ve been here for a hundred years without needing to play Silicon Valley games.',to:'sofia_bg'},
+ {cap:'He gestures to Anders.',who:'erik_bg',say:'What do you think?',to:'anders_bg',gest:{erik_bg:'open'}},
+ {cap:'Anders, ever the pragmatist, nods slowly.',who:'anders_bg',say:'Sofia’s right about market trends. But each of these options brings risks. A platform-based model means giving up control to third parties. E-commerce is expensive to set up and could alienate our distributors.',to:'erik_bg'},
+ {who:'anders_bg',say:'And AI integration? That’s a direct hit to our workers. If we automate too much, what happens to the families who’ve worked in our factories for generations?',to:'erik_bg'},
+ {cap:'Lena Nyström adjusts her glasses.',who:'lena_bg',say:'Numbers don’t lie, Erik. Our traditional B2B sales have been stagnant for the last five years. Platform partnerships could unlock new global markets. E-commerce could give us direct customer data.',to:'erik_bg'},
+ {who:'lena_bg',say:'And AI? If fully implemented, it might cut production costs by 30 percent within three years.',to:'erik_bg'},
+ {cap:'Erik frowns.',who:'erik_bg',say:'And cut how many jobs?',to:'lena_bg',mood:{erik_bg:'frown'}},
+ {cap:'Sofia sighs.',who:'sofia_bg',say:'Father, we’re at a turning point. The reality is that digital transformation isn’t a choice anymore. It’s survival.',to:'erik_bg'},
+ {cap:'The tension in the room thickens. For Erik, Bergström Industries isn’t just a business: it is a legacy. His father and grandfather built it through craftsmanship and trust. Pivoting to digital models feels like betraying that legacy.',look:{all:'erik_bg',erik_bg:'table'},think:{erik_bg:'Craftsmanship and trust.'},dur:10.4},
+ {cap:'Erik’s voice is calm but firm.',who:'erik_bg',say:'You think survival means giving up everything that made us who we are? We built this company on relationships, with suppliers, customers, and employees. An e-commerce site? A faceless AI-powered factory? That’s not Bergström.',to:'sofia_bg'},
+ {cap:'Sofia meets his gaze.',who:'sofia_bg',say:'But it could be the Bergström of the future.',to:'erik_bg'},
+ {cap:'Anders interjects, trying to defuse the tension.',who:'anders_bg',say:'What if we phase it? Start small? Test an e-commerce model with select products, keep most production human-driven but integrate AI in logistics, and negotiate platform deals without losing pricing control?',to:'table'},
+ {cap:'Lena nods.',who:'lena_bg',say:'A phased approach reduces risk.',to:'erik_bg',react:{lena_bg:'nod'}},
+ {cap:'Sofia hesitates.',who:'sofia_bg',say:'That could work. But if we move too slowly, we lose the first-mover advantage.',to:'anders_bg'},
+ {cap:'Erik rubs his temples.',who:'erik_bg',say:'Let’s say we go forward. Who decides? This isn’t just about numbers. It’s about governance.',to:'table'},
+ {cap:'Lena flips through her notes.',who:'lena_bg',say:'Right now, the family council has full decision-making power, but most of the younger Bergströms aren’t active in the company. Do they still get to shape this transition?',to:'erik_bg'},
+ {cap:'Anders shifts in his seat.',who:'anders_bg',say:'Maybe it’s time to separate ownership from leadership. Active members, like Sofia, should have more say than distant cousins living in Australia who haven’t stepped foot in the factory in twenty years.',to:'erik_bg'},
+ {cap:'Erik stiffens.',who:'erik_bg',say:'That’s a slippery slope. If we change governance, we risk alienating the family. Our strength has always been unity.',to:'anders_bg'},
+ {cap:'Sofia chooses her words carefully.',who:'sofia_bg',say:'Unity is important, but it shouldn’t come at the cost of progress.',to:'erik_bg'},
+ {cap:'The room falls silent.',look:{all:'table'},dur:5}];
+const BERGSTROM={
+ id:'bergstrom',name:'Bergström Industries',company:'The Bergström Dilemma: Tradition or Transformation',sub:'A century-old toolmaker, three digital options, and the question of who decides',
+ blurb:'Bergström Industries, a century-old Swedish maker of high-end industrial tools, faces stagnant sales. Sofia, the new Chief Strategy Officer, presents three digital options to her father Erik, the CEO; her uncle Anders and the CFO weigh the risks. Then the question turns to who decides: the family council, or the family members active in the company.',
+ arrive:'A rainy day at Bergström Industries.',arriveShort:'Bergström Industries, in the rain.',
+ room:'bergstrom',clock:{day:'Wednesday',start:[9,30]},chair:'erik_bg',hero:'sofia_bg',ally:'anders_bg',moods:{erik_bg:'neutral',sofia_bg:'neutral',anders_bg:'neutral',lena_bg:'neutral'},meetTitle:'Meet the Bergströms',
+ bystanders:{ex_peter:'ex_karin',ex_karin:'ex_peter'},
+ roles:[['watch','Watch the case','See the board discussion play out as written in the case.']],
+ cast:BG_CAST,base:BG_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','A clear path'],['trust','Family unity']],
+ idle:{erik_bg:['glasses','sip'],sofia_bg:['pen','type'],anders_bg:['tap','write'],lena_bg:['glasses','write'],ex_peter:['write'],ex_karin:['sip']},
+ react:{erik_bg:{sofia_bg:['side'],anders_bg:['nod']},sofia_bg:{erik_bg:['side'],anders_bg:['nod']},anders_bg:{sofia_bg:['nod']},lena_bg:{sofia_bg:['nod']}},
+ meet:[[null,'Bergström Industries. A century-old Swedish maker of high-end industrial tools. Meet the Bergströms.','','Meet the Bergströms'],
+  ['erik_bg','Erik Bergström, sixty-three. The CEO. His experience was forged in factories and on sales floors.','CEO · father · 63'],
+  ['sofia_bg','Sofia, thirty-one. His daughter, the new Chief Strategy Officer, with a fresh MBA.','Chief Strategy Officer · daughter · 31'],
+  ['anders_bg','Anders, fifty-eight. Erik’s younger brother, and the COO. A pragmatist.','COO · brother · 58'],
+  ['lena_bg','Lena Nyström, fifty-two. The CFO.','CFO · 52']],
+ questions:['Which strategic option is the most viable for Bergström Industries? Should they adopt a platform-based model, e-commerce, or AI-driven production, or a combination?','How should family businesses balance tradition and digital transformation? What risks come with moving too fast or too slow?','Should non-active family members have the same governance rights as those working in the company? How can legacy businesses ensure fair and effective decision-making?','If you were Erik, what would you decide? If you were Sofia, how would you persuade your father?'],
+ endings:{watch:'Three options on the screen, a phased plan on the table, and a harder question underneath: who decides the future of Bergström Industries?'},
+ prompt:{kind:'family business management meeting',lead:'The Bergström family and their executives are discussing',place:'Bergström Industries, a century-old Swedish maker of high-end industrial tools; the boardroom on a rainy day',issue:'three digital options (platform partnerships, e-commerce, AI-integrated production), a phased approach, and whether family members active in the company should have more say than the family council',dyn:'Erik, 63, CEO, sees the company as a legacy of craftsmanship and relationships; his daughter Sofia, 31, new Chief Strategy Officer with an MBA, pushes digital transformation; his brother Anders, 58, COO, a pragmatist, worries about the workers and proposes phasing; Lena Nyström, 52, the CFO, points to five years of stagnant sales',voice:'whether Sofia’s case is heard',board:'whether the family can decide who decides',trust:'unity between Erik, Sofia and Anders'},
+ place:'Industrial tools · digital transformation',
+};
+
+const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,SJOSTROM,BIXA,ROSENHOLM2,STJERNHOLM,MARTINSSON,BELLUCCI,BERGSTROM];
 // only the watch mode is offered; the playable roles and their decisions stay in the data for later use
 CASES.forEach(c=>{if(c.parts)return;const w=c.roles.find(r=>r[0]==='watch');c.roles=[['watch','Watch the case',w?w[2]:'See the case play out as written.']];c.blurb=c.blurb.replace(/\s*[^.!?]*partly on you\.\s*$/,'')});
 let CASE=LINDQVIST,CAST,BASE,DEC_AT,DECISIONS,QUESTIONS,METERS,MEET,IDLE,REACT;
@@ -3730,32 +4219,123 @@ function buildPicker(){
 }
 function closeCase(){makeScene()}
 // topic filter for the case chooser (keywords drawn partly from the Spotlight topics)
-const TOPICS=[["Board", ["lindqvist", "rosenholm", "eriksson", "bixa"]], ["Governance", ["lindqvist", "sjostrand", "nygaard", "eriksson", "sjostrom", "bixa"]], ["Ownership", ["lindqvist", "sjostrand", "nygaard", "eriksson", "bixa"]], ["Succession", ["lindqvist", "stenberg", "sorensen", "rosenholm", "bixa"]], ["Next generation", ["lindqvist", "stenberg", "sjostrand", "solberg", "sorensen", "nygaard", "bixa"]], ["Leadership", ["stenberg", "sorensen", "rosenholm"]], ["Women", ["lindqvist", "stenberg", "sjostrand", "solberg", "rosenholm"]], ["Siblings and cousins", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa"]], ["Conflict", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa"]], ["Emotions", ["stenberg", "rosenholm", "eriksson", "sjostrom", "bixa"]], ["Trust", ["sorensen", "nygaard", "sjostrom", "bixa"]], ["Communication", ["lindqvist", "solberg", "sjostrom", "bixa"]], ["Illness and death", ["rosenholm", "sjostrom"]], ["Legacy", ["rosenholm", "nygaard", "eriksson", "bixa"]], ["Strategy", ["lindqvist", "sjostrand", "solberg", "eriksson"]], ["Innovation and risk", ["sjostrand", "solberg", "sorensen", "eriksson"]], ["Sustainability", ["sjostrand", "solberg"]], ["Wealth and trusts", ["nygaard", "sjostrom"]], ["Advisors", ["lindqvist", "stenberg", "sjostrom"]], ["Sale and acquisitions", ["lindqvist", "bixa"]]];
+const TOPICS=[["Board", ["lindqvist", "rosenholm", "eriksson", "bixa", "rosenholm2", "martinsson", "bellucci"]], ["Governance", ["lindqvist", "sjostrand", "nygaard", "eriksson", "sjostrom", "bixa", "rosenholm2", "stjernholm", "bergstrom"]], ["Ownership", ["lindqvist", "sjostrand", "nygaard", "eriksson", "bixa", "rosenholm2", "stjernholm", "bergstrom"]], ["Succession", ["lindqvist", "stenberg", "sorensen", "rosenholm", "bixa", "rosenholm2", "stjernholm", "martinsson"]], ["Next generation", ["lindqvist", "stenberg", "sjostrand", "solberg", "sorensen", "nygaard", "bixa", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Leadership", ["stenberg", "sorensen", "rosenholm", "rosenholm2", "martinsson", "bellucci", "bergstrom"]], ["Women", ["lindqvist", "stenberg", "sjostrand", "solberg", "rosenholm", "martinsson", "bergstrom"]], ["Siblings and cousins", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "rosenholm2", "stjernholm", "martinsson"]], ["Conflict", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "rosenholm2", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Emotions", ["stenberg", "rosenholm", "eriksson", "sjostrom", "bixa", "stjernholm", "martinsson"]], ["Trust", ["sorensen", "nygaard", "sjostrom", "bixa"]], ["Communication", ["lindqvist", "solberg", "sjostrom", "bixa", "martinsson", "bellucci"]], ["Illness and death", ["rosenholm", "sjostrom", "rosenholm2"]], ["Legacy", ["rosenholm", "nygaard", "eriksson", "bixa", "stjernholm", "bellucci", "bergstrom"]], ["Strategy", ["lindqvist", "sjostrand", "solberg", "eriksson", "bellucci", "bergstrom"]], ["Innovation and risk", ["sjostrand", "solberg", "sorensen", "eriksson", "stjernholm", "bellucci", "bergstrom"]], ["Sustainability", ["sjostrand", "solberg", "stjernholm", "bellucci"]], ["Wealth and trusts", ["nygaard", "sjostrom"]], ["Advisors", ["lindqvist", "stenberg", "sjostrom", "rosenholm2"]], ["Sale and acquisitions", ["lindqvist", "bixa", "stjernholm"]], ["Ethics", ["sjostrom", "bellucci"]]];
 let TOPIC=null;
 const topicsOf=id=>TOPICS.filter(t=>t[1].includes(id)).map(t=>t[0]);
+// The case chooser: a search box, the topics (a short row, the rest on request) and the cases, eight at a time.
+// Search runs in the page: every case's names, key points, topics, cast and script are indexed, and the query's
+// words are widened to the concepts they belong to (e.g. "heir" also finds succession, "green" sustainability).
+const PICK={q:'',page:null,more:false};
+const PER_PAGE=8;
+const normTxt=t=>(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ø/g,'o').replace(/æ/g,'ae').replace(/ß/g,'ss');
+const STOPW=new Set('the a an and or of in on at to for with about is are be by from what how who which case cases family business firm company that this it its do does their them they we our my your'.split(' '));
+const CONCEPTS=[
+ ['succession','successor','take over','takeover','taking over','handover','hand over','next ceo','new ceo','heir','inherit','retire','step down','stepping down','helm','who will lead','transition','passing'],
+ ['ethic','values','integrity','child labor','child labour','labor law','responsib','csr','esg','honest','accountab','moral','right thing'],
+ ['sustainab','green','environment','climate','regenerative','ecolog','esg','renewable','enova','emission','plant-based'],
+ ['digital','e-commerce','ecommerce','online','platform','automation','robot','machine learning','ai ','artificial','tech','software','data'],
+ ['innovat','new idea','startup','start-up','pilot','venture','entrepreneur','new product','transform','change','modern'],
+ ['conflict','tension','disagree','dispute','rivalry','quarrel','fight','argument','divide','clash','frustrat','angry','feud'],
+ ['sibling','brother','sister','cousin','twin','half-brother','step-brother','stepsister'],
+ ['daughter','woman','women','female','gender','granddaughter','mother','wife','sister'],
+ ['son','grandson','father','dad','patriarch','founder','grandfather','parent'],
+ ['next generation','next-generation','children','young','grandchild','heir','millennial','youth','kids','fifth generation','fourth generation'],
+ ['governance','board','council','family council','director','decision','decides','rules','constitution','vote','voting','ownership rights','who decides'],
+ ['owner','ownership','shares','shareholder','percent','equity','stake','non-active','not active','inactive'],
+ ['sale','sell','selling','buyer','acquisition','acquire','exit','divest','offer','conglomerate','merger','sold'],
+ ['trust','trustee','trust fund','trusts','wealth','inheritance','fortune','money'],
+ ['illness','stroke','hospital','health','sick','death','died','dying','funeral','ill '],
+ ['farm','agricultur','land','hectare','dairy','harvest','rural','countryside'],
+ ['communicat','silence','unspoken','talk','conversation','listen','heard','voice','dialogue','say it'],
+ ['legacy','tradition','heritage','history','century','generations','craftsmanship','grandfather built','roots'],
+ ['strategy','strategic','plan','investment','invest','growth','expand','market','competition','competitor'],
+ ['finance','cost','debt','capital','profit','margin','revenue','sales','numbers','cfo','budget','loan'],
+ ['advisor','adviser','consultant','mediator','therapist','coach','outside help','external director'],
+ ['emotion','feel','hurt','anger','grief','fear','guilt','pride','sad','upset','cry'],
+ ['leadership','leader','ceo','lead','manage','management','coo','authority','control'],
+ ['christmas','julbord','midsummer','holiday','dinner','summer house','celebration'],
+ ['fashion','clothes','tailor','apparel','textile'],
+ ['shipping','maritime','logistics','harbour','harbor','port','vessel'],
+ ['manufactur','factory','industrial','foundry','production','tools','parts','automotive','timber','bakery','food'],
+];
+function stemW(w){return w.length>5?w.replace(/(ations|ation|ments|ment|ings|ing|ers|ies|ed|es|s)$/,''):w}
+let SIDX=null;
+function scriptOf(c){const out=[];const add=b=>(b||[]).forEach(x=>{if(x.cap)out.push(x.cap);if(x.say)out.push(x.say)});add(c.base);if(c.parts)Object.values(c.parts).forEach(p=>add(p.base));(c.questions||[]).forEach(q=>out.push(q));return out.join(' ')}
+function searchIndex(){if(SIDX)return SIDX;
+  SIDX=CASES.map(c=>[[6,[c.name,c.company,c.place].join(' ')],[4,[c.sub,(CASE_KEYS[c.id]||[]).join(' '),topicsOf(c.id).join(' ')].join(' ')],[3,c.blurb],
+    [2,(c.cast||[]).map(p=>[p.first,p.last,p.role,p.bio].join(' ')).join(' ')],[1,scriptOf(c)]].map(([w,t])=>[w,' '+normTxt(t).replace(/[^a-z0-9%-]+/g,' ')+' ']));
+  return SIDX}
+function countIn(hay,term){let n=0,i=hay.indexOf(term);while(i>=0&&n<4){n++;i=hay.indexOf(term,i+term.length)}return n}
+function searchCases(q){
+  const toks=normTxt(q).split(/[^a-z0-9%-]+/).filter(t=>t.length>1&&!STOPW.has(t));if(!toks.length)return null;
+  const idx=searchIndex(),N=CASES.length;
+  const scores=CASES.map(()=>({s:0,hit:0}));
+  toks.forEach(tok=>{const st=stemW(tok),terms=[[' '+st,1]];
+    CONCEPTS.forEach(g=>{if(g.some(m=>{const nm=normTxt(m).trim();return nm.startsWith(st)||(st.length>3&&st.startsWith(stemW(nm)))}))g.forEach(m=>terms.push([' '+normTxt(m).trim(),.55]))});
+    const per=idx.map(fs=>Math.max(...terms.map(([t,w])=>w*fs.reduce((a,[fw,h])=>a+fw*countIn(h,t),0))));
+    const df=per.filter(v=>v>0).length;if(!df)return;const idf=Math.log(1+N/df);
+    per.forEach((v,i)=>{if(v>0){scores[i].s+=v*idf;scores[i].hit++}})});
+  const rs=CASES.map((c,i)=>({c,...scores[i]})).filter(r=>r.s>0).sort((a,b)=>b.hit-a.hit||b.s-a.s);if(!rs.length)return [];
+  const top=Math.max(...rs.map(r=>r.s)),mh=rs[0].hit;                 // keep the strong matches: all words and a fair score, or a high one
+  return rs.filter(r=>(r.hit===mh&&r.s>=top*.22)||r.s>=top*.5).map(r=>r.c)}
 function buildIntro2(){
   const card=document.querySelector('#intro .introcard');if(!card)return;
   card.innerHTML='';
+  const lab=document.createElement('div');lab.className='caselab';lab.textContent='Choose a case';
+  // search
+  const sb=document.createElement('div');sb.className='casesearch';
+  const inp=document.createElement('input');inp.type='search';inp.placeholder='Search: a theme, a question, a name… (e.g. daughter succession, ethics, selling the firm)';inp.value=PICK.q;inp.setAttribute('aria-label','Search the cases');
+  const clr=document.createElement('button');clr.type='button';clr.className='csclear';clr.textContent='×';clr.setAttribute('aria-label','Clear the search');
+  sb.append(inp,clr);
+  // topics: the most used ones in one row, the rest behind "More topics"
+  const tp=document.createElement('div');tp.className='topics';tp.setAttribute('role','group');tp.setAttribute('aria-label','Filter cases by topic');
+  const byUse=TOPICS.slice().sort((a,b)=>b[1].length-a[1].length),SHORT=6;
+  const cnt=document.createElement('div');cnt.className='topiccount';cnt.setAttribute('aria-live','polite');
   const pick=document.createElement('div');pick.className='casepick';
-  CASES.forEach(c=>{const b=document.createElement('button');b.className='casechip'+(c===CASE?' on':'');b.innerHTML='<strong></strong><span></span>';b.querySelector('strong').textContent='Case '+(CASES.indexOf(c)+1)+' · '+c.name;b.querySelector('span').textContent=c.place;
-    b.appendChild(infoBtn(c));b.onclick=()=>openCase(c.id);pick.appendChild(b)});
+  const nav=document.createElement('div');nav.className='casenav';
+  const prev=document.createElement('button');prev.type='button';prev.textContent='‹';prev.setAttribute('aria-label','Previous cases');
+  const next=document.createElement('button');next.type='button';next.textContent='›';next.setAttribute('aria-label','Next cases');
+  const pos=document.createElement('span');nav.append(prev,pos,next);
+  const drawTopics=()=>{tp.innerHTML='';
+    const mk=(label,val,n)=>{const b=document.createElement('button');b.type='button';if(val)b.dataset.t=val;b.textContent=label;if(n!=null){const c=document.createElement('span');c.textContent=n;b.appendChild(c)}
+      const on=(val||null)===TOPIC;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);
+      b.onclick=e=>{e.stopPropagation();TOPIC=(val&&TOPIC!==val)?val:null;PICK.page=0;drawTopics();draw()};tp.appendChild(b)};
+    mk('All',null,null);
+    const shown=PICK.more?TOPICS:byUse.slice(0,SHORT).concat(TOPIC&&!byUse.slice(0,SHORT).some(t=>t[0]===TOPIC)?[TOPICS.find(t=>t[0]===TOPIC)]:[]);
+    shown.forEach(([t,c])=>mk(t,t,c.length));
+    const m=document.createElement('button');m.type='button';m.className='tmore';m.textContent=PICK.more?'Fewer topics':'More topics ('+(TOPICS.length-SHORT)+')';
+    m.onclick=e=>{e.stopPropagation();PICK.more=!PICK.more;drawTopics()};tp.appendChild(m)};
+  const draw=()=>{
+    const found=PICK.q.trim()?searchCases(PICK.q):null;
+    const hit=TOPIC?(TOPICS.find(t=>t[0]===TOPIC)||[0,[]])[1]:null;
+    const list=(found||CASES).filter(c=>!hit||hit.includes(c.id));
+    const pages=Math.max(1,Math.ceil(list.length/PER_PAGE));
+    if(PICK.page==null){const i=list.indexOf(CASE);PICK.page=i>=0?Math.floor(i/PER_PAGE):0}
+    PICK.page=Math.min(Math.max(0,PICK.page),pages-1);
+    pick.innerHTML='';
+    list.slice(PICK.page*PER_PAGE,PICK.page*PER_PAGE+PER_PAGE).forEach(c=>{const b=document.createElement('button');b.className='casechip'+(c===CASE?' on':'');b.innerHTML='<strong></strong><span></span>';
+      b.querySelector('strong').textContent='Case '+(CASES.indexOf(c)+1)+' · '+c.name;b.querySelector('span').textContent=c.place;b.title=c.company;
+      b.appendChild(infoBtn(c));b.onclick=()=>openCase(c.id);pick.appendChild(b)});
+    if(!list.length){const e=document.createElement('div');e.className='casenone';e.textContent='No case matches. Try other words, or clear the search.';pick.appendChild(e)}
+    const a=list.length?PICK.page*PER_PAGE+1:0,z=Math.min(list.length,PICK.page*PER_PAGE+PER_PAGE);
+    pos.textContent=list.length?a+'–'+z+' of '+list.length:'';prev.disabled=PICK.page<=0;next.disabled=PICK.page>=pages-1;nav.style.visibility=pages>1?'visible':'hidden';
+    const bits=[];if(found)bits.push(list.length+(list.length===1?' case matches':' cases match')+' “'+PICK.q.trim()+'”'+(found.length?', best first':''));
+    if(TOPIC)bits.push((found?'':list.length+(list.length===1?' case':' cases')+' ')+'on '+TOPIC.toLowerCase());
+    cnt.textContent=bits.join(', ');clr.style.visibility=PICK.q?'visible':'hidden'};
+  let tmr=null;inp.oninput=()=>{PICK.q=inp.value;PICK.page=0;clearTimeout(tmr);tmr=setTimeout(draw,120)};
+  inp.onkeydown=e=>{e.stopPropagation();if(e.key==='Enter'){const f=pick.querySelector('.casechip');if(f&&PICK.q.trim())f.click()}if(e.key==='Escape'){PICK.q='';inp.value='';draw()}};
+  clr.onclick=e=>{e.stopPropagation();PICK.q='';inp.value='';PICK.page=0;draw();inp.focus()};
+  prev.onclick=e=>{e.stopPropagation();PICK.page--;draw()};next.onclick=e=>{e.stopPropagation();PICK.page++;draw()};
+  let sx=null;pick.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+  pick.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50){PICK.page+=dx<0?1:-1;draw()}},{passive:true});
+  pick.addEventListener('wheel',e=>{if(Math.abs(e.deltaX)>Math.abs(e.deltaY)&&Math.abs(e.deltaX)>30){e.preventDefault();const now=Date.now();if(now-(pick._w||0)<450)return;pick._w=now;PICK.page+=e.deltaX>0?1:-1;draw()}},{passive:false});
   const h=document.createElement('h2');h.textContent=CASE.company;
   const pp=document.createElement('p');pp.textContent=CASE.blurb;
   const roles=document.createElement('div');roles.className='roles';
   if(CASE.roles.length>1)roles.classList.add('multi');
   CASE.roles.forEach(([id,label,desc,lock])=>{const b=document.createElement('button');b.dataset.role=id;b.innerHTML='<strong></strong><span></span>';b.querySelector('strong').textContent=label;const locked=lock&&!partDone(CASE.id,lock),wait=!ASSETS.ready[CASE.id];b.querySelector('span').textContent=locked?'Watch Part '+lock+' first.':wait?'Loading the case…':desc;if(locked||wait){b.disabled=true;b.classList.add('locked')}else b.onclick=()=>makeScene(id);roles.appendChild(b)});
-  const lab=document.createElement('div');lab.className='caselab';lab.textContent='Choose a case';
-  const tp=document.createElement('div');tp.className='topics';tp.setAttribute('role','group');tp.setAttribute('aria-label','Filter cases by topic');
-  const apply=()=>{tp.querySelectorAll('button').forEach(b=>{const on=(b.dataset.t||null)===TOPIC;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
-    const hit=TOPIC?(TOPICS.find(t=>t[0]===TOPIC)||[0,[]])[1]:null;
-    pick.querySelectorAll('.casechip').forEach((b,i)=>b.classList.toggle('dim',!!hit&&!hit.includes(CASES[i].id)));
-    cnt.textContent=TOPIC?hit.length+(hit.length===1?' case':' cases')+' on '+TOPIC.toLowerCase():''};
-  const mk=(label,val,n)=>{const b=document.createElement('button');b.type='button';if(val)b.dataset.t=val;b.textContent=label;if(n!=null){const c=document.createElement('span');c.textContent=n;b.appendChild(c)}
-    b.onclick=e=>{e.stopPropagation();TOPIC=(val&&TOPIC!==val)?val:null;apply()};tp.appendChild(b)};
-  mk('All',null,null);TOPICS.forEach(([t,c])=>mk(t,t,c.length));
-  const cnt=document.createElement('div');cnt.className='topiccount';cnt.setAttribute('aria-live','polite');
   const cl=document.createElement('div');cl.className='cardload';cl.innerHTML='<div class="lbtrack"><i></i></div><div class="lbn"></div>';
-  card.append(lab,tp,cnt,pick,h,pp,cl,roles);apply();syncCardLoad();
+  card.append(lab,sb,tp,cnt,pick,nav,h,pp,cl,roles);drawTopics();draw();syncCardLoad();
 }
 function meetCard(){let el=document.getElementById('meetCard');if(!el){el=document.createElement('div');el.id='meetCard';
   el.style.cssText='position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:40;width:min(560px,92vw);background:rgba(255,255,255,.94);color:#22282B;border-radius:20px;box-shadow:0 16px 40px rgba(10,25,30,.35);backdrop-filter:blur(12px);padding:14px 18px 12px;font-family:"Nunito",system-ui,sans-serif';
@@ -4033,6 +4613,11 @@ const MUNINN={name:'Leif Muninn',sub:'CeFEO’s literature desk',img:'data:image
  src:{spotlight:'Spotlight by CeFEO',ffi:'FFI Practitioner',fborg:'FamilyBusiness.org'},
  readings:{"lindqvist": {"say": "Leif Muninn, literature desk. The field calls this board process: who is heard, and whose analysis counts. Five pieces.", "items": [{"s": "spotlight", "t": "How does family involvement shape what actually happens inside the boardroom?", "u": "https://spotlight.cefeo.se/articles/how-family-involvement-shapes-the-boardroom", "n": "Four family boardrooms, observed directly. Family habits imprint the meeting; role clarity and power balance decide who is heard."}, {"s": "fborg", "t": "Four Things that the Best Family Business Boards Do Well", "u": "https://familybusiness.org/content/four-things-that-the-best-family-business-boards-do-well", "n": "Board practice. Family directors out of their depth go silent or turn defiant; candour has to be built."}, {"s": "ffi", "t": "Balancing Representation with Qualification on Family Business Boards", "u": "https://ffipractitioner.org/balancing-representation-with-qualification-on-family-business-boards/", "n": "Family seats against qualified seats, with a shareholder forum as the pressure valve."}, {"s": "fborg", "t": "Developing Competent Owners and Stewards for a Lasting Family Business", "u": "https://familybusiness.org/content/developing-competent-owners-and-stewards-for-a-lasting-family-bu", "n": "Ownership competence. Owners are asked to rule on acquisitions without having been prepared for it."}, {"s": "spotlight", "t": "Does the board really run a family firm, or do the functions happen elsewhere?", "u": "https://spotlight.cefeo.se/articles/does-the-board-really-run-a-family-firm-or-do-the-functions-happen-elsewhere", "n": "Four Swedish firms. Most board functions happen outside the boardroom. Narrower than the first."}]}, "stenberg": {"say": "Leif Muninn, literature desk. Successor selection: family or not, and what fair means between siblings. Five pieces.", "items": [{"s": "ffi", "t": "Leadership Succession: Selecting an internal or external successor?", "u": "https://ffipractitioner.org/leadership-succession-selecting-an-internal-or-external-successor/", "n": "Selection as a process: requirements, independent assessment, a committee. Internal and external candidates side by side."}, {"s": "fborg", "t": "Why Does EOS/Traction Work So Well for Family Businesses?", "u": "https://familybusiness.org/content/why-does-eostraction-work-so-well-for-family-businesses", "n": "Three siblings and one seat. Functions are defined before names are placed in them."}, {"s": "fborg", "t": "Helping Daughters Become Successful Family Business Leaders", "u": "https://familybusiness.org/content/helping-daughters-become-successful-family-business-leaders", "n": "Daughter succession. Why the bar sits higher, and eight conditions that lower it."}, {"s": "spotlight", "t": "What if family ties didn’t just influence succession, but shaped every career decision inside and around the family firm?", "u": "https://spotlight.cefeo.se/articles/what-if-family-ties-didnt-just-influence-succession--but-shaped-every-career-decision-inside-and-around-the-family-firm", "n": "Family embeddedness of careers. Succession signals begin in childhood."}, {"s": "spotlight", "t": "How does a family's collective sense of ‘ours’ shape the succession process?", "u": "https://spotlight.cefeo.se/articles/how-does-a-familys-collective-sense-of-ours-shape-the-succession-process", "n": "Collective psychological ownership. Nine Spanish firms; transfer as collaboration or as crisis."}]}, "sjostrand": {"say": "Leif Muninn, literature desk. The cousin consortium, and strategy decided away from the boardroom. Five pieces.", "items": [{"s": "ffi", "t": "Cousins in Charge: Managing Conflicts and Driving Success in Multi-Generational Family Enterprises", "u": "https://ffipractitioner.org/cousins-in-charge-managing-conflicts-and-driving-success-in-multi-generational-family-enterprises/", "n": "The cousin consortium. Diverging risk appetites, and the governance that has to follow."}, {"s": "spotlight", "t": "Does the board really run a family firm, or do the functions happen elsewhere?", "u": "https://spotlight.cefeo.se/articles/does-the-board-really-run-a-family-firm-or-do-the-functions-happen-elsewhere", "n": "Informal governance. Decisions made in kitchens and on family trips, and why that is not always a fault."}, {"s": "spotlight", "t": "How do family firms balance long-term sustainability goals with short-term crises?", "u": "https://spotlight.cefeo.se/articles/how-do-family-firms-balance-long-term-sustainability-goals-with-short-term-crises", "n": "Green transformation under uncertainty. Long-term orientation helps and hinders at the same time."}, {"s": "ffi", "t": "Summary 2: Financial Decision Making in Family Firms", "u": "https://ffipractitioner.org/summary-2-financial-decision-making-in-family-firms-an-adaptation-of-the-theory-of-planned-behaviour/", "n": "Financing preferences. Family norms about debt outlive the people who set them."}, {"s": "fborg", "t": "Family Firms: Building Resilience Across Generations", "u": "https://familybusiness.org/content/family-firms-building-resilience-across-generations", "n": "Low leverage and reserves as a family-firm habit. The other side of the debt argument."}]}, "solberg": {"say": "Leif Muninn, literature desk. Next-generation voice, and knowledge that does not travel upward. Five pieces.", "items": [{"s": "spotlight", "t": "How do emotional bonds, trust, and conflict shape innovation across generations?", "u": "https://spotlight.cefeo.se/articles/how-do-emotional-bonds-trust-and-conflict-shape-innovation-across-generations", "n": "Knowledge internalization. Close families that do not absorb each other’s expertise do not innovate."}, {"s": "ffi", "t": "Transforming Legacy Family Enterprises for Sustainable Development", "u": "https://ffipractitioner.org/transforming-legacy-family-enterprises-for-sustainable-development/", "n": "Sustainable development in long-lived family firms. Control, commitment, continuity."}, {"s": "fborg", "t": "A Family's Non-Financial Values Shape Its Sustainability Strategy", "u": "https://familybusiness.org/content/a-familys-non-financial-values-shape-its-sustainability-strategy", "n": "Socioemotional wealth and sustainability. Forward-looking families formalise it; backward-looking ones do not."}, {"s": "fborg", "t": "Ready to Lead: Building Confidence Across Generations", "u": "https://familybusiness.org/content/ready-to-lead-building-confidence-across-generations", "n": "Parallel readiness. Seniors who hide their early mistakes make the next generation cautious."}, {"s": "ffi", "t": "Three Communication Skills for Breaking Through Impenetrable Barriers", "u": "https://ffipractitioner.org/three-communication-skills-for-breaking-through-impenetrable-barriers/", "n": "Communication technique, including a conversation about the conversation. Narrower than the others."}]}, "sorensen": {"say": "Leif Muninn, literature desk. Trust, and the development path of successors. Five pieces.", "items": [{"s": "ffi", "t": "Family Governance at Work: Organizing for new product development in family SMEs", "u": "https://ffipractitioner.org/family-governance-at-work-organizing-for-new-product-development-in-family-smes/", "n": "New product development in family SMEs. A family champion and a technical leader, rarely the same person."}, {"s": "ffi", "t": "The Challenge of Developing Next Generation Leadership Presence in a Family Business", "u": "https://ffipractitioner.org/the-challenge-of-developing-next-generation-leadership-presence-in-a-family-business/", "n": "Leadership presence. The incumbent’s confidence is the slowest to earn."}, {"s": "fborg", "t": "Ready to Lead: Building Confidence Across Generations", "u": "https://familybusiness.org/content/ready-to-lead-building-confidence-across-generations", "n": "Parallel readiness. Readiness grows through real responsibility, even small projects."}, {"s": "spotlight", "t": "What kinds of entrepreneurs are next-generation family business successors?", "u": "https://spotlight.cefeo.se/articles/successor-profiles-transgenerational-entrepreneurship-italian-family-firms", "n": "Five successor profiles. Families often judge successors with a single yardstick."}, {"s": "fborg", "t": "When entrepreneurs raise entrepreneurs", "u": "https://familybusiness.org/content/When-entrepreneurs-raise-entrepreneurs", "n": "Successors who build their own ventures, and the legitimacy that brings back."}]}, "rosenholm": {"say": "Leif Muninn, literature desk. Crisis succession. The field's term is emergency succession planning. Five pieces.", "items": [{"s": "fborg", "t": "Your Family Needs An Emergency Succession Plan", "u": "https://familybusiness.org/content/your-family-needs-an-emergency-succession-plan", "n": "Emergency succession. Interim leadership, a support team, and what has to be settled in advance."}, {"s": "ffi", "t": "Live Wires in the Family Enterprise", "u": "https://ffipractitioner.org/live-wires-in-the-family-enterprise/", "n": "A leader disabled by a stroke, as a scenario. How sibling rivalry grows in the gap."}, {"s": "spotlight", "t": "What happens when a nonfamily CEO steps into the shoes of the family leader?", "u": "https://spotlight.cefeo.se/articles/what-happens-when-a-nonfamily-ceo-steps-into-the-shoes-of-the-family-leader", "n": "A non-family CEO after the family leader. Four tensions, managed rather than resolved."}, {"s": "fborg", "t": "The Making of Successful Female Family-Enterprise Leaders", "u": "https://familybusiness.org/content/the-making-of-successful-female-family-enterprise-leaders", "n": "Forty-six daughter successors. Legitimacy and sibling rivalry recur."}, {"s": "ffi", "t": "Stronger Family Bonds and Better Strategic Decisions: Mediation in a Second-Generation Family Business", "u": "https://ffipractitioner.org/stronger-family-bonds-and-better-strategic-decisions-mediation-in-a-second-generation-family-business/", "n": "Mediation after a leader’s death. Relational repair tied to board reform."}]}, "nygaard": {"say": "Leif Muninn, literature desk. Next-generation entry, and governance that is never written down. Five pieces.", "items": [{"s": "fborg", "t": "Are the ‘Best Practices’ All Wrong for Your Family Business?", "u": "https://familybusiness.org/content/are-the-best-practices-all-wrong-for-your-family-business", "n": "Informal governance. Unwritten rules as scaffolding rather than as a gap."}, {"s": "fborg", "t": "Thicker Than Water: Balancing Individual Career Goals and the Family Business", "u": "https://familybusiness.org/content/thicker-than-water-balancing-individual-career-goals-and-the-fam", "n": "Swedish business families. Entry as the default option; individual careers neglected."}, {"s": "spotlight", "t": "Can young family business members innovate outside the family firm without breaking ties?", "u": "https://spotlight.cefeo.se/articles/can-young-family-business-members-innovate-outside-the-family-firm-without-breaking-ties", "n": "Ventures outside the core firm. Three routes: imitation, evolution, separation."}, {"s": "ffi", "t": "How to Keep a Business Family Alive: Families that fuel next generation family business leaders", "u": "https://ffipractitioner.org/how-to-keep-a-business-family-alive-families-that-fuel-next-generation-family-business-leaders/", "n": "Four family types. How the rising generation is informed decides whether it joins."}, {"s": "spotlight", "t": "What makes later-generation family members choose the family business?", "u": "https://spotlight.cefeo.se/articles/what-makes-later-generation-family-members-choose-the-family-business", "n": "Successor commitment. Identity and career fit matter more than obligation."}]}, "eriksson": {"say": "Leif Muninn, literature desk. Ownership governance in a growing family: who votes, and on what. Five pieces.", "items": [{"s": "ffi", "t": "The Two Pillars of Governance in Family Enterprises", "u": "https://ffipractitioner.org/the-two-pillars-of-governance-in-family-enterprises-a-straightforward-understanding-of-complex-systems/", "n": "An enterprise pillar and a family pillar. A voice in the family is not the same as a vote in the firm."}, {"s": "fborg", "t": "Family Firms Prosper When Shareholders Think Like Trustees", "u": "https://familybusiness.org/content/family-firms-prosper-when-shareholders-think-like-trustees", "n": "Large owner groups. Giving small and inactive shareholders a voice keeps them attached."}, {"s": "ffi", "t": "Future-Ready Shareholders Agreements to Help Family Enterprises Navigate Turbulent Times", "u": "https://ffipractitioner.org/future-ready-shareholders-agreements-to-help-family-enterprises-navigate-turbulent-times/", "n": "Decision thresholds and deadlock provisions. The mechanics of a family vote."}, {"s": "spotlight", "t": "Can too much family involvement in governance hurt your firm’s success, especially in high-tech sectors?", "u": "https://spotlight.cefeo.se/articles/can-too-much-family-involvement-in-governance-hurt-your-firms-success--especially-in-high-tech-sectors", "n": "Overembeddedness. More family directors, weaker performance where technology moves fast."}, {"s": "fborg", "t": "Your Investment Strategy Should Reflect Your Family Values and Goals", "u": "https://familybusiness.org/content/your-investment-strategy-should-refect-your-family-values-and-go", "n": "Family investment policy. Divergent risk appetites, written down before the next deal."}]}, "sjostrom": {"say": "Leif Muninn, literature desk. The trustee's duty to account. Five pieces.", "items": [{"s": "ffi", "t": "On Accounting to the Beneficiary", "u": "https://ffipractitioner.org/on-accounting-to-the-beneficiary/", "n": "The duty to account, and why a trust without it is not really a trust."}, {"s": "ffi", "t": "Trust Owned Family Enterprises: Pitfalls and practical suggestions when naming trustees who also serve on Board of Directors", "u": "https://ffipractitioner.org/trust-owned-family-enterprises-pitfalls-and-practical-suggestions-when-naming-trustees-who-also-serve-on-board-of-directors-a-case-study/", "n": "Trustees who withhold information from beneficiaries. Which hat is worn, and when."}, {"s": "fborg", "t": "Punishment, Reward, Control: How Money Shows Up in the Business Family", "u": "https://familybusiness.org/content/punishment-reward-control-how-money-shows-up-in-the-business-fam", "n": "Money scripts. Money used to reward, punish and control inside a family."}, {"s": "spotlight", "t": "What is the role of money education in strengthening business families?", "u": "https://spotlight.cefeo.se/articles/are-your-kids-ready-to-manage-the-family-fortune", "n": "Money education. Financial disputes often stand in for other ones."}, {"s": "fborg", "t": "Let's Talk About Money, and Trauma", "u": "https://familybusiness.org/content/lets-talk-about-money-and-trauma", "n": "Talking about money across generations. The older generation is expected to go first."}]}, "bixa": {"say": "Leif Muninn, literature desk. Owner exit, and what a sale means to each owner. Five pieces.", "items": [{"s": "spotlight", "t": "Letting go, moving forward: What happens to psychological ownership when a family sells the business?", "u": "https://spotlight.cefeo.se/articles/letting-go-moving-forward-what-happens-to-psychological-ownership-when-a-family-sells-the-business", "n": "A Scandinavian exit followed over ten years: a majority-owner father and two minority sons. Ownership meanings shift; grief follows."}, {"s": "fborg", "t": "How to Weigh the Consequences of Selling the Family Business", "u": "https://familybusiness.org/content/how-to-weigh-the-consequences-of-selling-the-family-business", "n": "Approval of a decision versus ownership of it. The same sale means different things to each member."}, {"s": "ffi", "t": "Exiting the Family Business Is as Tricky as Leaving Your Lover", "u": "https://ffipractitioner.org/exiting-the-family-business-is-as-tricky-as-leaving-your-lover/", "n": "Exit paths and the emotions under them. Leaving the business is not leaving the family."}, {"s": "fborg", "t": "Can a Family Stay a Business Family After Selling the Business?", "u": "https://familybusiness.org/content/can-a-family-stay-a-business-family-after-selling-the-business", "n": "Life after the sale. Shared identity fades unless something carries it."}, {"s": "spotlight", "t": "Why do family business owners leave ownership change so poorly regulated?", "u": "https://spotlight.cefeo.se/articles/why-do-family-business-owners-leave-ownership-change-so-poorly-regulated", "n": "The ownership contract. Swedish and Danish owners leave the hard cases unregulated."}]}}};
 function hideMuninn(){['muninn','muninnBtn'].forEach(id=>{const el=document.getElementById(id);if(el&&el.remove)el.remove()})}
+MUNINN.readings.rosenholm2=MUNINN.readings.rosenholm2||MUNINN.readings.rosenholm;   // the same succession crisis, retold
+MUNINN.readings.stjernholm={"say": "Leif Muninn, literature desk. Three ownership logics for one piece of land, and governance that begins at the kitchen table. Five pieces.", "items": [{"s": "spotlight", "t": "Can emotional ties to land and family business shape decisions after displacement?", "u": "https://spotlight.cefeo.se/articles/can-emotional-ties-to-land-and-family-business-shape-decisions-after-displacement", "n": "Reinvest in the land or sell it. Six ways family members weigh value and risk, and why land carries socioemotional wealth long after the business."}, {"s": "ffi", "t": "Research Applied: FBR Précis for FFI Practitioner", "u": "https://ffipractitioner.org/research-applied-fbr-precis-for-ffi-practitioner-12/", "n": "Community socioemotional wealth. Twenty farming families who refuse to sell to developers, at a cost to themselves."}, {"s": "ffi", "t": "A Strong Owners Team: An asset for the family business", "u": "https://ffipractitioner.org/a-strong-owners-team-an-asset-for-the-family-business/", "n": "The shared owners’ vision: ambition, values, returns, risk appetite and involvement, agreed and written down."}, {"s": "fborg", "t": "Your Family’s Mental Model Might Be Fueling Its Conflicts", "u": "https://familybusiness.org/content/your-familys-mental-model-might-be-fueling-its-conflicts", "n": "Four mental models of business families, each with its typical conflict, and a conflict protocol agreed in calm times."}, {"s": "spotlight", "t": "Can farming families inspire a richer, more grounded understanding of entrepreneurship?", "u": "https://spotlight.cefeo.se/articles/can-farming-families-inspire-a-richer-more-grounded-understanding-of-entrepreneurship", "n": "Entrepreneurship on the farm. Why agri-tourism can feel like an extension of the family’s identity, and unrelated ventures do not."}]};
+MUNINN.readings.martinsson={"say": "Leif Muninn, literature desk. Succession by signal rather than by conversation, and the loyalties no one names. Five pieces.", "items": [{"s": "spotlight", "t": "What if family ties didn’t just influence succession—but shaped every career decision inside and around the family firm?", "u": "https://spotlight.cefeo.se/articles/what-if-family-ties-didnt-just-influence-succession--but-shaped-every-career-decision-inside-and-around-the-family-firm", "n": "Family embeddedness and careers. The signalling game of succession begins in childhood, long before anything is said."}, {"s": "ffi", "t": "The Inherited Bind: How Differentiation of Self and Invisible Loyalties Can Shape Family Businesses' Succession", "u": "https://ffipractitioner.org/the-inherited-bind-how-differentiation-of-self-and-invisible-loyalties-can-shape-family-businesses-succession/", "n": "Invisible loyalties and differentiation of self. A son who does not want the role, and how he finds the permission to say so."}, {"s": "ffi", "t": "From Silence to Cohesion: What One Family’s Experience Reveals About the Role of Narrative in Successful Succession", "u": "https://ffipractitioner.org/from-silence-to-cohesion-what-one-familys-experience-reveals-about-the-role-of-narrative-in-successful-succession/", "n": "Narrative in succession. A transition stalled for decades, unblocked when the family starts to talk."}, {"s": "fborg", "t": "How Family Firms Can Prevent (or Cool Down) Sibling Rivalries", "u": "https://familybusiness.org/content/how-family-firms-can-prevent-or-cool-down-sibling-rivalries", "n": "Sibling rivalry. Parents who compare or treat children differently, and why each child needs a genuine choice."}, {"s": "spotlight", "t": "Does founding their own venture make family business offspring more likely to take over?", "u": "https://spotlight.cefeo.se/articles/does-founding-their-own-venture-make-family-business-offspring-more-likely-to-take-over", "n": "Succession as dual agency: the parent must want the child, and the child the firm. When the child’s own venture thrives, the family firm is the smaller prize."}]};
+MUNINN.readings.bellucci={"say": "Leif Muninn, literature desk. Responsible sourcing, and the generations who weigh it differently. Five pieces.", "items": [{"s": "fborg", "t": "ESG Essentials For Family Firms", "u": "https://familybusiness.org/content/esg-essentials-for-family-firms", "n": "Responsible sourcing and fair labour as part of ESG, the generational gap on sustainability, and why the credible story matters more than the list of activities."}, {"s": "fborg", "t": "A Family's Non-Financial Values Shape Its Sustainability Strategy", "u": "https://familybusiness.org/content/a-familys-non-financial-values-shape-its-sustainability-strategy", "n": "Socioemotional wealth and sustainability. Forward-looking families formalise it; cost is not what decides."}, {"s": "ffi", "t": "Transforming Legacy Family Enterprises for Sustainable Development", "u": "https://ffipractitioner.org/transforming-legacy-family-enterprises-for-sustainable-development/", "n": "How long-lived family firms move from economics-first legacies to sustainable development: control, commitment, continuity; purpose, professionalism, partnerships."}, {"s": "ffi", "t": "Handing Over a Responsible Family Business: The benefits of formalising social and environmental responsibility practices", "u": "https://ffipractitioner.org/handing-over-a-responsible-family-business-the-benefits-of-formalising-social-and-environmental-responsibility-practices/", "n": "Formalising responsibility. A next generation that expects international standards, and what formal policies do for reputation."}, {"s": "spotlight", "t": "Can family businesses balance tax strategies with their duty to future generations?", "u": "https://spotlight.cefeo.se/articles/can-family-businesses-balance-tax-strategies-with-their-duty-to-future-generations", "n": "Ethics in the grey zone. Duty to the next generation and financial pressure can make the family’s interest read as the ethical choice."}]};
+MUNINN.readings.bergstrom={"say": "Leif Muninn, literature desk. Digital change in a legacy firm, and who among the owners decides. Five pieces.", "items": [{"s": "ffi", "t": "Is Traditional Successor Induction Still Relevant for Family Firms?", "u": "https://ffipractitioner.org/is-traditional-successor-induction-still-relevant-for-family-firms/", "n": "Learning from the elders alone, or from outside. Four generations of one firm, and why fast-changing markets call for re-socialisation."}, {"s": "fborg", "t": "Generative AI Can Help Family Businesses Innovate and Grow", "u": "https://familybusiness.org/content/generative-ai-can-help-family-businesses-innovate-and-grow", "n": "AI as a co-pilot, and why it should change the business model rather than only cut costs; culture decides how it lands."}, {"s": "fborg", "t": "Let the Next Generation of Family Firm Leaders Chart Their Own Path", "u": "https://familybusiness.org/content/Let-the-next-generation-of-family-firm-leaders-chart-their-own-p", "n": "Successors who bring digital and e-commerce experience back into century-old family firms."}, {"s": "ffi", "t": "The Evolution of Ownership Decision-Making in Family Enterprises: From Founder to Next Generation", "u": "https://ffipractitioner.org/the-evolution-of-ownership-decision-making-in-family-enterprises-from-founder-to-next-generation/", "n": "Owners not active in the business: owners’ councils, clear decision rights, and information that keeps them able to decide."}, {"s": "spotlight", "t": "What kinds of entrepreneurs are next-generation family business successors?", "u": "https://spotlight.cefeo.se/articles/successor-profiles-transgenerational-entrepreneurship-italian-family-firms", "n": "Five successor profiles, from revolutioner to improver. Families often judge a successor with a single yardstick."}]};
 function showMuninnBtn(){if(!MUNINN.readings[CASE.id])return;const b=document.createElement('button');b.id='muninnBtn';b.className='muninnbtn';b.setAttribute('aria-label','Ask Leif Muninn for readings');
   b.innerHTML='<img alt=""><span><strong>Ask Muninn</strong><em>Readings on this case</em></span>';b.querySelector('img').src=muninnFace();
   b.onclick=e=>{e.stopPropagation();b.remove();showMuninn()};document.getElementById('stage').appendChild(b)}
@@ -4078,7 +4663,7 @@ function endScene(){Voice.hush();
   else out=E.mid;
   setCaption(out);addTx('cap','End of scene. '+out);
   const h=document.createElement('div');h.className='txq';h.innerHTML='<strong>For discussion</strong>';const ol=document.createElement('ol');
-  QUESTIONS.forEach(q=>{const li=document.createElement('li');li.textContent=q;ol.appendChild(li)});h.appendChild(ol);tx.appendChild(h);
+  QUESTIONS.forEach(q=>{const li=document.createElement('li');li.textContent=q;ol.appendChild(li)});h.appendChild(ol);if(QUESTIONS.length)tx.appendChild(h);
   if(part&&CASE.compare&&scene.role!=='A'){const others=Object.keys(CASE.parts).filter(k=>k!=='A');
     if(others.every(k=>partDone(CASE.id,k))){const c=document.createElement('div');c.className='txq';c.innerHTML='<strong>Three versions</strong>';const ul=document.createElement('ul');CASE.compare.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li)});c.appendChild(ul);tx.appendChild(c)}
     else addTx('cap','Watch the other perspectives too. After all three, you will see where the versions disagree.')}
