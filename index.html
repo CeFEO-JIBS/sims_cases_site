@@ -193,6 +193,7 @@ body.focus aside,body.focus .brand{display:none !important}
 body.noshare .sharebtn{display:none}body.noshare .co{padding-right:100px !important}
 @media (max-width:760px){body.noshare .hud.top{right:108px}}
 body.nopanel aside{display:none !important}
+body.nocontrols #controls{display:none !important}
 body.onecase .introcard h2{padding-top:0;border-top:0}
 body.onecase .casepick,body.onecase .caselab,body.onecase .topics,body.onecase .topiccount,body.onecase #closeCaseBtn{display:none !important}
 /* share / embed dialog */
@@ -334,11 +335,12 @@ let E3D=null,use3D=false,lastRaw=0,syncFig=()=>{};
 let prefer3D=true;                                  // every visit opens in 3D; the button switches for this visit only
 // Options in the address, set by the share dialog for links and embedded frames:
 // case=<id>, only=1 (that case alone, no chooser), room=classic, voices=0, closeups=0, thoughts=0,
-// names=0, panel=0 (no side panel), controls=0 (controls folded), share=0 (no share button).
+// names=0, panel=0 (no side panel), controls=0 (controls folded) or controls=hide (no controls box),
+// speed=1.5 or 2, share=0 (no share button).
 const URLQ=(()=>{try{return new URLSearchParams(location.search)}catch(e){return{get:()=>null}}})();
 const qOff=k=>URLQ.get(k)==='0';
 if(URLQ.get('room')==='classic')prefer3D=false;
-{const b=document.body.classList;if(URLQ.get('only')==='1')b.add('onecase');if(qOff('panel'))b.add('nopanel');if(qOff('share'))b.add('noshare')}
+{const b=document.body.classList;if(URLQ.get('only')==='1')b.add('onecase');if(qOff('panel'))b.add('nopanel');if(qOff('share'))b.add('noshare');if(URLQ.get('controls')==='hide')b.add('nocontrols')}
 const has3D=()=>!!(E3D&&E3D.has(CASE.id)&&(ASSETS.ready[CASE.id]||{}).threeD);
 const ASSETS={ready:{},loading:null};
 const loadBox=(()=>{const el=document.createElement('div');el.className='loadbox';el.hidden=true;
@@ -4280,6 +4282,7 @@ document.getElementById('camBtn').onclick=e=>{closeups=!closeups;e.target.classL
 document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.classList.toggle('on',thoughtsOn);if(!thoughtsOn)people.forEach(p=>p.thought=null)};
 // the start-up options from the address show on their buttons
 [['camBtn',closeups],['thinkBtn',thoughtsOn],['namesBtn',namesOn]].forEach(([id,on])=>document.getElementById(id).classList.toggle('on',on));
+{const v=URLQ.get('speed');if(v==='1.5'||v==='2')document.querySelector('[data-speed="'+v+'"]').click()}
 // Share: a link to the case, or the code of a frame that puts it on another web page, with the
 // options above. Off a web server (the file opened locally) the links point at the public site.
 {const PUB='https://cefeo-jibs.github.io/sims_cases_site/';
@@ -4300,8 +4303,10 @@ document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.
    <label><input type="checkbox" id="shThoughts" checked> Thoughts</label>
    <label><input type="checkbox" id="shNames" checked> Names</label>
    <label><input type="checkbox" id="shPanel" checked> Side panel (people, transcript)</label>
-   <label><input type="checkbox" id="shControls" checked> Controls open</label>
    <label><input type="checkbox" id="shShare"> Share button in the frame</label></div></fieldset>
+  <fieldset><legend>Controls box</legend><div class="shrow">
+   <label>Box <select id="shControls" aria-label="Controls box"><option value="open">Shown</option><option value="folded">Folded (opens with ☰)</option><option value="hide">Hidden</option></select></label>
+   <label>Speed <select id="shSpeed" aria-label="Speed"><option value="1">1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label></div></fieldset>
   <fieldset><legend>Embed code</legend><div class="shout"><textarea id="shCode" readonly spellcheck="false" aria-label="Embed code"></textarea><button type="button" id="shCopyCode" class="primary">Copy code</button></div></fieldset>
   <fieldset><legend>Link</legend><div class="shout"><input class="shlink" id="shLink" readonly aria-label="Link"><button type="button" id="shCopyLink">Copy link</button></div></fieldset>
   <p class="shnote"><a id="shOpen" href="#" target="_blank" rel="noopener">Open with these settings in a new tab</a> to check them. Paste the code into the HTML of your page (in WordPress, Canvas or Moodle: an HTML or embed block). Voices start after the viewer's first click, as browsers require.</p>
@@ -4312,7 +4317,9 @@ document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.
  const esc=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
  function url(frame){const q=new URLSearchParams();q.set('case',$('shCase').value);if($('shOnly').checked)q.set('only','1');
    if(!$('sh3d').checked)q.set('room','classic');
-   [['shVoices','voices'],['shCloseups','closeups'],['shThoughts','thoughts'],['shNames','names'],['shPanel','panel'],['shControls','controls']].forEach(([id,k])=>{if(!$(id).checked)q.set(k,'0')});
+   [['shVoices','voices'],['shCloseups','closeups'],['shThoughts','thoughts'],['shNames','names'],['shPanel','panel']].forEach(([id,k])=>{if(!$(id).checked)q.set(k,'0')});
+   {const c=$('shControls').value;if(c==='folded')q.set('controls','0');else if(c==='hide')q.set('controls','hide')}
+   if($('shSpeed').value!=='1')q.set('speed',$('shSpeed').value);
    if(frame&&!$('shShare').checked)q.set('share','0');
    return base()+'?'+q.toString()}
  function update(){const sz=$('shSize').value;$('shCustom').hidden=sz!=='custom';
@@ -4334,6 +4341,8 @@ document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.
  function open(){back=document.activeElement;$('shCase').value=CASE.id;
    $('sh3d').checked=use3D||(prefer3D&&!has3D());$('shCloseups').checked=closeups;$('shThoughts').checked=thoughtsOn;$('shNames').checked=namesOn;
    $('shVoices').checked=!document.getElementById('voiceBtn').classList.contains('muted');
+   $('shControls').value=document.body.classList.contains('nocontrols')?'hide':document.getElementById('controls').classList.contains('collapsed')?'folded':'open';
+   $('shSpeed').value=speed===1.5||speed===2?String(speed):'1';
    update();bg.hidden=false;$('shCase').focus()}
  bg.querySelector('.shx').onclick=close;
  bg.addEventListener('click',e=>{if(e.target===bg)close()});
