@@ -1,6 +1,14 @@
 {
  "id": "bellucci",
- "voices": [],
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/bellucci.vpk",
+   "size": 1500055,
+   "enc": "",
+   "n": 33
+  }
+ ],
  "models": {
   "enc": "gz",
   "layout": "bellucci",

@@ -1,6 +1,14 @@
 {
  "id": "martinsson",
- "voices": [],
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/martinsson.vpk",
+   "size": 1210100,
+   "enc": "",
+   "n": 30
+  }
+ ],
  "models": {
   "enc": "gz",
   "layout": "martinsson",

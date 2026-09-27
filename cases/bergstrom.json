@@ -1,6 +1,14 @@
 {
  "id": "bergstrom",
- "voices": [],
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/bergstrom.vpk",
+   "size": 1779158,
+   "enc": "",
+   "n": 34
+  }
+ ],
  "models": {
   "enc": "gz",
   "layout": "bergstrom",

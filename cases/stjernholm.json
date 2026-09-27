@@ -1,6 +1,14 @@
 {
  "id": "stjernholm",
- "voices": [],
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/stjernholm.vpk",
+   "size": 1117741,
+   "enc": "",
+   "n": 28
+  }
+ ],
  "models": {
   "enc": "gz",
   "layout": "farm",
