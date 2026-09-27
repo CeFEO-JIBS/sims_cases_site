@@ -187,8 +187,35 @@ aside{width:300px; background:var(--panel); border-left:1px solid var(--line); d
 .fsbtn{right:58px}.fsbtn .ic-col{display:none}.fsbtn.on .ic-exp{display:none}.fsbtn.on .ic-col{display:block}
 body.focus aside,body.focus .brand{display:none !important}
 .voicebtn .ic-off{display:none}.voicebtn.muted .ic-on{display:none}.voicebtn.muted .ic-off{display:block}.voicebtn.muted{color:var(--muted)}
-.co{padding-right:60px !important}
-@media (max-width:760px){.hud.top{right:60px}}
+.co{padding-right:150px !important}
+@media (max-width:760px){.hud.top{right:156px}}
+.sharebtn{right:106px}
+body.noshare .sharebtn{display:none}body.noshare .co{padding-right:100px !important}
+@media (max-width:760px){body.noshare .hud.top{right:108px}}
+body.nopanel aside{display:none !important}
+body.onecase .introcard h2{padding-top:0;border-top:0}
+body.onecase .casepick,body.onecase .caselab,body.onecase .topics,body.onecase .topiccount,body.onecase #closeCaseBtn{display:none !important}
+/* share / embed dialog */
+.sharebg{position:fixed;inset:0;z-index:90;background:rgba(20,26,28,.45);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.sharebg[hidden]{display:none}
+.sharebox{width:min(620px,100%);background:var(--panel);color:var(--ink);border-radius:18px;box-shadow:0 18px 44px rgba(10,25,30,.4);padding:18px 20px 16px;font-family:"Nunito",system-ui,sans-serif;margin:auto 0}
+.sharebox h2{margin:0 0 4px;font-size:20px}
+.sharebox .shsub{margin:0 0 14px;font-size:13px;color:var(--muted)}
+.sharebox .shx{float:right;width:32px;height:32px;padding:0;border-radius:50%;font-size:18px;line-height:1}
+.sharebox fieldset{border:0;margin:0 0 12px;padding:0}
+.sharebox legend{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;padding:0}
+.sharebox select,.sharebox input[type=number]{font:inherit;font-size:14px;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.sharebox input[type=number]{width:84px}
+.sharebox .shrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.sharebox .shopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px}
+.sharebox label{font-size:14px;display:flex;align-items:center;gap:7px;cursor:pointer}
+.sharebox textarea,.sharebox .shlink{width:100%;box-sizing:border-box;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.sharebox textarea{height:96px}
+.sharebox .shout{display:flex;gap:8px;align-items:flex-start;margin-top:4px}
+.sharebox .shout>:first-child{flex:1;min-width:0}
+.sharebox .shout button{flex:none}
+.sharebox .shnote{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.45}
+@media (max-width:560px){.sharebox .shopts{grid-template-columns:1fr}}
 .foot{padding:12px 16px 14px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); line-height:1.45}
 .foot button{margin-top:8px}
 @media (max-width:760px){
@@ -217,6 +244,9 @@ canvas.e3d{z-index:-1}
 <button id="fsBtn" class="voicebtn fsbtn" type="button" aria-label="Full screen" title="Full screen">
   <svg class="ic-exp" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <svg class="ic-col" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<button id="shareBtn" class="voicebtn sharebtn" type="button" aria-label="Share or embed this case" title="Share or embed this case">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 <button id="voiceBtn" class="voicebtn" type="button" style="display:none" aria-pressed="true" aria-label="Mute character voices">
   <svg class="ic-on" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -302,6 +332,13 @@ const cam={zoom:1,px:0,py:0}; let camAnim=null;
 let E3D=null,use3D=false,lastRaw=0,syncFig=()=>{};
 // the learner's choice of room for cases that have a 3D one (the figures button switches it)
 let prefer3D=true;                                  // every visit opens in 3D; the button switches for this visit only
+// Options in the address, set by the share dialog for links and embedded frames:
+// case=<id>, only=1 (that case alone, no chooser), room=classic, voices=0, closeups=0, thoughts=0,
+// names=0, panel=0 (no side panel), controls=0 (controls folded), share=0 (no share button).
+const URLQ=(()=>{try{return new URLSearchParams(location.search)}catch(e){return{get:()=>null}}})();
+const qOff=k=>URLQ.get(k)==='0';
+if(URLQ.get('room')==='classic')prefer3D=false;
+{const b=document.body.classList;if(URLQ.get('only')==='1')b.add('onecase');if(qOff('panel'))b.add('nopanel');if(qOff('share'))b.add('noshare')}
 const has3D=()=>!!(E3D&&E3D.has(CASE.id)&&(ASSETS.ready[CASE.id]||{}).threeD);
 const ASSETS={ready:{},loading:null};
 const loadBox=(()=>{const el=document.createElement('div');el.className='loadbox';el.hidden=true;
@@ -2199,7 +2236,7 @@ function drawBubble(p){
 }
 
 // ---------------------------------------------------------------- board meeting scene
-let mode='scene', scene=null, animT=0, closeups=true, thoughtsOn=true, sampleFn=null;
+let mode='scene', scene=null, animT=0, closeups=!qOff('closeups'), thoughtsOn=!qOff('thoughts'), sampleFn=null;
 (async()=>{try{if(window.claude&&claude.use){sampleFn=await claude.use('sample')}}catch(e){sampleFn=null}})();
 const L_CAST=[
  {id:'hans',cloth:'pin',vest:'#8C7355',bushy:true,browCol:'#E2DDD4',mug:'#8A3B34',pocket:'#F4F2EE',age:64,eyes:'#5B7A99',watch:'#D6B25E',  first:'Hans',  last:'Lindqvist',role:'CEO and father, 64',fam:true, seat:'b_h1',shirt:'#4F5B66',trous:'#2F3A35',skin:'#F2D4BC',hair:'#CFCBC4',hairStyle:0,hairType:'bald',tie:'#8A3B34',inner:'#F4F2EE',bio:'64, founder-generation CEO and chair of the meeting. Protective of his son Ulf as successor, controls the floor, impatient, dismissive of Freya without meaning to be cruel.'},
@@ -3834,6 +3871,7 @@ const Voice=(()=>{
   const persist=()=>{try{localStorage.setItem('fbsim.badv2',JSON.stringify([...badPersist].filter(x=>!worked.has(x))));localStorage.setItem('fbsim.goodv2',JSON.stringify([...worked]))}catch(e){}};
   const resetVoices=()=>{bad.clear();badPersist.clear();for(const k in strikes)delete strikes[k];assigned={};saved={};try{localStorage.removeItem('fbsim.badv2');localStorage.removeItem('fbsim.voicemap')}catch(e){}assign()};
   try{const v=localStorage.getItem('fbsim.voice');if(v==='off')on=false}catch(e){}
+  if(qOff('voices'))on=false;
   let saved={};try{saved=JSON.parse(localStorage.getItem('fbsim.voicemap')||'{}')}catch(e){}
   const keepRefs=[];
   const fresh=v=>{if(!v)return null;let all=[];try{all=synth.getVoices()||[]}catch(e){}return all.find(x=>x.voiceURI===v.voiceURI)||all.find(x=>x.name===v.name)||null};
@@ -4171,7 +4209,7 @@ function select(p,pan){
 function updateMeetBtn(){const b=document.getElementById('meetBtn');const n=people.filter(p=>p.state==='present').length;b.disabled=!!meeting||n<2;b.textContent=meeting?'Board meeting in session':'Call board meeting'}
 
 // ---------------------------------------------------------------- input
-const pointers=new Map();let down=null,moved=false,pinch=null,namesOn=true;
+const pointers=new Map();let down=null,moved=false,pinch=null,namesOn=!qOff('names');
 function zoomAt(sx,sy,f){const z=Math.max(.12,Math.min(ZMAX,cam.zoom*f));const wx=(sx-cam.px)/cam.zoom,wy=(sy-cam.py)/cam.zoom;cam.px=sx-wx*z;cam.py=sy-wy*z;cam.zoom=z}
 function hitPerson(sx,sy){let best=null;people.forEach(p=>{if(!p.visible||p.hidden||!p.hit)return;const[a,b,c,d]=p.hit;if(sx>=a&&sx<=c&&sy>=b&&sy<=d){if(!best||p.y+p.x>best.x+best.y)best=p}});return best}
 function hoverAt(sx,sy){
@@ -4227,7 +4265,7 @@ document.getElementById('closeCaseBtn').onclick=()=>closeCase();
 document.getElementById('castBtn').onclick=()=>replayMeet();
 {const box=document.getElementById('controls'),tg=document.getElementById('ctlToggle');
  const set=c=>{box.classList.toggle('collapsed',c);tg.textContent=c?'☰':'–';tg.title=c?'Show controls':'Hide controls';tg.setAttribute&&tg.setAttribute('aria-expanded',String(!c));try{localStorage.setItem('fbsim.ctl',c?'closed':'open')}catch(e){}};
- let c0=false;try{c0=localStorage.getItem('fbsim.ctl')==='closed'}catch(e){}set(c0);
+ let c0=false;try{c0=localStorage.getItem('fbsim.ctl')==='closed'}catch(e){}if(URLQ.get('controls'))c0=qOff('controls');box.classList.toggle('collapsed',c0);tg.textContent=c0?'☰':'–';tg.title=c0?'Show controls':'Hide controls';tg.setAttribute&&tg.setAttribute('aria-expanded',String(!c0));
  tg.onclick=e=>{e.stopPropagation();set(!box.classList.contains('collapsed'))}}
 document.getElementById('camBtn').onclick=e=>{closeups=!closeups;e.target.classList.toggle('on',closeups);if(!closeups)focusBoardroom(true)};
 // The button switches between the 3D room and the classic room. Where there is no 3D room (no WebGL,
@@ -4240,8 +4278,71 @@ document.getElementById('camBtn').onclick=e=>{closeups=!closeups;e.target.classL
     if(!prefer3D&&E3D.portrait)E3D.shot(null,null,cam,vw,vh);
     enable3D(prefer3D);if(!prefer3D)focusBoardroom(true);sync()}}
 document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.classList.toggle('on',thoughtsOn);if(!thoughtsOn)people.forEach(p=>p.thought=null)};
+// the start-up options from the address show on their buttons
+[['camBtn',closeups],['thinkBtn',thoughtsOn],['namesBtn',namesOn]].forEach(([id,on])=>document.getElementById(id).classList.toggle('on',on));
+// Share: a link to the case, or the code of a frame that puts it on another web page, with the
+// options above. Off a web server (the file opened locally) the links point at the public site.
+{const PUB='https://cefeo-jibs.github.io/sims_cases_site/';
+ const base=()=>/^https?:$/.test(location.protocol)?location.origin+location.pathname:PUB;
+ const bg=document.createElement('div');bg.id='shareBg';bg.className='sharebg';bg.hidden=true;
+ bg.innerHTML=`<div class="sharebox" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <button class="shx" type="button" aria-label="Close">×</button>
+  <h2 id="shTitle">Share or embed</h2><p class="shsub">Choose the settings, then copy the link or the code to put the case on a web page.</p>
+  <fieldset><legend>Case</legend><div class="shrow"><select id="shCase" aria-label="Case"></select>
+   <label><input type="checkbox" id="shOnly" checked> This case only (no case chooser)</label></div></fieldset>
+  <fieldset><legend>Size of the frame</legend><div class="shrow"><select id="shSize" aria-label="Size">
+   <option value="fluid">Full width of the page (16:10)</option><option value="1280x800">1280 × 800</option><option value="1024x640">1024 × 640</option><option value="800x600">800 × 600</option><option value="custom">Custom</option></select>
+   <span id="shCustom" hidden><input type="number" id="shW" min="320" max="3840" value="960" aria-label="Width in pixels"> × <input type="number" id="shH" min="300" max="2160" value="600" aria-label="Height in pixels"> px</span></div></fieldset>
+  <fieldset><legend>Settings</legend><div class="shopts">
+   <label><input type="checkbox" id="sh3d" checked> 3D room (else the classic room)</label>
+   <label><input type="checkbox" id="shVoices" checked> Voices on</label>
+   <label><input type="checkbox" id="shCloseups" checked> Close-ups</label>
+   <label><input type="checkbox" id="shThoughts" checked> Thoughts</label>
+   <label><input type="checkbox" id="shNames" checked> Names</label>
+   <label><input type="checkbox" id="shPanel" checked> Side panel (people, transcript)</label>
+   <label><input type="checkbox" id="shControls" checked> Controls open</label>
+   <label><input type="checkbox" id="shShare"> Share button in the frame</label></div></fieldset>
+  <fieldset><legend>Embed code</legend><div class="shout"><textarea id="shCode" readonly spellcheck="false" aria-label="Embed code"></textarea><button type="button" id="shCopyCode" class="primary">Copy code</button></div></fieldset>
+  <fieldset><legend>Link</legend><div class="shout"><input class="shlink" id="shLink" readonly aria-label="Link"><button type="button" id="shCopyLink">Copy link</button></div></fieldset>
+  <p class="shnote"><a id="shOpen" href="#" target="_blank" rel="noopener">Open with these settings in a new tab</a> to check them. Paste the code into the HTML of your page (in WordPress, Canvas or Moodle: an HTML or embed block). Voices start after the viewer's first click, as browsers require.</p>
+ </div>`;
+ document.body.appendChild(bg);
+ const $=id=>bg.querySelector('#'+id),box=bg.querySelector('.sharebox');
+ CASES.forEach((c,i)=>{const o=document.createElement('option');o.value=c.id;o.textContent='Case '+(i+1)+' · '+c.name;$('shCase').appendChild(o)});
+ const esc=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+ function url(frame){const q=new URLSearchParams();q.set('case',$('shCase').value);if($('shOnly').checked)q.set('only','1');
+   if(!$('sh3d').checked)q.set('room','classic');
+   [['shVoices','voices'],['shCloseups','closeups'],['shThoughts','thoughts'],['shNames','names'],['shPanel','panel'],['shControls','controls']].forEach(([id,k])=>{if(!$(id).checked)q.set(k,'0')});
+   if(frame&&!$('shShare').checked)q.set('share','0');
+   return base()+'?'+q.toString()}
+ function update(){const sz=$('shSize').value;$('shCustom').hidden=sz!=='custom';
+   const c=CASES.find(x=>x.id===$('shCase').value)||CASE,src=esc(url(true)),title=esc('Family business case: '+c.company.split(':')[0]);
+   const attrs=`src="${src}" title="${title}" allow="fullscreen; autoplay" allowfullscreen loading="lazy"`;
+   let code;
+   if(sz==='fluid')code=`<div style="position:relative;width:100%;aspect-ratio:16/10;min-height:480px">\n  <iframe ${attrs} style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:8px"></iframe>\n</div>`;
+   else{let[w,h]=sz==='custom'?[+$('shW').value||960,+$('shH').value||600]:sz.split('x').map(Number);w=Math.max(320,Math.min(3840,w));h=Math.max(300,Math.min(2160,h));
+     code=`<iframe ${attrs} width="${w}" height="${h}" style="max-width:100%;border:0;border-radius:8px"></iframe>`}
+   $('shCode').value=code;$('shLink').value=url(false);$('shOpen').href=url(false)}
+ bg.addEventListener('input',update);bg.addEventListener('change',update);
+ const copy=(el,btn)=>{const done=()=>{const t=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=t,1400)};
+   const old=()=>{el.select();try{document.execCommand('copy');done()}catch(e){}};
+   if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(el.value).then(done,old);else old()};
+ $('shCopyCode').onclick=()=>copy($('shCode'),$('shCopyCode'));$('shCopyLink').onclick=()=>copy($('shLink'),$('shCopyLink'));
+ [$('shCode'),$('shLink')].forEach(el=>el.addEventListener('focus',()=>el.select()));
+ let back=null;
+ const close=()=>{bg.hidden=true;if(back&&back.focus)back.focus()};
+ function open(){back=document.activeElement;$('shCase').value=CASE.id;
+   $('sh3d').checked=use3D||(prefer3D&&!has3D());$('shCloseups').checked=closeups;$('shThoughts').checked=thoughtsOn;$('shNames').checked=namesOn;
+   $('shVoices').checked=!document.getElementById('voiceBtn').classList.contains('muted');
+   update();bg.hidden=false;$('shCase').focus()}
+ bg.querySelector('.shx').onclick=close;
+ bg.addEventListener('click',e=>{if(e.target===bg)close()});
+ bg.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')close();
+   else if(e.key==='Tab'){const f=[...box.querySelectorAll('button,select,input,textarea,a[href]')].filter(x=>x.offsetParent);const a=f[0],z=f[f.length-1];
+     if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}});
+ document.getElementById('shareBtn').onclick=e=>{e.stopPropagation();open()}}
 
-window.addEventListener('keydown',e=>{if(mode!=='scene'||document.activeElement.tagName==='INPUT')return;
+window.addEventListener('keydown',e=>{if(mode!=='scene'||/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)||!document.getElementById('shareBg').hidden)return;
   if(e.key===' '||e.key==='ArrowRight'){e.preventDefault();skipBeat()}
   else if(e.key==='ArrowLeft'){e.preventDefault();prevBeat()}});
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{if(b.dataset.mode!==mode)setMode(b.dataset.mode)});
@@ -4266,7 +4367,7 @@ new ResizeObserver(()=>{resize();mode==='scene'?focusBoardroom(false):fit(false)
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readTheme);
 {const inV=o=>o.x0>=-.3&&o.y0>=-.3&&o.x1<=W+.3&&o.y1<=H+.3;const keep=D.filter(inV);D.length=0;keep.forEach(o=>D.push(o));
  const ks=SHADOWS.filter(sh=>sh.r?sh.r[2]<=W+.3&&sh.r[3]<=H+.3:sh.e[0]<=W&&sh.e[1]<=H);SHADOWS.length=0;ks.forEach(x=>SHADOWS.push(x));}
-{let c0='lindqvist';try{c0=localStorage.getItem('fbsim.case2')||c0}catch(e){}loadCase(c0)}readTheme();resize();makeScene();focusBoardroom(false);openCase(CASE.id,true);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{floorCache=null});requestAnimationFrame(frame);
+{let c0='lindqvist';try{c0=localStorage.getItem('fbsim.case2')||c0}catch(e){}const q=URLQ.get('case');if(q&&CASES.some(c=>c.id===q))c0=q;loadCase(c0)}readTheme();resize();makeScene();focusBoardroom(false);openCase(CASE.id,true);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{floorCache=null});requestAnimationFrame(frame);
 })();
 </script>
 </body>
