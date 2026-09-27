@@ -1,0 +1,61 @@
+{
+ "id": "nygaard",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/nygaard.vpk",
+   "size": 739305,
+   "enc": "",
+   "n": 55
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "lobby",
+  "people": {
+   "ingrid_n": "models/cast/W30_01_Sofia.glb.gz",
+   "mats": "models/cast/M20_02_Oskar.glb.gz"
+  },
+  "room": {
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "compact_sofa": "models/props/compact_sofa.glb.gz",
+   "laptop": "models/props/laptop.glb.gz"
+  },
+  "images": {
+   "next_voyage": "models/images/next_voyage.jpg.gz"
+  },
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/W30_01_Sofia.glb.gz",
+    "size": 711375
+   },
+   {
+    "path": "models/cast/M20_02_Oskar.glb.gz",
+    "size": 689324
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/compact_sofa.glb.gz",
+    "size": 1269
+   },
+   {
+    "path": "models/props/laptop.glb.gz",
+    "size": 834
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   },
+   {
+    "path": "models/images/next_voyage.jpg.gz",
+    "size": 305687
+   }
+  ]
+ }
+}

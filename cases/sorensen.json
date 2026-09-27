@@ -1,0 +1,75 @@
+{
+ "id": "sorensen",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/sorensen.vpk",
+   "size": 891672,
+   "enc": "",
+   "n": 65
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "copen",
+  "people": {
+   "lars": "models/cast/M50_02_Thomas.glb.gz",
+   "anna": "models/cast/W20_04_Elin.glb.gz",
+   "mikkel": "models/cast/M30_02_Erik.glb.gz"
+  },
+  "room": {
+   "chair_A_wood": "models/props/chair_A_wood.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "coffee_mug": "models/props/coffee_mug.glb.gz",
+   "laptop": "models/props/laptop.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/M50_02_Thomas.glb.gz",
+    "size": 735963
+   },
+   {
+    "path": "models/cast/W20_04_Elin.glb.gz",
+    "size": 725699
+   },
+   {
+    "path": "models/cast/M30_02_Erik.glb.gz",
+    "size": 676475
+   },
+   {
+    "path": "models/props/chair_A_wood.glb.gz",
+    "size": 16764
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/coffee_mug.glb.gz",
+    "size": 994
+   },
+   {
+    "path": "models/props/laptop.glb.gz",
+    "size": 834
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}

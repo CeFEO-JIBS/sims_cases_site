@@ -1,0 +1,170 @@
+{
+ "id": "sjostrand",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/sjostrand.vpk",
+   "size": 864770,
+   "enc": "",
+   "n": 54
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "julbord",
+  "people": {
+   "nils": "models/cast/M60_04_Bengt.glb.gz",
+   "gunnar": "models/cast/M60_03_Gunnar.glb.gz",
+   "sara": "models/cast/W30_04_Hanna.glb.gz",
+   "david": "models/cast/M30_03_Anders.glb.gz",
+   "birgitta": "models/cast/W60_02_Birgitta.glb.gz",
+   "margareta": "models/cast/W60_03_Kristina.glb.gz",
+   "elsa": "models/cast/W20_02_Freja.glb.gz",
+   "olle": "models/cast/M20_01_Emil.glb.gz",
+   "jonas": "models/cast/M40_01_Magnus.glb.gz",
+   "maja": "models/cast/W30_03_Maja.glb.gz"
+  },
+  "room": {
+   "chair_A_wood": "models/props/chair_A_wood.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "cabinet_medium": "models/props/cabinet_medium.glb.gz",
+   "christmas_tree_decorated": "models/props/christmas_tree_decorated.glb.gz",
+   "present_A_red": "models/props/present_A_red.glb.gz",
+   "present_B_green": "models/props/present_B_green.glb.gz",
+   "present_C_white": "models/props/present_C_white.glb.gz",
+   "present_sphere_A_yellow": "models/props/present_sphere_A_yellow.glb.gz",
+   "wreath": "models/props/wreath.glb.gz",
+   "bell_decorated": "models/props/bell_decorated.glb.gz",
+   "gingerbread_house_decorated": "models/props/gingerbread_house_decorated.glb.gz",
+   "chair_large_red": "models/props/chair_large_red.glb.gz",
+   "footstool_red": "models/props/footstool_red.glb.gz",
+   "plate_decorated_B": "models/props/plate_decorated_B.glb.gz",
+   "candycane_small": "models/props/candycane_small.glb.gz",
+   "gingerbread_man": "models/props/gingerbread_man.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/M60_04_Bengt.glb.gz",
+    "size": 665301
+   },
+   {
+    "path": "models/cast/M60_03_Gunnar.glb.gz",
+    "size": 714427
+   },
+   {
+    "path": "models/cast/W30_04_Hanna.glb.gz",
+    "size": 692262
+   },
+   {
+    "path": "models/cast/M30_03_Anders.glb.gz",
+    "size": 718876
+   },
+   {
+    "path": "models/cast/W60_02_Birgitta.glb.gz",
+    "size": 697849
+   },
+   {
+    "path": "models/cast/W60_03_Kristina.glb.gz",
+    "size": 710947
+   },
+   {
+    "path": "models/cast/W20_02_Freja.glb.gz",
+    "size": 724146
+   },
+   {
+    "path": "models/cast/M20_01_Emil.glb.gz",
+    "size": 705531
+   },
+   {
+    "path": "models/cast/M40_01_Magnus.glb.gz",
+    "size": 750438
+   },
+   {
+    "path": "models/cast/W30_03_Maja.glb.gz",
+    "size": 689402
+   },
+   {
+    "path": "models/props/chair_A_wood.glb.gz",
+    "size": 16764
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/cabinet_medium.glb.gz",
+    "size": 18311
+   },
+   {
+    "path": "models/props/christmas_tree_decorated.glb.gz",
+    "size": 283127
+   },
+   {
+    "path": "models/props/present_A_red.glb.gz",
+    "size": 25416
+   },
+   {
+    "path": "models/props/present_B_green.glb.gz",
+    "size": 25274
+   },
+   {
+    "path": "models/props/present_C_white.glb.gz",
+    "size": 25454
+   },
+   {
+    "path": "models/props/present_sphere_A_yellow.glb.gz",
+    "size": 27418
+   },
+   {
+    "path": "models/props/wreath.glb.gz",
+    "size": 63468
+   },
+   {
+    "path": "models/props/bell_decorated.glb.gz",
+    "size": 36719
+   },
+   {
+    "path": "models/props/gingerbread_house_decorated.glb.gz",
+    "size": 85868
+   },
+   {
+    "path": "models/props/chair_large_red.glb.gz",
+    "size": 33937
+   },
+   {
+    "path": "models/props/footstool_red.glb.gz",
+    "size": 18998
+   },
+   {
+    "path": "models/props/plate_decorated_B.glb.gz",
+    "size": 32941
+   },
+   {
+    "path": "models/props/candycane_small.glb.gz",
+    "size": 18050
+   },
+   {
+    "path": "models/props/gingerbread_man.glb.gz",
+    "size": 29219
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}

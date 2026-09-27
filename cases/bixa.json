@@ -1,0 +1,200 @@
+{
+ "id": "bixa",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/bixa.vpk",
+   "size": 1649463,
+   "enc": "",
+   "n": 103
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "bixa",
+  "people": {
+   "anders": "models/cast/M50_01_Lars.glb.gz",
+   "max": "models/cast/M30_01_Johan.glb.gz",
+   "thomas": "models/cast/M20_03_Lukas.glb.gz",
+   "lovisa": "models/cast/W30_01_Sofia.glb.gz",
+   "karin": "models/cast/W50_04_Susanne.glb.gz"
+  },
+  "room": {
+   "chair_A_wood": "models/props/chair_A_wood.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "cabinet_medium": "models/props/cabinet_medium.glb.gz",
+   "book_set": "models/props/book_set.glb.gz",
+   "book_single": "models/props/book_single.glb.gz",
+   "lamp_table": "models/props/lamp_table.glb.gz",
+   "pictureframe_standing_B": "models/props/pictureframe_standing_B.glb.gz",
+   "cactus_small_A": "models/props/cactus_small_A.glb.gz",
+   "cactus_small_B": "models/props/cactus_small_B.glb.gz",
+   "cabinet_small": "models/props/cabinet_small.glb.gz",
+   "lamp_standing": "models/props/lamp_standing.glb.gz",
+   "pillow_A": "models/props/pillow_A.glb.gz",
+   "pillow_B": "models/props/pillow_B.glb.gz",
+   "chair_large_red": "models/props/chair_large_red.glb.gz",
+   "chair_large_brown": "models/props/chair_large_brown.glb.gz",
+   "train_locomotive": "models/props/train_locomotive.glb.gz",
+   "train_wagon": "models/props/train_wagon.glb.gz",
+   "chair_large_green": "models/props/chair_large_green.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "laptop": "models/props/laptop.glb.gz",
+   "coffee_mug": "models/props/coffee_mug.glb.gz",
+   "ceramic_vase": "models/props/ceramic_vase.glb.gz",
+   "woven_basket": "models/props/woven_basket.glb.gz",
+   "slim_floor_lamp": "models/props/slim_floor_lamp.glb.gz",
+   "serving_trolley": "models/props/serving_trolley.glb.gz",
+   "nordic_lounge_chair": "models/props/nordic_lounge_chair.glb.gz",
+   "compact_sofa": "models/props/compact_sofa.glb.gz",
+   "rectangular_dining_table_6": "models/props/rectangular_dining_table_6.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/M50_01_Lars.glb.gz",
+    "size": 699901
+   },
+   {
+    "path": "models/cast/M30_01_Johan.glb.gz",
+    "size": 670462
+   },
+   {
+    "path": "models/cast/M20_03_Lukas.glb.gz",
+    "size": 677322
+   },
+   {
+    "path": "models/cast/W30_01_Sofia.glb.gz",
+    "size": 711375
+   },
+   {
+    "path": "models/cast/W50_04_Susanne.glb.gz",
+    "size": 682526
+   },
+   {
+    "path": "models/props/chair_A_wood.glb.gz",
+    "size": 16764
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/cabinet_medium.glb.gz",
+    "size": 18311
+   },
+   {
+    "path": "models/props/book_set.glb.gz",
+    "size": 14568
+   },
+   {
+    "path": "models/props/book_single.glb.gz",
+    "size": 12180
+   },
+   {
+    "path": "models/props/lamp_table.glb.gz",
+    "size": 16965
+   },
+   {
+    "path": "models/props/pictureframe_standing_B.glb.gz",
+    "size": 12620
+   },
+   {
+    "path": "models/props/cactus_small_A.glb.gz",
+    "size": 15440
+   },
+   {
+    "path": "models/props/cactus_small_B.glb.gz",
+    "size": 15469
+   },
+   {
+    "path": "models/props/cabinet_small.glb.gz",
+    "size": 16388
+   },
+   {
+    "path": "models/props/lamp_standing.glb.gz",
+    "size": 16048
+   },
+   {
+    "path": "models/props/pillow_A.glb.gz",
+    "size": 11992
+   },
+   {
+    "path": "models/props/pillow_B.glb.gz",
+    "size": 11992
+   },
+   {
+    "path": "models/props/chair_large_red.glb.gz",
+    "size": 33937
+   },
+   {
+    "path": "models/props/chair_large_brown.glb.gz",
+    "size": 33983
+   },
+   {
+    "path": "models/props/train_locomotive.glb.gz",
+    "size": 49702
+   },
+   {
+    "path": "models/props/train_wagon.glb.gz",
+    "size": 41913
+   },
+   {
+    "path": "models/props/chair_large_green.glb.gz",
+    "size": 34044
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/laptop.glb.gz",
+    "size": 834
+   },
+   {
+    "path": "models/props/coffee_mug.glb.gz",
+    "size": 994
+   },
+   {
+    "path": "models/props/ceramic_vase.glb.gz",
+    "size": 974
+   },
+   {
+    "path": "models/props/woven_basket.glb.gz",
+    "size": 1009
+   },
+   {
+    "path": "models/props/slim_floor_lamp.glb.gz",
+    "size": 1523
+   },
+   {
+    "path": "models/props/serving_trolley.glb.gz",
+    "size": 2012
+   },
+   {
+    "path": "models/props/nordic_lounge_chair.glb.gz",
+    "size": 1443
+   },
+   {
+    "path": "models/props/compact_sofa.glb.gz",
+    "size": 1269
+   },
+   {
+    "path": "models/props/rectangular_dining_table_6.glb.gz",
+    "size": 1001
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}

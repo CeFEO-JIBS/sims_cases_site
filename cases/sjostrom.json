@@ -1,0 +1,90 @@
+{
+ "id": "sjostrom",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/sjostrom.vpk",
+   "size": 905093,
+   "enc": "",
+   "n": 66
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "malaren",
+  "people": {
+   "claudia": "models/cast/W40_03_Helena.glb.gz",
+   "vero": "models/cast/W30_02_Ida.glb.gz",
+   "helena": "models/cast/W50_01_Eva.glb.gz",
+   "oskar": "models/cast/M20_02_Oskar.glb.gz",
+   "linnea": "models/cast/W20_02_Freja.glb.gz"
+  },
+  "room": {
+   "chair_A_wood": "models/props/chair_A_wood.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "compact_sofa": "models/props/compact_sofa.glb.gz",
+   "nordic_lounge_chair": "models/props/nordic_lounge_chair.glb.gz",
+   "slim_floor_lamp": "models/props/slim_floor_lamp.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/W40_03_Helena.glb.gz",
+    "size": 695386
+   },
+   {
+    "path": "models/cast/W30_02_Ida.glb.gz",
+    "size": 715252
+   },
+   {
+    "path": "models/cast/W50_01_Eva.glb.gz",
+    "size": 695228
+   },
+   {
+    "path": "models/cast/M20_02_Oskar.glb.gz",
+    "size": 689324
+   },
+   {
+    "path": "models/cast/W20_02_Freja.glb.gz",
+    "size": 724146
+   },
+   {
+    "path": "models/props/chair_A_wood.glb.gz",
+    "size": 16764
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/compact_sofa.glb.gz",
+    "size": 1269
+   },
+   {
+    "path": "models/props/nordic_lounge_chair.glb.gz",
+    "size": 1443
+   },
+   {
+    "path": "models/props/slim_floor_lamp.glb.gz",
+    "size": 1523
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}
