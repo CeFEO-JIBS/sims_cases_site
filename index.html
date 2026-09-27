@@ -247,7 +247,7 @@ canvas.e3d{z-index:-1}
         <button id="meetBtn" class="primary">Call board meeting</button>
         <button id="castBtn">Meet the cast</button>
         <button id="camBtn" class="on">Close-ups</button>
-        <button id="thinkBtn" class="on">Thoughts</button><button id="figBtn" title="Switch between the classic figures and the new draft style">Classic figures</button>
+        <button id="thinkBtn" class="on">Thoughts</button><button id="figBtn" title="Switch between the 3D room and the classic room" style="display:none">Classic room</button>
         <button id="replayBtn" class="primary">Start over</button>
         <button id="closeCaseBtn">Close case</button>
       </div>
@@ -301,7 +301,7 @@ const cam={zoom:1,px:0,py:0}; let camAnim=null;
 // the classic room. cases/<id>.json lists the files and their sizes.
 let E3D=null,use3D=false,lastRaw=0,syncFig=()=>{};
 // the learner's choice of room for cases that have a 3D one (the figures button switches it)
-let prefer3D=true;try{if(localStorage.getItem('fbsim.room')==='2d')prefer3D=false}catch(e){}
+let prefer3D=true;                                  // every visit opens in 3D; the button switches for this visit only
 const has3D=()=>!!(E3D&&E3D.has(CASE.id)&&(ASSETS.ready[CASE.id]||{}).threeD);
 const ASSETS={ready:{},loading:null};
 const loadBox=(()=>{const el=document.createElement('div');el.className='loadbox';el.hidden=true;
@@ -1444,7 +1444,7 @@ function personDrawable(p){
 // Adult proportions (about 7.5 heads), built as simple 3D forms (ellipsoids and capsules) and projected with the
 // room's own 2:1 view, so a figure can turn in any direction. The body always faces the table; the head turns
 // toward the speaker, and toward the viewer while speaking. Units are centimetres; S maps them to canvas units.
-let FIG='v1';try{if(localStorage.getItem('fbsim.fig3')==='v2')FIG='v2'}catch(e){}
+let FIG='v1';                                       // the classic figures; the v2 draft renderer stays in the code, unused
 const V2S=1.5,V2K=.70711*V2S,V2C=.86603*V2S;
 const v2V=[.61237,.61237,.5];                       // unit vector from the figure toward the viewer (world x, y, z)
 function v2scr(w){return[(w[0]-w[1])*V2K,(w[0]+w[1])*V2K*.5-w[2]*V2C]}
@@ -4198,17 +4198,15 @@ document.getElementById('castBtn').onclick=()=>replayMeet();
  let c0=false;try{c0=localStorage.getItem('fbsim.ctl')==='closed'}catch(e){}set(c0);
  tg.onclick=e=>{e.stopPropagation();set(!box.classList.contains('collapsed'))}}
 document.getElementById('camBtn').onclick=e=>{closeups=!closeups;e.target.classList.toggle('on',closeups);if(!closeups)focusBoardroom(true)};
-// In a case with a 3D room the button switches between the 3D room and the classic one; elsewhere
-// it switches the classic figures' style, as before.
+// The button switches between the 3D room and the classic room. Where there is no 3D room (no WebGL,
+// a failed download, the single-file page) there is nothing to switch, and it hides.
 {const fb=document.getElementById('figBtn');
-  const sync=()=>{if(has3D()){fb.classList.remove('on');fb.textContent=use3D?'Classic room':'3D room';fb.title='Switch between the 3D room and the classic room'}
-    else{fb.classList.toggle('on',FIG==='v2');fb.textContent=FIG==='v2'?'New style (draft)':'Classic figures';fb.title='Switch between the classic figures and the new draft style'}};
+  const sync=()=>{const on=has3D();fb.style.display=on?'':'none';fb.classList.remove('on');
+    fb.textContent=use3D?'Classic room':'3D room';fb.title='Switch between the 3D room and the classic room'};
   syncFig=sync;sync();
-  fb.onclick=()=>{
-    if(has3D()){prefer3D=!use3D;try{localStorage.setItem('fbsim.room',prefer3D?'3d':'2d')}catch(e){}
-      if(!prefer3D&&E3D.portrait)E3D.shot(null,null,cam,vw,vh);
-      enable3D(prefer3D);if(!prefer3D)focusBoardroom(true);sync();return}
-    FIG=FIG==='v2'?'v1':'v2';try{localStorage.setItem('fbsim.fig3',FIG)}catch(e){}people.forEach(p=>p._gm=null);sync()}}
+  fb.onclick=()=>{if(!has3D())return;prefer3D=!use3D;
+    if(!prefer3D&&E3D.portrait)E3D.shot(null,null,cam,vw,vh);
+    enable3D(prefer3D);if(!prefer3D)focusBoardroom(true);sync()}}
 document.getElementById('thinkBtn').onclick=e=>{thoughtsOn=!thoughtsOn;e.target.classList.toggle('on',thoughtsOn);if(!thoughtsOn)people.forEach(p=>p.thought=null)};
 
 window.addEventListener('keydown',e=>{if(mode==='scene'&&(e.key===' '||e.key==='ArrowRight')&&document.activeElement.tagName!=='INPUT'){e.preventDefault();skipBeat()}});
