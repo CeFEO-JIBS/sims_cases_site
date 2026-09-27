@@ -1551,6 +1551,9 @@ export function create(stage){
       else if(!(a.clipKey.startsWith('nod') && a.cur && a.cur.isRunning()))
         play(a, 'idle'+S, S ? clips.Listening : a.own.Idle_A, S ? MOTION : 1);
       a.react = p.react;
+      // undo last frame's head turn first: a clip that does not key the head (Walking_A) leaves it in place,
+      // and turns applied on top of each other spin the head right round
+      if(a.head && a.yawQ){ a.head.quaternion.premultiply(a.yawQ.invert()); a.yawQ = null }
       a.mx.update(dtA);
       if(a.base){ a.baseW += (a.baseWant - a.baseW)*Math.min(1, dtA*8); a.base.setEffectiveWeight(S ? a.baseW : 0) }
       // --- face: an emote beats a thought beats the mood
@@ -1577,7 +1580,7 @@ export function create(stage){
         a.yaw += (yaw - a.yaw) * Math.min(1, dtA*3.5);
         if(Math.abs(a.yaw) > .004){ const pq = new THREE.Quaternion(); a.head.parent.getWorldQuaternion(pq);
           const axis = new THREE.Vector3(0,1,0).applyQuaternion(pq.invert()).normalize();
-          a.head.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(axis, a.yaw)) }
+          a.yawQ = new THREE.Quaternion().setFromAxisAngle(axis, a.yaw); a.head.quaternion.premultiply(a.yawQ.clone()) }
       }
     }
     clearShot();
