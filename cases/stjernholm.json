@@ -1,0 +1,85 @@
+{
+ "id": "stjernholm",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/stjernholm.vpk",
+   "size": 1117741,
+   "enc": "",
+   "n": 28
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "farm",
+  "people": {
+   "kerstin_s": "models/cast/W60_02_Birgitta.glb.gz",
+   "sara_s": "models/cast/W30_03_Maja.glb.gz",
+   "elin_s": "models/cast/W30_01_Sofia.glb.gz",
+   "leo_s": "models/cast/M20_02_Oskar.glb.gz"
+  },
+  "room": {
+   "chair_A_wood": "models/props/chair_A_wood.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "coffee_mug": "models/props/coffee_mug.glb.gz",
+   "woven_basket": "models/props/woven_basket.glb.gz",
+   "throw_blanket_folded": "models/props/throw_blanket_folded.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/W60_02_Birgitta.glb.gz",
+    "size": 697849
+   },
+   {
+    "path": "models/cast/W30_03_Maja.glb.gz",
+    "size": 689402
+   },
+   {
+    "path": "models/cast/W30_01_Sofia.glb.gz",
+    "size": 711375
+   },
+   {
+    "path": "models/cast/M20_02_Oskar.glb.gz",
+    "size": 689324
+   },
+   {
+    "path": "models/props/chair_A_wood.glb.gz",
+    "size": 16764
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/coffee_mug.glb.gz",
+    "size": 994
+   },
+   {
+    "path": "models/props/woven_basket.glb.gz",
+    "size": 1009
+   },
+   {
+    "path": "models/props/throw_blanket_folded.glb.gz",
+    "size": 657
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}

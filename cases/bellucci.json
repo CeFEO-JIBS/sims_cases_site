@@ -1,0 +1,150 @@
+{
+ "id": "bellucci",
+ "voices": [
+  {
+   "pack": true,
+   "path": "voices/bellucci.vpk",
+   "size": 1500055,
+   "enc": "",
+   "n": 33
+  }
+ ],
+ "models": {
+  "enc": "gz",
+  "layout": "bellucci",
+  "people": {
+   "antonio_b": "models/cast/M70_02_Nils.glb.gz",
+   "marco_b": "models/cast/M50_01_Lars.glb.gz",
+   "isabella_b": "models/cast/W40_03_Helena.glb.gz",
+   "sophia_b": "models/cast/W30_02_Ida.glb.gz",
+   "luca_b": "models/cast/M20_04_Viktor.glb.gz"
+  },
+  "room": {
+   "chair_A": "models/props/chair_A.glb.gz",
+   "table_medium_long": "models/props/table_medium_long.glb.gz",
+   "rug_rectangle_B": "models/props/rug_rectangle_B.glb.gz",
+   "cabinet_medium": "models/props/cabinet_medium.glb.gz",
+   "book_set": "models/props/book_set.glb.gz",
+   "book_single": "models/props/book_single.glb.gz",
+   "lamp_table": "models/props/lamp_table.glb.gz",
+   "pictureframe_standing_B": "models/props/pictureframe_standing_B.glb.gz",
+   "cactus_small_A": "models/props/cactus_small_A.glb.gz",
+   "cactus_small_B": "models/props/cactus_small_B.glb.gz",
+   "cabinet_small": "models/props/cabinet_small.glb.gz",
+   "large_nordic_window": "models/props/large_nordic_window.glb.gz",
+   "door_light_oak": "models/props/door_light_oak.glb.gz",
+   "laptop": "models/props/laptop.glb.gz",
+   "coffee_mug": "models/props/coffee_mug.glb.gz",
+   "ceramic_vase": "models/props/ceramic_vase.glb.gz",
+   "woven_basket": "models/props/woven_basket.glb.gz",
+   "slim_floor_lamp": "models/props/slim_floor_lamp.glb.gz",
+   "serving_trolley": "models/props/serving_trolley.glb.gz"
+  },
+  "images": {},
+  "clips": [
+   "models/clips/meeting.glb.gz"
+  ],
+  "files": [
+   {
+    "path": "models/cast/M70_02_Nils.glb.gz",
+    "size": 727463
+   },
+   {
+    "path": "models/cast/M50_01_Lars.glb.gz",
+    "size": 699901
+   },
+   {
+    "path": "models/cast/W40_03_Helena.glb.gz",
+    "size": 695386
+   },
+   {
+    "path": "models/cast/W30_02_Ida.glb.gz",
+    "size": 715252
+   },
+   {
+    "path": "models/cast/M20_04_Viktor.glb.gz",
+    "size": 725445
+   },
+   {
+    "path": "models/props/chair_A.glb.gz",
+    "size": 16745
+   },
+   {
+    "path": "models/props/table_medium_long.glb.gz",
+    "size": 13489
+   },
+   {
+    "path": "models/props/rug_rectangle_B.glb.gz",
+    "size": 11230
+   },
+   {
+    "path": "models/props/cabinet_medium.glb.gz",
+    "size": 18311
+   },
+   {
+    "path": "models/props/book_set.glb.gz",
+    "size": 14568
+   },
+   {
+    "path": "models/props/book_single.glb.gz",
+    "size": 12180
+   },
+   {
+    "path": "models/props/lamp_table.glb.gz",
+    "size": 16965
+   },
+   {
+    "path": "models/props/pictureframe_standing_B.glb.gz",
+    "size": 12620
+   },
+   {
+    "path": "models/props/cactus_small_A.glb.gz",
+    "size": 15440
+   },
+   {
+    "path": "models/props/cactus_small_B.glb.gz",
+    "size": 15469
+   },
+   {
+    "path": "models/props/cabinet_small.glb.gz",
+    "size": 16388
+   },
+   {
+    "path": "models/props/large_nordic_window.glb.gz",
+    "size": 1162
+   },
+   {
+    "path": "models/props/door_light_oak.glb.gz",
+    "size": 1271
+   },
+   {
+    "path": "models/props/laptop.glb.gz",
+    "size": 834
+   },
+   {
+    "path": "models/props/coffee_mug.glb.gz",
+    "size": 994
+   },
+   {
+    "path": "models/props/ceramic_vase.glb.gz",
+    "size": 974
+   },
+   {
+    "path": "models/props/woven_basket.glb.gz",
+    "size": 1009
+   },
+   {
+    "path": "models/props/slim_floor_lamp.glb.gz",
+    "size": 1523
+   },
+   {
+    "path": "models/props/serving_trolley.glb.gz",
+    "size": 2012
+   },
+   {
+    "path": "models/clips/meeting.glb.gz",
+    "size": 101296
+   }
+  ]
+ }
+}
