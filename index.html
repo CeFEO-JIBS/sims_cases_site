@@ -4193,7 +4193,7 @@ const JB_BASE=[
  {cap:'He nods towards the screen.',who:'massimo',say:'But live cases hit three walls. The topics are sensitive: succession, money, siblings who stopped speaking. Time is short. And they don’t scale: one family, twenty students, once.',to:'table',gest:{massimo:'talk'}},
  {who:'mans',say:'So what changes?',to:'massimo'},
  {who:'massimo',say:'AI lets us build a family that students can question. It answers, it remembers, and it holds things back. Every student gets their own board meeting.',to:'mans',gest:{massimo:'talk'}},
- {cap:'Måns has five minutes before the next agenda item. What should he ask next?',look:{all:'mans',mans:'table'},dur:6}];
+ {who:'mans',say:'Massimo, you have five minutes… show me how it works.',to:'massimo'}];
 const JIBS={
  id:'jibs',name:'The JIBS boardroom',company:'The question at the table',sub:'A mini case in one minute: live cases, their limits, and what AI changes',
  blurb:'In the JIBS boardroom, Måns, rector of Jönköping University, asks Massimo for one place where AI already changes education. Massimo starts from the case method: mini cases in class, live cases as the best of all, and the three walls live cases hit (sensitive topics, limited time, no scale). AI, he argues, can take some of those walls down.',
@@ -4209,8 +4209,8 @@ const JIBS={
   ['mans','Måns. Rector of Jönköping University. He wants examples, not promises.','Rector · Jönköping University'],
   ['massimo','Massimo. Professor at JIBS. He teaches family business, mostly through cases.','Professor · JIBS'],
   ['ulrika_j','Ulrika Berg. A member of the board.','Board member']],
- questions:['What should Måns ask next?','Which of the three walls of live cases (sensitive topics, limited time, no scale) matters most in your own teaching?','What can a student learn by questioning an AI family that a written case cannot teach? And what might they learn wrong?','Where should the line run between a simulated family and a real one?'],
- endings:{watch:'A case about cases: a minute at the table, three walls around the live case, and a family that students can question. What should Måns ask next?'},
+ questions:['You have five minutes to show Måns how it works. What do you show him?','Which of the three walls of live cases (sensitive topics, limited time, no scale) matters most in your own teaching?','What can a student learn by questioning an AI family that a written case cannot teach? And what might they learn wrong?','Where should the line run between a simulated family and a real one?'],
+ endings:{watch:'A case about cases: a minute at the table, three walls around the live case, and a family that students can question. Måns gives Massimo five minutes to show how it works.'},
  prompt:{kind:'university board meeting',lead:'The rector and members of the board are discussing',place:'the boardroom of Jönköping International Business School, a Thursday morning',issue:'examples of AI in education: the case method, mini cases in class, the value and the limits of live cases (sensitive topics, limited time, no scale), and AI-simulated families that students can question',dyn:'Måns, rector of Jönköping University, wants concrete examples rather than promises; Massimo, a professor who teaches family business through cases, argues that AI can take down some of the walls around live cases; Ulrika Berg, a board member, asks the follow-up questions',voice:'whether everyone at the table is heard',board:'whether the board sees a concrete use of AI',trust:'a shared understanding of what AI can and cannot do in teaching'},
  place:'Business education · AI and the case method',
 };
