@@ -4,7 +4,7 @@
   {
    "pack": true,
    "path": "voices/jibs.vpk",
-   "size": 456269,
+   "size": 430061,
    "enc": "",
    "n": 14
   }
@@ -54,7 +54,7 @@
    },
    {
     "path": "models/cast/M_CUSTOM_Massimo.glb.gz",
-    "size": 746496
+    "size": 746484
    },
    {
     "path": "models/cast/W60_03_Kristina.glb.gz",
