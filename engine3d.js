@@ -241,6 +241,11 @@ export function create(stage){
       m.position.y = len/2 - .02; p.add(m); p.position.z = .046; g.add(p); return p };
     clockHands = {h: hand(r*.5, .018), m: hand(r*.75, .012)};
   }
+  // a piece drawn from pictures (a.imgs) repaints once they have decoded
+  function artLoaded(a, g, w, h, t){
+    for(const im of a.imgs||[]) if(!(im.complete && im.naturalWidth))
+      im.addEventListener('load', () => { g.clearRect(0, 0, w, h); a.draw(g, w, h); t.needsUpdate = true }, {once:true});
+  }
   // a piece of the classic room's wall art on the left wall (x = 0): {y0, y1, z0, z1, draw(g, w, h)}
   // in 2D wall units, 32 per tile along the wall and 39.2 per tile up. Its left edge is at y1.
   function wallArt(a){
@@ -248,6 +253,7 @@ export function create(stage){
     const c = document.createElement('canvas'); c.width = Math.ceil(w*S); c.height = Math.ceil(h*S);
     const g = c.getContext('2d'); g.scale(S, S); a.draw(g, w, h);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    artLoaded(a, g, w, h, t);
     const y0 = a.z0/39.2, y1 = a.z1/39.2;
     slab(.005, a.y0, .035, a.y1, y0, y1, '#3A2E24', .6);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(a.y1-a.y0, y1-y0), new THREE.MeshStandardMaterial({map:t, roughness:.7}));
@@ -339,6 +345,7 @@ export function create(stage){
     const c = document.createElement('canvas'); c.width = Math.ceil(w*S); c.height = Math.ceil(h*S);
     const g = c.getContext('2d'); g.scale(S, S); a.draw(g, w, h);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    artLoaded(a, g, w, h, t);
     const y0 = a.z0/39.2, y1 = a.z1/39.2;
     slab(a.x0, .005, a.x1, .03, y0, y1, '#3A2E24', .6);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(a.x1-a.x0, y1-y0), new THREE.MeshStandardMaterial({map:t, roughness:.7}));
