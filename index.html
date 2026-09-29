@@ -776,6 +776,22 @@ ROOMSTYLES.bergstrom.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){           
   g.fillStyle='#C9A55A';g.save();g.translate(w*.52,h*.48);g.fillRect(-1.2,-14,2.4,26);g.fillStyle='#8A4A3A';g.fillRect(-2,4,4,10);g.restore();
   g.fillStyle='#B8BEC2';g.save();g.translate(w*.74,h*.5);g.rotate(.4);g.fillRect(-1.5,-12,3,22);g.fillRect(-5,-13,10,3);g.restore();
   g.fillStyle='#C9A55A';g.fillRect(w/2-12,h-9,24,4);g.fillStyle='#3A3028';g.font='bold 2.4px sans-serif';g.textAlign='center';g.fillText('BERGSTRÖM',w/2,h-6.2)}}];
+// Case 15: the JIBS boardroom: the default layout in university navy and pale oak, the slide of the three
+// walls around the live case on the screen, a city morning outside. Drawn by both rooms.
+ROOMSTYLES.jibs={...ROOMSTYLES.scandi,floor:'#C8B08A',tex:'wood',wall:['#EEF0F2','#F5F6F7','#E2E6EA','#D2D8DE'],base:['#2A3A4E','#223044'],wains:['#3A4E66','rgba(20,30,44,.4)'],
+  rugs:[[1.1,1.55,8.9,5.45,'#1F3A5A']],top:'#DCCDB0',leg:'#2A3A4E',chair:'#2A3A4E',glass:'#9AAAB8',win:'city',light:'day',decor:'jibs',
+  stage:'radial-gradient(ellipse at 50% 40%,#3E5670 0%,#24344A 60%,#141E2C 100%)',
+  slide(g,w,h){g.fillStyle='#F6F7F8';g.fillRect(0,0,w,h);g.fillStyle='#1F3A5A';g.fillRect(0,0,w,5);
+    g.fillStyle='#FFFFFF';g.font='bold 3px sans-serif';g.fillText('LIVE CASES: THREE WALLS',3,3.7);
+    [['Sensitive topics','#8A4A3A'],['Limited time','#C9A55A'],['No scale','#3F6E73']].forEach(([t,c],i)=>{const x=3+i*(w-6)/3,bw=(w-12)/3;
+      g.fillStyle=c;g.fillRect(x,8,bw,h-12);g.fillStyle='#FFFFFF';g.font='bold 2.4px sans-serif';const ws=t.split(' ');ws.forEach((wd,k)=>g.fillText(wd,x+1.5,12+k*3.2));
+      g.fillStyle='rgba(255,255,255,.55)';for(let k=0;k<3;k++)g.fillRect(x+1.5,h-10+k*2.2,bw-3-(k%2)*3,.8)})}};
+ROOMSTYLES.jibs.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){                            // the school's name on the back wall
+  g.fillStyle='#1F3A5A';g.fillRect(0,0,w,h);g.fillStyle='#24446A';g.fillRect(2,2,w-4,h-4);
+  g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=.6;g.beginPath();g.arc(w/2,h*.36,9,0,6.283);g.stroke();
+  g.fillStyle='#FFFFFF';g.font='bold 7px sans-serif';g.textAlign='center';g.fillText('JIBS',w/2,h*.36+2.5);
+  g.font='bold 2.2px sans-serif';g.fillText('JÖNKÖPING INTERNATIONAL',w/2,h*.66);g.fillText('BUSINESS SCHOOL',w/2,h*.66+3.2);
+  g.fillStyle='#C9A55A';g.fillRect(w/2-10,h*.78,20,.8)}}];
 ROOMSTYLES.julbord={floor:'#8A6040',tex:'wood',hall:'#7A6A5A',wall:['#EFE3CC','#F6EDDC','#E4D6BC','#D0C0A0'],base:['#2E4436','#263A2E'],wains:['#3E5A48','rgba(20,40,28,.5)'],
   rugs:[[1.1,1.55,8.9,5.45,'#7A2A28'],[.6,7.3,9.4,8.7,'#5E4A3C']],top:'#F6F3EC',leg:'#5A3A26',chair:'#7A2E2A',glass:'#22304C',win:'snow',decor:'julbord',pend:'#C9A55A',props:'julbord',light:'evening',
   glows:[[3.8,3.5,30,90,.3],[6.2,3.5,30,90,.3],[.7,3.5,12,90,.26],[9.1,1.1,40,80,.22],[3.6,3.5,82,70,.14],[5,3.5,82,70,.14],[6.4,3.5,82,70,.14]],
@@ -1295,7 +1311,7 @@ function drawWallDecor(w){
       ctx.fillStyle='#3E4A2E';ctx.fillRect(40,12,1.5,10);ctx.beginPath();ctx.ellipse(40.7,11,2,5,0,0,6.283);ctx.fill();});
     return}
   if(RS.decor==='julbord')return;
-  if(RS.decor==='summer'||RS.decor==='villa'||RS.decor==='farm'||RS.decor==='martinsson'||RS.decor==='hotel'||RS.decor==='bellucci'||RS.decor==='bergstrom')return;
+  if(RS.decor==='summer'||RS.decor==='villa'||RS.decor==='farm'||RS.decor==='martinsson'||RS.decor==='hotel'||RS.decor==='bellucci'||RS.decor==='bergstrom'||RS.decor==='jibs')return;
   if(RS.decor==='glass')return;
   if(w.o==='Y'){
     onY(w.y1,4.1,88,()=>{const u=1.8*32;ctx.fillStyle='#6E5540';ctx.fillRect(0,0,u,52);ctx.fillStyle='#EFE8DA';ctx.fillRect(3,3,u-6,46);
@@ -3840,6 +3856,7 @@ const CASE_KEYS={
  martinsson:['Jacob, nearly 70 and in declining health, built Martinsson AB into a leading automotive parts supplier, and has never talked about succession.','His signals, business trips and client relationships, point to Marcus, 34, a tech entrepreneur who does not want the role; Isabel, 38, a finance executive, feels sidelined.','At a board meeting Jacob turns to Marcus after Isabel’s strategy; afterwards the siblings finally talk, and that night agree to talk to their father together.','Themes: unspoken expectations, communication, sibling relations, the incumbent’s silence.'],
  bellucci:['The Bellucci Group grew from a tailor’s shop in Little Italy, founded in 1958, into a global fashion house; much of its production is outsourced to Asia.','At a family board meeting in New York, Sophia and Luca bring evidence that a supplier uses child labour and unsafe conditions, and propose reshoring to the U.S. at 20–30 percent higher cost.','Marco, the COO, and Isabella, head of logistics, defend the status quo; Antonio, 72, asks for a real plan, and asks Luca whether they can afford it.','Themes: business ethics and supply chains, reputation, generational values, strategy and communication to stakeholders.'],
  bergstrom:['Bergström Industries, a century-old Swedish maker of high-end industrial tools; traditional B2B sales have been stagnant for five years.','Sofia, the new Chief Strategy Officer, presents three options: platform partnerships, e-commerce, AI-integrated production; her father Erik, the CEO, sees a legacy at risk.','Her uncle Anders, the COO, proposes phasing it; then the question becomes who decides: the family council, or the family members active in the company.','Themes: digital transformation, tradition and legacy, governance of active and non-active owners.'],
+ jibs:['Måns, rector of Jönköping University, asks Massimo for one place where AI already changes education.','Massimo starts from the case method: mini cases in class, and live cases as the best of all.','Live cases hit three walls: sensitive topics, limited time, and no scale.','AI, he argues, lets students question a simulated family, each in their own board meeting.'],
  sjostrom:['Helena has managed her children’s trusts for years, and nearly emptied them.','She wants two consultants to present the news as a “technical briefing”.','The advisors believe the children must hear it from their mother.','Themes: accountability, the ethics of advising, governance of family trusts.'],
 };
 // ---------------------------------------------------------------- case 8: Eriksson Group, between legacy and innovation
@@ -4147,7 +4164,50 @@ const BERGSTROM={
  place:'Industrial tools · digital transformation',
 };
 
-const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,SJOSTROM,BIXA,STJERNHOLM,MARTINSSON,BELLUCCI,BERGSTROM];
+// ---------------------------------------------------------------- case 15: the JIBS boardroom, the question at the table
+const JB_CAST=[
+ {id:'mans',cloth:'pin',mug:'#1F3A5A',pocket:'#F4F2EE',age:60,eyes:'#4F7F9F',watch:'#C9CED2',first:'Måns',last:'',role:'Rector of Jönköping University',fam:false,seat:'b_h2',shirt:'#23303C',trous:'#262B31',skin:'#EBC5A5',hair:'#B8B2A8',hairType:'short',tie:'#1F3A5A',inner:'#EEF2F6',bio:'Rector of Jönköping University. He wants examples, not promises.'},
+ {id:'massimo',glasses:true,mug:'#1F3A5A',age:52,eyes:'#3D2E24',watch:'#2B2B2B',first:'Massimo',last:'',role:'Professor, JIBS',fam:false,seat:'b_n1',shirt:'#2E3A46',trous:'#262B31',skin:'#E8C4A4',hair:'#5A4A3E',hairType:'short',inner:'#F2F4F6',bio:'Professor at Jönköping International Business School. He teaches family business, mostly through cases.'},
+ {id:'ulrika_j',pads:true,fem:true,glasses:true,eyes:'#5B7A99',ear:'pearl',mug:'#1F3A5A',age:61,first:'Ulrika',last:'Berg',role:'Board member',fam:false,seat:'b_s1',shirt:'#3A4A5E',trous:'#2B2F36',skin:'#F2D4BC',hair:'#C9C2B6',hairType:'bob',inner:'#F4F4F2',bio:'A member of the board, and the one who asks the follow-up question.'},
+ {id:'ex_bengt',extra:true,cloth:'pin',age:66,eyes:'#4A6B8A',mug:'#1F3A5A',first:'Bengt',last:'Ahlgren',role:'Board member',fam:false,seat:'b_n0',shirt:'#3A3F4A',trous:'#262B31',skin:'#F0CFB4',hair:'#D6D2CA',hairType:'short',tie:'#5A2E2E',inner:'#EEF2F6',bio:'Board member.'},
+ {id:'ex_maria',extra:true,fem:true,age:54,eyes:'#3D2E24',ear:'gold',mug:'#1F3A5A',first:'Maria',last:'Kjellberg',role:'Board member',fam:false,seat:'b_s0',shirt:'#5A4A5E',trous:'#2B2F36',skin:'#F2D4BC',hair:'#6A4A34',hairType:'long',inner:'#F4F4F2',bio:'Board member.'},
+ {id:'ex_stefan',extra:true,casual:true,cloth:'knit',age:57,eyes:'#5B7A99',mug:'#1F3A5A',first:'Stefan',last:'Wiklund',role:'Board member',fam:false,seat:'b_n2',shirt:'#4A5A4E',trous:'#2E3440',skin:'#EBC5A5',hair:'#8A7E70',hairType:'short',inner:'#E8ECEF',bio:'Board member.'},
+ {id:'ex_helena',extra:true,fem:true,pads:true,age:46,eyes:'#4F7F9F',ear:'silver',mug:'#1F3A5A',first:'Helena',last:'Strand',role:'Board member',fam:false,seat:'b_s2',shirt:'#2F5A6E',trous:'#2B2F36',skin:'#F6E0CD',hair:'#B8A48A',hairType:'bun',inner:'#F4F6F8',bio:'Board member.'},
+ {id:'ex_nils',extra:true,cloth:'pin',age:71,eyes:'#4A6B8A',mug:'#1F3A5A',first:'Nils',last:'Ekman',role:'Board member',fam:false,seat:'b_n3',shirt:'#2F3A34',trous:'#262B31',skin:'#F0CFB4',hair:'#E2DDD4',hairType:'short',tie:'#2F4A5A',inner:'#EEF2F6',bio:'Board member.'},
+];
+const JB_BASE=[
+ {cap:'The JIBS boardroom, a Thursday morning. The coffee is going cold.',look:{all:'table'},dur:5},
+ {cap:'Måns, rector of Jönköping University, sits at the head of the table. Massimo sits halfway down, among six colleagues.',look:{all:'mans',mans:'table'},dur:7},
+ {who:'mans',say:'Everyone tells me AI will change education. Massimo, show me one place where it already does.',to:'massimo'},
+ {who:'massimo',say:'Start with how we teach. Business schools run on cases. In class we use mini cases like this one: a minute, a dilemma, a decision.',to:'mans',gest:{massimo:'talk'}},
+ {who:'ulrika_j',say:'And the best cases?',to:'massimo'},
+ {who:'massimo',say:'Live ones. A real family and a real firm, with a real problem in the room.',to:'ulrika_j'},
+ {cap:'He nods towards the screen.',who:'massimo',say:'But live cases hit three walls. The topics are sensitive: succession, money, siblings who stopped speaking. Time is short. And they don’t scale: one family, twenty students, once.',to:'table',gest:{massimo:'talk'}},
+ {who:'mans',say:'So what changes?',to:'massimo'},
+ {who:'massimo',say:'AI lets us build a family that students can question. It answers, it remembers, and it holds things back. Every student gets their own board meeting.',to:'mans',gest:{massimo:'talk'}},
+ {cap:'Måns has five minutes before the next agenda item. What should he ask next?',look:{all:'mans',mans:'table'},dur:6}];
+const JIBS={
+ id:'jibs',name:'The JIBS boardroom',company:'The question at the table',sub:'A mini case in one minute: live cases, their limits, and what AI changes',
+ blurb:'In the JIBS boardroom, Måns, rector of Jönköping University, asks Massimo for one place where AI already changes education. Massimo starts from the case method: mini cases in class, live cases as the best of all, and the three walls live cases hit (sensitive topics, limited time, no scale). AI, he argues, can take some of those walls down.',
+ arrive:'A Thursday morning at JIBS.',arriveShort:'The JIBS boardroom.',
+ room:'jibs',clock:{day:'Thursday',start:[8,30]},chair:'mans',hero:'massimo',ally:'ulrika_j',moods:{mans:'neutral',massimo:'neutral',ulrika_j:'neutral'},meetTitle:'Meet the table',
+ bystanders:{ex_bengt:'ex_maria',ex_maria:'ex_bengt',ex_stefan:'ex_helena',ex_helena:'ex_stefan',ex_nils:'ex_stefan'},
+ roles:[['watch','Watch the case','See the conversation play out as written in the case.']],
+ cast:JB_CAST,base:JB_BASE,decAt:{},decisions:{},
+ meters:[['voice','Everyone heard'],['board','A clear path'],['trust','Shared understanding']],
+ idle:{mans:['glasses','sip'],massimo:['pen','write'],ulrika_j:['glasses','write'],ex_bengt:['sip'],ex_maria:['write'],ex_stefan:['write'],ex_helena:['sip'],ex_nils:['glasses']},
+ react:{mans:{massimo:['nod']},ulrika_j:{massimo:['nod']},massimo:{mans:['nod']}},
+ meet:[[null,'The JIBS boardroom in Jönköping. Eight people around one table. Meet them.','','Meet the table'],
+  ['mans','Måns. Rector of Jönköping University. He wants examples, not promises.','Rector · Jönköping University'],
+  ['massimo','Massimo. Professor at JIBS. He teaches family business, mostly through cases.','Professor · JIBS'],
+  ['ulrika_j','Ulrika Berg. A member of the board.','Board member']],
+ questions:['What should Måns ask next?','Which of the three walls of live cases (sensitive topics, limited time, no scale) matters most in your own teaching?','What can a student learn by questioning an AI family that a written case cannot teach? And what might they learn wrong?','Where should the line run between a simulated family and a real one?'],
+ endings:{watch:'A case about cases: a minute at the table, three walls around the live case, and a family that students can question. What should Måns ask next?'},
+ prompt:{kind:'university board meeting',lead:'The rector and members of the board are discussing',place:'the boardroom of Jönköping International Business School, a Thursday morning',issue:'examples of AI in education: the case method, mini cases in class, the value and the limits of live cases (sensitive topics, limited time, no scale), and AI-simulated families that students can question',dyn:'Måns, rector of Jönköping University, wants concrete examples rather than promises; Massimo, a professor who teaches family business through cases, argues that AI can take down some of the walls around live cases; Ulrika Berg, a board member, asks the follow-up questions',voice:'whether everyone at the table is heard',board:'whether the board sees a concrete use of AI',trust:'a shared understanding of what AI can and cannot do in teaching'},
+ place:'Business education · AI and the case method',
+};
+
+const CASES=[LINDQVIST,STENBERG,SJOSTRAND,SOLBERG,SORENSEN,ROSENHOLM,NYGAARD,ERIKSSON,SJOSTROM,BIXA,STJERNHOLM,MARTINSSON,BELLUCCI,BERGSTROM,JIBS];
 // only the watch mode is offered; the playable roles and their decisions stay in the data for later use
 CASES.forEach(c=>{if(c.parts)return;const w=c.roles.find(r=>r[0]==='watch');c.roles=[['watch','Watch the case',w?w[2]:'See the case play out as written.']];c.blurb=c.blurb.replace(/\s*[^.!?]*partly on you\.\s*$/,'')});
 let CASE=LINDQVIST,CAST,BASE,DEC_AT,DECISIONS,QUESTIONS,METERS,MEET,IDLE,REACT;
@@ -4185,7 +4245,7 @@ function buildPicker(){
 }
 function closeCase(){makeScene()}
 // topic filter for the case chooser (keywords drawn partly from the Spotlight topics)
-const TOPICS=[["Board", ["lindqvist", "rosenholm", "eriksson", "bixa", "martinsson", "bellucci"]], ["Governance", ["lindqvist", "sjostrand", "nygaard", "eriksson", "sjostrom", "bixa", "stjernholm", "bergstrom"]], ["Ownership", ["lindqvist", "sjostrand", "nygaard", "eriksson", "bixa", "stjernholm", "bergstrom"]], ["Succession", ["lindqvist", "stenberg", "sorensen", "rosenholm", "bixa", "stjernholm", "martinsson"]], ["Next generation", ["lindqvist", "stenberg", "sjostrand", "solberg", "sorensen", "nygaard", "bixa", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Leadership", ["stenberg", "sorensen", "rosenholm", "martinsson", "bellucci", "bergstrom"]], ["Women", ["lindqvist", "stenberg", "sjostrand", "solberg", "rosenholm", "martinsson", "bergstrom"]], ["Siblings and cousins", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "stjernholm", "martinsson"]], ["Conflict", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Emotions", ["stenberg", "rosenholm", "eriksson", "sjostrom", "bixa", "stjernholm", "martinsson"]], ["Trust", ["sorensen", "nygaard", "sjostrom", "bixa"]], ["Communication", ["lindqvist", "solberg", "sjostrom", "bixa", "martinsson", "bellucci"]], ["Illness and death", ["rosenholm", "sjostrom"]], ["Legacy", ["rosenholm", "nygaard", "eriksson", "bixa", "stjernholm", "bellucci", "bergstrom"]], ["Strategy", ["lindqvist", "sjostrand", "solberg", "eriksson", "bellucci", "bergstrom"]], ["Innovation and risk", ["sjostrand", "solberg", "sorensen", "eriksson", "stjernholm", "bellucci", "bergstrom"]], ["Sustainability", ["sjostrand", "solberg", "stjernholm", "bellucci"]], ["Wealth and trusts", ["nygaard", "sjostrom"]], ["Advisors", ["lindqvist", "stenberg", "sjostrom"]], ["Sale and acquisitions", ["lindqvist", "bixa", "stjernholm"]], ["Ethics", ["sjostrom", "bellucci"]]];
+const TOPICS=[["Board", ["lindqvist", "rosenholm", "eriksson", "bixa", "martinsson", "bellucci", "jibs"]], ["Governance", ["lindqvist", "sjostrand", "nygaard", "eriksson", "sjostrom", "bixa", "stjernholm", "bergstrom"]], ["Ownership", ["lindqvist", "sjostrand", "nygaard", "eriksson", "bixa", "stjernholm", "bergstrom"]], ["Succession", ["lindqvist", "stenberg", "sorensen", "rosenholm", "bixa", "stjernholm", "martinsson"]], ["Next generation", ["lindqvist", "stenberg", "sjostrand", "solberg", "sorensen", "nygaard", "bixa", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Leadership", ["stenberg", "sorensen", "rosenholm", "martinsson", "bellucci", "bergstrom"]], ["Women", ["lindqvist", "stenberg", "sjostrand", "solberg", "rosenholm", "martinsson", "bergstrom"]], ["Siblings and cousins", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "stjernholm", "martinsson"]], ["Conflict", ["stenberg", "sjostrand", "rosenholm", "eriksson", "bixa", "stjernholm", "martinsson", "bellucci", "bergstrom"]], ["Emotions", ["stenberg", "rosenholm", "eriksson", "sjostrom", "bixa", "stjernholm", "martinsson"]], ["Trust", ["sorensen", "nygaard", "sjostrom", "bixa"]], ["Communication", ["lindqvist", "solberg", "sjostrom", "bixa", "martinsson", "bellucci"]], ["Illness and death", ["rosenholm", "sjostrom"]], ["Legacy", ["rosenholm", "nygaard", "eriksson", "bixa", "stjernholm", "bellucci", "bergstrom"]], ["Strategy", ["lindqvist", "sjostrand", "solberg", "eriksson", "bellucci", "bergstrom"]], ["Innovation and risk", ["sjostrand", "solberg", "sorensen", "eriksson", "stjernholm", "bellucci", "bergstrom", "jibs"]], ["Sustainability", ["sjostrand", "solberg", "stjernholm", "bellucci"]], ["Wealth and trusts", ["nygaard", "sjostrom"]], ["Advisors", ["lindqvist", "stenberg", "sjostrom"]], ["Sale and acquisitions", ["lindqvist", "bixa", "stjernholm"]], ["Ethics", ["sjostrom", "bellucci"]]];
 let TOPIC=null;
 const topicsOf=id=>TOPICS.filter(t=>t[1].includes(id)).map(t=>t[0]);
 // The case chooser: a search box, the topics (a short row, the rest on request) and the cases, eight at a time.
