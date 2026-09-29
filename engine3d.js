@@ -634,6 +634,7 @@ export function create(stage){
       const w = (4.4-2.6)*32, h = 26, S = 10, c = document.createElement('canvas'); c.width = w*S; c.height = h*S;
       const g = c.getContext('2d'); g.scale(S, S); RS.slide(g, w, h);
       const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      artLoaded({imgs:RS.slideImgs, draw:RS.slide}, g, w, h, t);
       const m = new THREE.Mesh(new THREE.PlaneGeometry(4.4-2.6, h/39.2), new THREE.MeshBasicMaterial({map:t}));
       m.rotation.y = Math.PI/2; m.position.set(.087, (38+64)/2/39.2, 3.5); room.add(m) }
     // under the screen (enhanced): a slim bench with a basket, a plant and a book; above it a wall clock
