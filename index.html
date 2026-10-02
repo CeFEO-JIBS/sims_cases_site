@@ -779,22 +779,25 @@ ROOMSTYLES.bergstrom.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){           
   g.fillStyle='#C9A55A';g.save();g.translate(w*.52,h*.48);g.fillRect(-1.2,-14,2.4,26);g.fillStyle='#8A4A3A';g.fillRect(-2,4,4,10);g.restore();
   g.fillStyle='#B8BEC2';g.save();g.translate(w*.74,h*.5);g.rotate(.4);g.fillRect(-1.5,-12,3,22);g.fillRect(-5,-13,10,3);g.restore();
   g.fillStyle='#C9A55A';g.fillRect(w/2-12,h-9,24,4);g.fillStyle='#3A3028';g.font='bold 2.4px sans-serif';g.textAlign='center';g.fillText('BERGSTRÖM',w/2,h-6.2)}}];
-// Case 16: the lounge at the family's private bank, set like a living room: two bottle-green leather sofas facing
-// each other across a low walnut table, an armchair at each end (the founder's and the banker's), a city morning
-// outside, the banker's slide of the three roads on the screen, an abstract painting on the back wall. Both rooms.
-ROOMSTYLES.bank={...ROOMSTYLES.scandi,floor:'#6E5440',tex:'wood',wall:['#E9E4DA','#F2EEE6','#DDD6CA','#CFC6B8'],base:['#2E3A34','#26302B'],wains:['#3E4A40','rgba(20,28,24,.45)'],
-  rugs:[[1.0,1.7,7.0,5.3,'#2E4A3E']],props:'lounge',leather:'#1F3A30',top:'#4A2E1E',leg:'#2A1E16',chair:'#1F3A30',glass:'#9AAAB8',win:'city',light:'day',decor:'bank',
-  stage:'radial-gradient(ellipse at 50% 40%,#4E5A50 0%,#2C3630 60%,#161C18 100%)',
-  slide(g,w,h){g.fillStyle='#F6F4EF';g.fillRect(0,0,w,h);g.fillStyle='#1F3A30';g.fillRect(0,0,w,5);
-    g.fillStyle='#FFFFFF';g.font='bold 3px sans-serif';g.fillText('THE FUND EXITS IN 2028',3,3.7);
-    [['Buy back 40%','#2E4A3E'],['Sell everything','#B08A4A'],['New partner','#6E7A80']].forEach(([t,c],i)=>{const x=3+i*(w-6)/3,bw=(w-12)/3;
-      g.fillStyle=c;g.fillRect(x,8,bw,h-12);g.fillStyle='#FFFFFF';g.font='bold 2.4px sans-serif';t.split(' ').forEach((wd,k)=>g.fillText(wd,x+1.5,12+k*3.2));
-      g.fillStyle='rgba(255,255,255,.55)';for(let k=0;k<3;k++)g.fillRect(x+1.5,h-10+k*2.2,bw-3-(k%2)*3,.8)})}};
-ROOMSTYLES.bank.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){                            // an abstract painting, the bank's own
-  g.fillStyle='#2A1E16';g.fillRect(0,0,w,h);g.fillStyle='#EFE9DE';g.fillRect(2.5,2.5,w-5,h-5);
-  g.fillStyle='#2E4A3E';g.fillRect(6,6,w*.42,h*.55);g.fillStyle='#B08A4A';g.fillRect(w*.38,h*.38,w*.46,h*.4);
-  g.fillStyle='#8A3A2E';g.beginPath();g.arc(w*.7,h*.28,7,0,6.283);g.fill();
-  g.strokeStyle='#1E2630';g.lineWidth=.8;g.beginPath();g.moveTo(8,h-9);g.lineTo(w-8,h*.32);g.stroke()}}];
+// Case 16: the lounge at the family's private bank, set like a living room and kept warm: an oak floor, cream
+// walls, terracotta sofas facing each other across a low oak table set for coffee, an armchair at each end (the
+// founder's by the fire, the banker's), the fireplace on the left wall between tall oak bookcases with a landscape
+// above the mantel, a low bookcase under an abstract painting on the back wall, plants. Drawn by both rooms.
+ROOMSTYLES.bank={...ROOMSTYLES.scandi,floor:'#C8A27A',tex:'wood',wall:['#F1E6D6','#F7EEE2','#E8DCC8','#DCCDB6'],base:['#B88A5A','#A87A4A'],wains:null,
+  rugs:[[1.6,1.7,6.6,5.3,'#E2D2B6']],props:'lounge',leather:'#A65A3E',oak:'#B88A5A',top:'#C9A06A',leg:'#9A6E44',chair:'#A65A3E',glass:'#B8C8D0',win:'city',light:'day',decor:'bank',
+  stage:'radial-gradient(ellipse at 50% 40%,#7A6450 0%,#4A3A2E 60%,#2A201A 100%)'};
+ROOMSTYLES.bank.backArt=[{x0:4.1,x1:5.9,z0:46,z1:90,draw(g,w,h){                            // an abstract painting in an oak frame
+  g.fillStyle='#9A6E44';g.fillRect(0,0,w,h);g.fillStyle='#F4ECDD';g.fillRect(2.5,2.5,w-5,h-5);
+  g.fillStyle='#C98A5A';g.fillRect(6,6,w*.42,h*.55);g.fillStyle='#E0B85A';g.fillRect(w*.38,h*.38,w*.46,h*.4);
+  g.fillStyle='#A64A3A';g.beginPath();g.arc(w*.7,h*.28,7,0,6.283);g.fill();g.fillStyle='#7A9A7A';g.beginPath();g.arc(w*.24,h*.78,5,0,6.283);g.fill();
+  g.strokeStyle='#5A3A26';g.lineWidth=.8;g.beginPath();g.moveTo(8,h-9);g.lineTo(w-8,h*.32);g.stroke()}}];
+ROOMSTYLES.bank.leftArt=[{y0:2.95,y1:4.05,z0:74,z1:98,draw(g,w,h){                          // a landscape above the mantel: hills, a lake, evening
+  g.fillStyle='#9A6E44';g.fillRect(0,0,w,h);const x0=2.2,y0=2.2,pw=w-4.4,ph=h-4.4;
+  const sky=g.createLinearGradient(0,y0,0,y0+ph*.6);sky.addColorStop(0,'#E8C9A0');sky.addColorStop(1,'#F4E2C4');g.fillStyle=sky;g.fillRect(x0,y0,pw,ph);
+  g.fillStyle='#F0D08A';g.beginPath();g.arc(x0+pw*.7,y0+ph*.42,3,0,6.283);g.fill();
+  g.fillStyle='#8A9A7A';g.beginPath();g.moveTo(x0,y0+ph*.55);g.quadraticCurveTo(x0+pw*.3,y0+ph*.3,x0+pw*.55,y0+ph*.52);g.quadraticCurveTo(x0+pw*.8,y0+ph*.38,x0+pw,y0+ph*.5);g.lineTo(x0+pw,y0+ph);g.lineTo(x0,y0+ph);g.fill();
+  g.fillStyle='#6E8A6A';g.beginPath();g.moveTo(x0,y0+ph*.68);g.quadraticCurveTo(x0+pw*.5,y0+ph*.58,x0+pw,y0+ph*.7);g.lineTo(x0+pw,y0+ph);g.lineTo(x0,y0+ph);g.fill();
+  g.fillStyle='#9DB8C4';g.fillRect(x0+pw*.15,y0+ph*.78,pw*.6,ph*.08);g.fillStyle='#5A6E4E';g.fillRect(x0,y0+ph*.88,pw,ph*.12)}}];
 // A picture from an image, not from code: artImg makes the Image, framed() hangs it in a slim dark frame on a
 // white mat. The art item lists its images in imgs, so the 3D room can repaint once they have decoded.
 function artImg(src){const im=new Image();im.src=src;return im}
@@ -1065,7 +1068,7 @@ function furnish(){
     plant(9.45,.55,1.1,'#B8653E');plant(.55,5.45,.9,'#B8653E');
     pendant(3.6,3.5,st.pend);pendant(5.0,3.5,st.pend);pendant(6.4,3.5,st.pend);
   }else if(st.props==='lounge'){
-    // a couch in leather (sofa or armchair): the seat at chair height, its back on one side, arms at the two ends
+    // an upholstered couch (sofa or armchair): the seat at chair height, its back on one side, arms at the two ends
     const L=st.leather,couch=(x0,y0,x1,y1,side)=>{const bt=.16,at=.12;let q=[x0,y0,x1,y1],bk,a1,a2;
       if(side==='-y'){q=[x0+at,y0+bt,x1-at,y1];bk=[x0,y0,x1,y0+bt];a1=[x0,y0+bt,x0+at,y1];a2=[x1-at,y0+bt,x1,y1]}
       if(side==='+y'){q=[x0+at,y0,x1-at,y1-bt];bk=[x0,y1-bt,x1,y1];a1=[x0,y0,x0+at,y1-bt];a2=[x1-at,y0,x1,y1-bt]}
@@ -1076,12 +1079,17 @@ function furnish(){
     couch(2.95,2.04,5.05,2.72,'-y');couch(2.95,4.28,5.05,4.96,'+y');                       // the sofas, two seats each (b_n0..1, b_s0..1)
     couch(1.24,3.12,1.92,3.88,'-x');couch(6.08,3.12,6.76,3.88,'+x');                       // the armchairs (b_h1, lr_e)
     [[3.5,2.42,'+y'],[4.5,2.42,'+y'],[3.5,4.58,'-y'],[4.5,4.58,'-y'],[1.62,3.5,'+x'],[6.38,3.5,'-x']].forEach(([x,y,f])=>CHAIRFACE[x+'|'+y]=f);
-    table(2.3,3.05,5.7,3.95,12,st.top,st.leg);                                              // the low walnut table
-    mug(2.7,3.3,12,'#FFFFFF');mug(3.4,3.75,12,'#E5EEF0');mug(4.6,3.25,12,'#FFFFFF');mug(5.3,3.7,12,'#E5EEF0');papers(3.7,3.2,4.1,3.5,12);papers(5.0,3.25,5.35,3.5,12);flowers(4.2,3.62,12);
-    box(3.1,.12,6.9,.6,0,26,WALNUT);box(3.5,.25,3.75,.45,26,40,'#DCE3E4');box(6.1,.22,6.5,.5,26,30,'#EDE6DA');
-    box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A',after(){if(st.slide)onX(.14,4.4,64,()=>st.slide(ctx,(4.4-2.6)*32,26))}});
-    lamp(1.0,2.35);lamp(7.0,2.6);plant(9.45,.55,1.1);plant(.55,5.45,.9);plant(9.4,5.6,1.0);
-    box(9.15,1.25,9.75,1.85,0,24,'#C9A27A',{top:'#7A5236'});mug(9.35,1.45,24,'#FFFFFF');mug(9.55,1.65,24,'#FFFFFF');   // the coffee trolley
+    table(2.3,3.05,5.7,3.95,12,st.top,st.leg);                                              // the low oak table, set for coffee
+    custom(3.82,3.38,4.0,3.56,12,26,()=>{const b=P(3.91,3.47,12),t=P(3.91,3.47,22);ctx.save();ctx.fillStyle='rgba(220,236,240,.6)';ctx.fillRect(b[0]-4,t[1],8,b[1]-t[1]);
+      ctx.fillStyle='#4A2E1E';ctx.fillRect(b[0]-4,t[1]+4,8,b[1]-t[1]-4);ctx.fillStyle='#2B2F33';ctx.fillRect(t[0]-4.5,t[1]-1.5,9,2);ctx.fillRect(t[0]-.5,t[1]-5,1,4);ctx.fillRect(b[0]+4,t[1]+2,2,5);ctx.restore()});  // the coffee press
+    mug(2.75,3.3,12,'#FFFFFF');mug(3.3,3.75,12,'#F2E2C8');mug(4.65,3.25,12,'#FFFFFF');mug(5.3,3.7,12,'#F2E2C8');mug(3.4,3.25,12,'#FFFFFF');mug(4.7,3.75,12,'#F2E2C8');
+    bunPlate(4.45,3.5,12);flowers(5.2,3.35,12);
+    fireplace();                                                                             // the fire, on the left wall
+    shelf(.06,.3,.46,2.15,84,'+x',41,st.oak);shelf(.06,4.85,.46,6.7,84,'+x',43,st.oak);      // tall oak bookcases either side
+    shelf(3.9,.1,6.1,.5,40,'+y',47,st.oak);smallPlant(4.3,.3,40);box(5.55,.22,5.75,.42,40,52,'#C98A5A');   // the low bookcase, a plant and a vase on it
+    lamp(1.0,5.3);lamp(7.0,2.6);
+    plant(9.45,.55,1.2);plant(9.4,5.6,1.1);plant(7.4,.55,.9);plant(.6,6.95,.8);plant(2.1,5.9,.85);
+    box(9.15,1.25,9.75,1.85,0,24,st.oak,{top:'#C9A06A'});mug(9.35,1.45,24,'#FFFFFF');mug(9.55,1.65,24,'#FFFFFF');   // the coffee trolley
   }else if(st.props==='office2'){
     box(3.1,.18,6.9,.55,0,20,'#F2F1EE');box(3.1,.18,6.9,.55,20,21.5,'#2B2F33');smallPlant(3.6,.36,21.5);box(5.6,.25,6.3,.48,21.5,23,'#D8D2C6');
     box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A'});

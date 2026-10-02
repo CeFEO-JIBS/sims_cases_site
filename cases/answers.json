@@ -40,7 +40,8 @@
    "ceramic_vase": "models/props/ceramic_vase.glb.gz",
    "woven_basket": "models/props/woven_basket.glb.gz",
    "slim_floor_lamp": "models/props/slim_floor_lamp.glb.gz",
-   "serving_trolley": "models/props/serving_trolley.glb.gz"
+   "serving_trolley": "models/props/serving_trolley.glb.gz",
+   "throw_blanket_folded": "models/props/throw_blanket_folded.glb.gz"
   },
   "images": {},
   "clips": [
@@ -150,6 +151,10 @@
    {
     "path": "models/props/serving_trolley.glb.gz",
     "size": 2012
+   },
+   {
+    "path": "models/props/throw_blanket_folded.glb.gz",
+    "size": 657
    },
    {
     "path": "models/clips/meeting.glb.gz",
