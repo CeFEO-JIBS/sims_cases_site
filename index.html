@@ -604,7 +604,7 @@ function smallPlant(px,py,z){custom(px-.1,py-.1,px+.1,py+.1,z,z+16,()=>{
 
 // ---------------------------------------------------------------- spots (places people go)
 const SP={}, GROUPS={};
-const SEATFACE={famsofa:'+x',lobbysofa:'+x',liftbench:'+x',herbench:'+y',sofa_s0:'-y',sofa_s1:'-y'};
+const SEATFACE={lr_e:'-x',famsofa:'+x',lobbysofa:'+x',liftbench:'+x',herbench:'+y',sofa_s0:'-y',sofa_s1:'-y'};
 function spot(id,group,px,py,ax,ay,z,act){
   const s={id,group,px,py,ax,ay,z,act,occ:null,room:roomAt(ax,ay),face:CHAIRFACE[px+'|'+py]||SEATFACE[id]||(id.startsWith('sofa_n')?'+y':null)};
   SP[id]=s;(GROUPS[group]=GROUPS[group]||[]).push(s);return s;
@@ -779,10 +779,11 @@ ROOMSTYLES.bergstrom.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){           
   g.fillStyle='#C9A55A';g.save();g.translate(w*.52,h*.48);g.fillRect(-1.2,-14,2.4,26);g.fillStyle='#8A4A3A';g.fillRect(-2,4,4,10);g.restore();
   g.fillStyle='#B8BEC2';g.save();g.translate(w*.74,h*.5);g.rotate(.4);g.fillRect(-1.5,-12,3,22);g.fillRect(-5,-13,10,3);g.restore();
   g.fillStyle='#C9A55A';g.fillRect(w/2-12,h-9,24,4);g.fillStyle='#3A3028';g.font='bold 2.4px sans-serif';g.textAlign='center';g.fillText('BERGSTRÖM',w/2,h-6.2)}}];
-// Case 16: a meeting room at the family's private bank: walnut and bottle-green leather, a city morning outside,
-// the banker's slide of the three roads on the screen, an abstract painting on the back wall. Drawn by both rooms.
+// Case 16: the lounge at the family's private bank, set like a living room: two bottle-green leather sofas facing
+// each other across a low walnut table, an armchair at each end (the founder's and the banker's), a city morning
+// outside, the banker's slide of the three roads on the screen, an abstract painting on the back wall. Both rooms.
 ROOMSTYLES.bank={...ROOMSTYLES.scandi,floor:'#6E5440',tex:'wood',wall:['#E9E4DA','#F2EEE6','#DDD6CA','#CFC6B8'],base:['#2E3A34','#26302B'],wains:['#3E4A40','rgba(20,28,24,.45)'],
-  rugs:[[1.1,1.55,8.9,5.45,'#2E4A3E']],top:'#4A2E1E',leg:'#2A1E16',chair:'#1F3A30',glass:'#9AAAB8',win:'city',light:'day',decor:'bank',
+  rugs:[[1.0,1.7,7.0,5.3,'#2E4A3E']],props:'lounge',leather:'#1F3A30',top:'#4A2E1E',leg:'#2A1E16',chair:'#1F3A30',glass:'#9AAAB8',win:'city',light:'day',decor:'bank',
   stage:'radial-gradient(ellipse at 50% 40%,#4E5A50 0%,#2C3630 60%,#161C18 100%)',
   slide(g,w,h){g.fillStyle='#F6F4EF';g.fillRect(0,0,w,h);g.fillStyle='#1F3A30';g.fillRect(0,0,w,5);
     g.fillStyle='#FFFFFF';g.font='bold 3px sans-serif';g.fillText('THE FUND EXITS IN 2028',3,3.7);
@@ -936,7 +937,7 @@ function furnish(){
     mug(2.6,3.35,25,'#FFFFFF');mug(3.5,3.02,25,'#D9E4EA');mug(4.5,3.02,25,'#F2D9C4');bunPlate(3.95,3.6,25);candle(4.95,3.3,25);candle(4.95,3.75,25);flowers(2.85,3.85,25);papers(3.2,3.85,3.55,4.1,25);
     plant(9.45,.55,1.0,'#E9E4DA');plant(.55,5.45,1.1,'#E9E4DA');
     pendant(3.75,3.5,st.pend);
-  }else if(['study','hospital','lobby','timber','bakery','salon','home','therapy','farm','hotel'].includes(st.props)){
+  }else if(['study','hospital','lobby','timber','bakery','salon','home','therapy','farm','hotel','lounge'].includes(st.props)){
   }else{
   table(2.2,2.72,7.8,4.28,25,st.top,st.leg);
   [3,4,5,6].forEach(i=>{chair(i+.5,2.42,'+y',st.chair);chair(i+.5,4.58,'-y',st.chair)});
@@ -1063,6 +1064,24 @@ function furnish(){
     candle(3.9,3.5,25);candle(5.0,3.5,25);candle(6.1,3.5,25);
     plant(9.45,.55,1.1,'#B8653E');plant(.55,5.45,.9,'#B8653E');
     pendant(3.6,3.5,st.pend);pendant(5.0,3.5,st.pend);pendant(6.4,3.5,st.pend);
+  }else if(st.props==='lounge'){
+    // a couch in leather (sofa or armchair): the seat at chair height, its back on one side, arms at the two ends
+    const L=st.leather,couch=(x0,y0,x1,y1,side)=>{const bt=.16,at=.12;let q=[x0,y0,x1,y1],bk,a1,a2;
+      if(side==='-y'){q=[x0+at,y0+bt,x1-at,y1];bk=[x0,y0,x1,y0+bt];a1=[x0,y0+bt,x0+at,y1];a2=[x1-at,y0+bt,x1,y1]}
+      if(side==='+y'){q=[x0+at,y0,x1-at,y1-bt];bk=[x0,y1-bt,x1,y1];a1=[x0,y0,x0+at,y1-bt];a2=[x1-at,y0,x1,y1-bt]}
+      if(side==='-x'){q=[x0+bt,y0+at,x1,y1-at];bk=[x0,y0,x0+bt,y1];a1=[x0+bt,y0,x1,y0+at];a2=[x0+bt,y1-at,x1,y1]}
+      if(side==='+x'){q=[x0,y0+at,x1-bt,y1-at];bk=[x1-bt,y0,x1,y1];a1=[x0,y0,x1-bt,y0+at];a2=[x0,y1-at,x1-bt,y1]}
+      box(q[0],q[1],q[2],q[3],0,12,L);box(bk[0],bk[1],bk[2],bk[3],0,30,shade2(L,-.06));box(a1[0],a1[1],a1[2],a1[3],0,20,shade2(L,-.03));box(a2[0],a2[1],a2[2],a2[3],0,20,shade2(L,-.03));
+      for(let x=Math.floor(x0);x<x1;x++)for(let y=Math.floor(y0);y<y1;y++)SOFT.add(tk(x,y))};
+    couch(2.95,2.04,5.05,2.72,'-y');couch(2.95,4.28,5.05,4.96,'+y');                       // the sofas, two seats each (b_n0..1, b_s0..1)
+    couch(1.24,3.12,1.92,3.88,'-x');couch(6.08,3.12,6.76,3.88,'+x');                       // the armchairs (b_h1, lr_e)
+    [[3.5,2.42,'+y'],[4.5,2.42,'+y'],[3.5,4.58,'-y'],[4.5,4.58,'-y'],[1.62,3.5,'+x'],[6.38,3.5,'-x']].forEach(([x,y,f])=>CHAIRFACE[x+'|'+y]=f);
+    table(2.3,3.05,5.7,3.95,12,st.top,st.leg);                                              // the low walnut table
+    mug(2.7,3.3,12,'#FFFFFF');mug(3.4,3.75,12,'#E5EEF0');mug(4.6,3.25,12,'#FFFFFF');mug(5.3,3.7,12,'#E5EEF0');papers(3.7,3.2,4.1,3.5,12);papers(5.0,3.25,5.35,3.5,12);flowers(4.2,3.62,12);
+    box(3.1,.12,6.9,.6,0,26,WALNUT);box(3.5,.25,3.75,.45,26,40,'#DCE3E4');box(6.1,.22,6.5,.5,26,30,'#EDE6DA');
+    box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A',after(){if(st.slide)onX(.14,4.4,64,()=>st.slide(ctx,(4.4-2.6)*32,26))}});
+    lamp(1.0,2.35);lamp(7.0,2.6);plant(9.45,.55,1.1);plant(.55,5.45,.9);plant(9.4,5.6,1.0);
+    box(9.15,1.25,9.75,1.85,0,24,'#C9A27A',{top:'#7A5236'});mug(9.35,1.45,24,'#FFFFFF');mug(9.55,1.65,24,'#FFFFFF');   // the coffee trolley
   }else if(st.props==='office2'){
     box(3.1,.18,6.9,.55,0,20,'#F2F1EE');box(3.1,.18,6.9,.55,20,21.5,'#2B2F33');smallPlant(3.6,.36,21.5);box(5.6,.25,6.3,.48,21.5,23,'#D8D2C6');
     box(.08,2.55,.14,4.45,36,66,CHAR,{right:'#2C343A'});
@@ -1103,6 +1122,8 @@ function applyRoomStyle(key){
 blockRect(2,3,7,3);blockRect(3,0,6,0);
 [3,4,5,6].forEach((i,k)=>{spot('b_n'+k,'board',i+.5,2.42,i,2,13,'Reading board papers');spot('b_s'+k,'board',i+.5,4.58,i,4,13,'Reading board papers')});
 spot('b_h1','board',1.62,3.5,1,3,13,'Reading board papers');spot('b_h2','board',8.38,3.5,8,3,13,'Reading board papers');
+// the lounge's second armchair (case 16), facing b_h1 across the low table; only a case's seat list puts anyone here
+spot('lr_e','lounge_e',6.38,3.5,6,3,13,'In the meeting');
 furnish();
 
 // CEO office
@@ -4236,12 +4257,12 @@ const JIBS={
 
 // ---------------------------------------------------------------- case 16: Five Answers, the opening hook for Responsible Ownership
 const FA_CAST=[
- {id:'tomas_fa',cloth:'pin',mug:'#1F3A30',pocket:'#F4F2EE',age:52,eyes:'#4A6B8A',watch:'#C9CED2',first:'Tomas',last:'Weber',role:'Private banker',fam:false,seat:'b_h2',shirt:'#2A3440',trous:'#22262C',skin:'#F0CFB4',hair:'#7A6A5A',hairType:'short',tie:'#1F3A30',inner:'#F2F4F6',bio:'The family’s private banker. He asked the question nobody else had asked.'},
+ {id:'tomas_fa',cloth:'pin',mug:'#1F3A30',pocket:'#F4F2EE',age:52,eyes:'#4A6B8A',watch:'#C9CED2',first:'Tomas',last:'Weber',role:'Private banker',fam:false,seat:'lr_e',shirt:'#2A3440',trous:'#22262C',skin:'#F0CFB4',hair:'#7A6A5A',hairType:'short',tie:'#1F3A30',inner:'#F2F4F6',bio:'The family’s private banker. He asked the question nobody else had asked.'},
  {id:'viktor_fa',cloth:'pin',bushy:true,browCol:'#C9C2B6',mug:'#1F3A30',age:63,eyes:'#5B7A99',watch:'#D6B25E',first:'Viktor',last:'',role:'Founder, father',fam:true,seat:'b_h1',shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#C9C2B6',hairType:'short',tie:'#5A2E2E',inner:'#EEF2F6',bio:'The founder. He started the company in 1992 with one refrigerated truck; today it runs cold-chain logistics in six countries, with 2,300 employees.'},
- {id:'elena_fa',pads:true,fem:true,eyes:'#5B7A99',ear:'pearl',mug:'#1F3A30',age:61,first:'Elena',last:'',role:'Holding board, mother',fam:true,seat:'b_n1',shirt:'#5A3A4A',trous:'#2B2F36',skin:'#F2D4BC',hair:'#B8A48A',hairType:'bob',inner:'#F4F4F2',bio:'Viktor’s wife. She has sat on the holding board since the beginning.'},
- {id:'daniel_fa',cloth:'knit',casual:true,mug:'#1F3A30',age:33,eyes:'#4F7F9F',watch:'#2B2B2B',first:'Daniel',last:'',role:'Digital operations, son, 33',fam:true,seat:'b_n2',shirt:'#2F4A6A',trous:'#2E3440',skin:'#EBC5A5',hair:'#6A5A4A',hairType:'short',inner:'#E8ECEF',bio:'33. Runs digital operations in the group, and wants to lead it.'},
- {id:'sofia_fa',pads:true,fem:true,eyes:'#4F7F9F',ear:'silver',lips:'#A8454A',mug:'#1F3A30',age:29,first:'Sofia',last:'',role:'Lawyer in London, daughter, 29',fam:true,seat:'b_s1',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#4A3424',hairType:'long',inner:'#F4F6F8',bio:'29. A lawyer in London. She has never worked in the company.'},
- {id:'mark_fa',casual:true,mug:'#1F3A30',age:24,eyes:'#5B7A99',first:'Mark',last:'',role:'Student, son, 24',fam:true,seat:'b_s2',shirt:'#4A5A4E',trous:'#2E3440',skin:'#F0CFB4',hair:'#8A6A4A',hairType:'short',inner:'#E8ECEF',bio:'24. Finishing a master’s degree.'},
+ {id:'elena_fa',pads:true,fem:true,eyes:'#5B7A99',ear:'pearl',mug:'#1F3A30',age:61,first:'Elena',last:'',role:'Holding board, mother',fam:true,seat:'b_n0',shirt:'#5A3A4A',trous:'#2B2F36',skin:'#F2D4BC',hair:'#B8A48A',hairType:'bob',inner:'#F4F4F2',bio:'Viktor’s wife. She has sat on the holding board since the beginning.'},
+ {id:'daniel_fa',cloth:'knit',casual:true,mug:'#1F3A30',age:33,eyes:'#4F7F9F',watch:'#2B2B2B',first:'Daniel',last:'',role:'Digital operations, son, 33',fam:true,seat:'b_n1',shirt:'#2F4A6A',trous:'#2E3440',skin:'#EBC5A5',hair:'#6A5A4A',hairType:'short',inner:'#E8ECEF',bio:'33. Runs digital operations in the group, and wants to lead it.'},
+ {id:'sofia_fa',pads:true,fem:true,eyes:'#4F7F9F',ear:'silver',lips:'#A8454A',mug:'#1F3A30',age:29,first:'Sofia',last:'',role:'Lawyer in London, daughter, 29',fam:true,seat:'b_s0',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#4A3424',hairType:'long',inner:'#F4F6F8',bio:'29. A lawyer in London. She has never worked in the company.'},
+ {id:'mark_fa',casual:true,mug:'#1F3A30',age:24,eyes:'#5B7A99',first:'Mark',last:'',role:'Student, son, 24',fam:true,seat:'b_s1',shirt:'#4A5A4E',trous:'#2E3440',skin:'#F0CFB4',hair:'#8A6A4A',hairType:'short',inner:'#E8ECEF',bio:'24. Finishing a master’s degree.'},
 ];
 const FA_BASE=[
  {cap:'Viktor started the company in 1992 with one refrigerated truck. Today it runs cold-chain logistics in six countries, with 2,300 employees, and the family name is on every truck.',look:{all:'viktor_fa',viktor_fa:'table'},dur:9},

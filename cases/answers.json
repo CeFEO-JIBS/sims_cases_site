@@ -32,6 +32,7 @@
    "cactus_small_A": "models/props/cactus_small_A.glb.gz",
    "cactus_small_B": "models/props/cactus_small_B.glb.gz",
    "cabinet_small": "models/props/cabinet_small.glb.gz",
+   "pillow_B": "models/props/pillow_B.glb.gz",
    "large_nordic_window": "models/props/large_nordic_window.glb.gz",
    "door_light_oak": "models/props/door_light_oak.glb.gz",
    "laptop": "models/props/laptop.glb.gz",
@@ -113,6 +114,10 @@
    {
     "path": "models/props/cabinet_small.glb.gz",
     "size": 16388
+   },
+   {
+    "path": "models/props/pillow_B.glb.gz",
+    "size": 11992
    },
    {
     "path": "models/props/large_nordic_window.glb.gz",

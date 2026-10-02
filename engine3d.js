@@ -214,14 +214,14 @@ export function create(stage){
     m.position.set((x0+x1)/2, (y0+y1)/2, .072); room.add(m);
   }
   // a low vase of tulips (enhanced room)
-  function tulips(x, z){
+  function tulips(x, z, base=KK){      // on a table top at base (the boardroom table by default)
     const v = new THREE.Mesh(new THREE.CylinderGeometry(.07,.055,.12,16), mat('#E9E4DA', .5));
-    v.position.set(x, KK+.06, z); v.castShadow = true; room.add(v);
+    v.position.set(x, base+.06, z); v.castShadow = true; room.add(v);
     const cols = ['#D9464A','#E8B64A','#D9464A','#F2EDE4','#E36A7A'];
     cols.forEach((c, i) => { const a = i/cols.length*6.283, r = .035, lean = .12;
-      const tx = x + Math.cos(a)*r*2.2, tz = z + Math.sin(a)*r*2.2, ty = KK + .2 + (i%2)*.04;
+      const tx = x + Math.cos(a)*r*2.2, tz = z + Math.sin(a)*r*2.2, ty = base + .2 + (i%2)*.04;
       const st = new THREE.Mesh(new THREE.CylinderGeometry(.005,.005,.16,5), mat('#5E8A4E'));
-      st.position.set((x+tx)/2, KK+.12+(i%2)*.02, (z+tz)/2); st.lookAt(tx, ty, tz); st.rotateX(Math.PI/2); room.add(st);
+      st.position.set((x+tx)/2, base+.12+(i%2)*.02, (z+tz)/2); st.lookAt(tx, ty, tz); st.rotateX(Math.PI/2); room.add(st);
       const h = new THREE.Mesh(new THREE.SphereGeometry(.028, 10, 8), new THREE.MeshStandardMaterial({color:c, roughness:.6}));
       h.scale.y = 1.3; h.position.set(tx, ty, tz); room.add(h) });
   }
@@ -1319,8 +1319,62 @@ export function create(stage){
   // Case 15: Bergström Industries, the default layout in steel grey and birch on a rainy day; the tools and the slide are shared
   ROOMS.bergstrom = (RS) => ROOMS.boardroom(RS, {rug:'#4E5A62', top:'#D9C9A8', chair:'chair_A', cushion:'#3A4046', art:false});
   ROOMS.jibs = (RS) => ROOMS.boardroom(RS, {rug:'#1F3A5A', top:'#DCCDB0', chair:'chair_A', cushion:'#2A3A4E', art:false});
-  // Case 16: the private bank's meeting room, walnut and bottle-green leather
-  ROOMS.bank = (RS) => ROOMS.boardroom(RS, {rug:'#2E4A3E', top:'#4A2E1E', chair:'chair_A', cushion:'#1F3A30', art:false});
+  // Case 16: the private bank's lounge, set like a living room (the classic 'lounge', index.html furnish()): two
+  // bottle-green leather sofas facing each other across a low walnut table, an armchair at each end, the credenza
+  // and the screen with the banker's slide, the painting on the back wall. The sofas and armchairs are built here,
+  // their seats at the height the sitting clip was made for (SEAT_Y), so everyone sits on the cushions.
+  ROOMS.bank = (RS) => {
+    ROOMS.board(RS);
+    rug(1.0, 1.7, 7.0, 5.3, '#2E4A3E');
+    const L = RS.leather || '#1F3A30', LB = '#18302A', OAKL = '#3A2618';
+    // a couch: the seat from x0..x1 by z0..z1, its back on one side ('-z' '+z' '-x' '+x'), arms at the two ends
+    const couch = (x0, z0, x1, z1, side) => {
+      const bt = .16, at = .12; let q, bk, a1, a2;
+      if(side==='-z'){ q=[x0+at,z0+bt,x1-at,z1]; bk=[x0,z0,x1,z0+bt]; a1=[x0,z0+bt,x0+at,z1]; a2=[x1-at,z0+bt,x1,z1] }
+      if(side==='+z'){ q=[x0+at,z0,x1-at,z1-bt]; bk=[x0,z1-bt,x1,z1]; a1=[x0,z0,x0+at,z1-bt]; a2=[x1-at,z0,x1,z1-bt] }
+      if(side==='-x'){ q=[x0+bt,z0+at,x1,z1-at]; bk=[x0,z0,x0+bt,z1]; a1=[x0+bt,z0,x1,z0+at]; a2=[x0+bt,z1-at,x1,z1] }
+      if(side==='+x'){ q=[x0,z0+at,x1-bt,z1-at]; bk=[x1-bt,z0,x1,z1]; a1=[x0,z0,x1-bt,z0+at]; a2=[x0,z1-at,x1-bt,z1] }
+      slab(q[0], q[1], q[2], q[3], .1, SEAT_Y - .05, L, .55);                       // the frame, then the cushion
+      slab(q[0]+.02, q[1]+.02, q[2]-.02, q[3]-.02, SEAT_Y - .05, SEAT_Y - .01, L, .45);
+      slab(bk[0], bk[1], bk[2], bk[3], .1, .8, LB, .55);
+      slab(a1[0], a1[1], a1[2], a1[3], .1, .55, LB, .55); slab(a2[0], a2[1], a2[2], a2[3], .1, .55, LB, .55);
+      for(const [x, z] of [[x0+.06,z0+.06],[x1-.06,z0+.06],[x0+.06,z1-.06],[x1-.06,z1-.06]])
+        slab(x-.025, z-.025, x+.025, z+.025, 0, .1, OAKL, .5);
+    };
+    couch(2.95, 2.04, 5.05, 2.72, '-z'); couch(2.95, 4.28, 5.05, 4.96, '+z');          // the sofas
+    couch(1.24, 3.12, 1.92, 3.88, '-x'); couch(6.08, 3.12, 6.76, 3.88, '+x');          // the armchairs
+    { const p = (x, z) => place('pillow_B', x, z, 0, SEAT_Y, KK*.4);                 // a cushion in each sofa's corner
+      p(3.15, 2.3); p(4.85, 4.7) }
+    // the low walnut table (2.3..5.7 x 3.05..3.95), 0.32 high, and what is on it
+    const TT = .32;
+    slab(2.3, 3.05, 5.7, 3.95, TT-.04, TT, '#4A2E1E', .35);
+    for(const [x, z] of [[2.42,3.15],[5.58,3.15],[2.42,3.85],[5.58,3.85]]) slab(x-.03, z-.03, x+.03, z+.03, 0, TT-.04, '#2A1E16', .5);
+    for(const [x, z] of [[2.7,3.3],[3.4,3.75],[4.6,3.25],[5.3,3.7]]) place('coffee_mug', x, z, 0, TT, .8);
+    slab(3.7, 3.2, 4.1, 3.5, TT, TT+.012, '#FBFBF8', .9); slab(5.0, 3.25, 5.35, 3.5, TT, TT+.012, '#FBFBF8', .9);
+    tulips(4.2, 3.62, TT);
+    // the walnut credenza on the back wall, its lamps, vase and photo
+    for(const x of [4.05, 5.95]) place('cabinet_medium', x, .36, 0, 0, [.95, .66, .48]);
+    const CT = .66;
+    place('lamp_table', 3.4, .34, 0, CT, KK*.55); place('lamp_table', 6.62, .34, 0, CT, KK*.55);
+    place('ceramic_vase', 3.95, .36, 0, CT, 1); place('pictureframe_standing_B', 6.1, .3, -.25, CT, KK*.55);
+    place('book_set', 5.55, .36, 0, CT + .25*KK*.5, KK*.5);
+    // the screen on the left wall (y 2.55..4.45, z 36..66) with the banker's slide
+    slab(.02,2.55,.08,4.45, .92,1.68, '#2E3338', .4);
+    slab(.08,2.62,.085,4.38, .96,1.64, '#1C2226', .15);
+    if(RS.slide){
+      const w = (4.4-2.6)*32, h = 26, S = 10, c = document.createElement('canvas'); c.width = w*S; c.height = h*S;
+      const g = c.getContext('2d'); g.scale(S, S); RS.slide(g, w, h);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      artLoaded({imgs:RS.slideImgs, draw:RS.slide}, g, w, h, t);
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(4.4-2.6, h/39.2), new THREE.MeshBasicMaterial({map:t}));
+      m.rotation.y = Math.PI/2; m.position.set(.087, (38+64)/2/39.2, 3.5); room.add(m) }
+    // two floor lamps by the armchairs, a plant in three corners
+    place('slim_floor_lamp', 1.0, 2.35, 0, 0, 1); place('slim_floor_lamp', 7.0, 2.6, 0, 0, 1);
+    for(const [x, z] of [[1.0, 2.35], [7.0, 2.6]]){ const l = new THREE.PointLight(0xffe4b8, .7, 3.2, 1.8); l.position.set(x, 1.3, z); room.add(l) }
+    plant(9.45, .55, 1.1); plant(.55, 5.45, .9); plant(9.4, 5.6, 1.0);
+    place('serving_trolley', 9.45, 1.55, -Math.PI/2, 0, 1);                       // the coffee trolley
+    place('coffee_mug', 9.35, 1.35, 0, .73, .8); place('coffee_mug', 9.52, 1.62, 0, .73, .8);
+  };
   ROOMS.board_items = (SP, CF) => {
     // a chair at every boardroom seat the engine defines, turned the way the engine turns it.
     // A seat's facing lives in CHAIRFACE: the engine lays the chairs out after it creates the seats.
