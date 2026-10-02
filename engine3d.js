@@ -1326,7 +1326,7 @@ export function create(stage){
   // was made for (SEAT_Y), so everyone sits on the cushions.
   ROOMS.bank = (RS) => {
     ROOMS.board(RS);
-    rug(1.6, 1.7, 6.6, 5.3, '#E2D2B6');
+    rug(2.6, 1.7, 7.4, 5.3, '#E2D2B6');
     const L = RS.leather || '#A65A3E', LB = '#8E4A32', OAK = RS.oak || '#B88A5A', OAKD = '#8A6040';
     // a couch: the seat from x0..x1 by z0..z1, its back on one side ('-z' '+z' '-x' '+x'), arms at the two ends
     const couch = (x0, z0, x1, z1, side) => {
@@ -1342,10 +1342,10 @@ export function create(stage){
       for(const [x, z] of [[x0+.06,z0+.06],[x1-.06,z0+.06],[x0+.06,z1-.06],[x1-.06,z1-.06]])
         slab(x-.025, z-.025, x+.025, z+.025, 0, .1, OAKD, .5);
     };
-    couch(2.95, 2.04, 5.05, 2.72, '-z'); couch(2.95, 4.28, 5.05, 4.96, '+z');          // the sofas
-    couch(1.24, 3.12, 1.92, 3.88, '-x'); couch(6.08, 3.12, 6.76, 3.88, '+x');          // the armchairs
-    place('pillow_B', 3.15, 2.3, 0, SEAT_Y, KK*.4); place('pillow_B', 4.85, 4.7, 0, SEAT_Y, KK*.4);
-    if(pieces.throw_blanket_folded) place('throw_blanket_folded', 4.9, 2.3, .2, SEAT_Y, .9);
+    couch(3.95, 2.04, 6.05, 2.72, '-z'); couch(3.95, 4.28, 6.05, 4.96, '+z');          // the sofas
+    couch(2.24, 3.12, 2.92, 3.88, '-x'); couch(7.08, 3.12, 7.76, 3.88, '+x');          // the armchairs
+    place('pillow_B', 4.15, 2.3, 0, SEAT_Y, KK*.4); place('pillow_B', 5.85, 4.7, 0, SEAT_Y, KK*.4);
+    if(pieces.throw_blanket_folded) place('throw_blanket_folded', 5.9, 2.3, .2, SEAT_Y, .9);
     // an oak bookcase full of books, against the left wall (x .06..d, z a0..a1) or the back wall (x a0..a1, z .06..d)
     let sd = 41; const rnd = () => (sd = (sd*9301 + 49297) % 233280) / 233280;
     const BOOKS = ['#C4927A','#8DA3B2','#9DB09A','#D2A64F','#EDE6DA','#6D7290','#A8716A','#3B4044','#7A3A2E'];
@@ -1361,23 +1361,23 @@ export function create(stage){
     bookcase(.3, 2.15, .46, 2.15, 'left'); bookcase(4.85, 6.7, .46, 2.15, 'left');     // tall bookcases either side
     bookcase(3.9, 6.1, .5, 1.02, 'back');                                              // the low bookcase under the painting
     place('cactus_small_A', 4.3, .3, 0, 1.02, KK*.55); place('ceramic_vase', 5.65, .32, 0, 1.02, 1);
-    // the low oak table (2.3..5.7 x 3.05..3.95), 0.32 high, set for coffee: a press, cups, biscuits, flowers
+    // the low oak table (3.3..6.7 x 3.05..3.95, centred in the room), 0.32 high, set for coffee: a press, cups, biscuits, flowers
     const TT = .32;
-    slab(2.3, 3.05, 5.7, 3.95, TT-.04, TT, RS.top || '#C9A06A', .45);
-    for(const [x, z] of [[2.42,3.15],[5.58,3.15],[2.42,3.85],[5.58,3.85]]) slab(x-.03, z-.03, x+.03, z+.03, 0, TT-.04, RS.leg || '#9A6E44', .5);
-    for(const [x, z] of [[2.75,3.3],[3.3,3.75],[4.65,3.25],[5.3,3.7],[3.4,3.25],[4.7,3.75]]) place('coffee_mug', x, z, 0, TT, .8);
+    slab(3.3, 3.05, 6.7, 3.95, TT-.04, TT, RS.top || '#C9A06A', .45);
+    for(const [x, z] of [[3.42,3.15],[6.58,3.15],[3.42,3.85],[6.58,3.85]]) slab(x-.03, z-.03, x+.03, z+.03, 0, TT-.04, RS.leg || '#9A6E44', .5);
+    for(const [x, z] of [[3.75,3.3],[4.3,3.75],[5.65,3.25],[6.3,3.7],[4.4,3.25],[5.7,3.75]]) place('coffee_mug', x, z, 0, TT, .8);
     { const g = new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.24,18), new THREE.MeshStandardMaterial({color:'#DCEBF0', transparent:true, opacity:.45, roughness:.05, depthWrite:false}));
-      g.position.set(3.91, TT+.12, 3.47); room.add(g);
-      const c = new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.15,18), mat('#4A2E1E', .3)); c.position.set(3.91, TT+.08, 3.47); room.add(c);
-      const l = new THREE.Mesh(new THREE.CylinderGeometry(.065,.065,.025,18), mat('#2B2F33', .3)); l.position.set(3.91, TT+.25, 3.47); room.add(l);
-      const k = new THREE.Mesh(new THREE.SphereGeometry(.02, 10, 8), mat('#2B2F33', .3)); k.position.set(3.91, TT+.3, 3.47); room.add(k) }
-    { const pl = new THREE.Mesh(new THREE.CylinderGeometry(.13,.11,.02,24), mat('#FFFFFF', .4)); pl.position.set(4.45, TT+.01, 3.5); room.add(pl);
+      g.position.set(4.91, TT+.12, 3.47); room.add(g);
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.15,18), mat('#4A2E1E', .3)); c.position.set(4.91, TT+.08, 3.47); room.add(c);
+      const l = new THREE.Mesh(new THREE.CylinderGeometry(.065,.065,.025,18), mat('#2B2F33', .3)); l.position.set(4.91, TT+.25, 3.47); room.add(l);
+      const k = new THREE.Mesh(new THREE.SphereGeometry(.02, 10, 8), mat('#2B2F33', .3)); k.position.set(4.91, TT+.3, 3.47); room.add(k) }
+    { const pl = new THREE.Mesh(new THREE.CylinderGeometry(.13,.11,.02,24), mat('#FFFFFF', .4)); pl.position.set(5.45, TT+.01, 3.5); room.add(pl);
       for(let k=0; k<6; k++){ const a = k/6*6.283, b = new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.015,14), mat('#C98A4A', .7));
-        b.position.set(4.45 + Math.cos(a)*.06, TT+.03, 3.5 + Math.sin(a)*.06); room.add(b) } }
-    tulips(5.2, 3.35, TT);
+        b.position.set(5.45 + Math.cos(a)*.06, TT+.03, 3.5 + Math.sin(a)*.06); room.add(b) } }
+    tulips(6.2, 3.35, TT);
     // two floor lamps, plants in the corners and by the windows, the coffee trolley
-    place('slim_floor_lamp', 1.0, 5.3, 0, 0, 1); place('slim_floor_lamp', 7.0, 2.6, 0, 0, 1);
-    for(const [x, z] of [[1.0, 5.3], [7.0, 2.6]]){ const l = new THREE.PointLight(0xffd9a8, .8, 3.2, 1.8); l.position.set(x, 1.3, z); room.add(l) }
+    place('slim_floor_lamp', 1.0, 5.3, 0, 0, 1); place('slim_floor_lamp', 8.1, 2.6, 0, 0, 1);
+    for(const [x, z] of [[1.0, 5.3], [8.1, 2.6]]){ const l = new THREE.PointLight(0xffd9a8, .8, 3.2, 1.8); l.position.set(x, 1.3, z); room.add(l) }
     plant(9.45, .55, 1.2); plant(9.4, 5.6, 1.1); plant(7.4, .55, .9); plant(.6, 6.95, .8); plant(2.1, 5.9, .85);
     place('serving_trolley', 9.45, 1.55, -Math.PI/2, 0, 1);
     place('coffee_mug', 9.35, 1.35, 0, .73, .8); place('coffee_mug', 9.52, 1.62, 0, .73, .8);

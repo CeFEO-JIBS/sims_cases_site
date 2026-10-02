@@ -604,7 +604,7 @@ function smallPlant(px,py,z){custom(px-.1,py-.1,px+.1,py+.1,z,z+16,()=>{
 
 // ---------------------------------------------------------------- spots (places people go)
 const SP={}, GROUPS={};
-const SEATFACE={lr_e:'-x',famsofa:'+x',lobbysofa:'+x',liftbench:'+x',herbench:'+y',sofa_s0:'-y',sofa_s1:'-y'};
+const SEATFACE={lr_w:'+x',lr_e:'-x',famsofa:'+x',lobbysofa:'+x',liftbench:'+x',herbench:'+y',sofa_s0:'-y',sofa_s1:'-y'};
 function spot(id,group,px,py,ax,ay,z,act){
   const s={id,group,px,py,ax,ay,z,act,occ:null,room:roomAt(ax,ay),face:CHAIRFACE[px+'|'+py]||SEATFACE[id]||(id.startsWith('sofa_n')?'+y':null)};
   SP[id]=s;(GROUPS[group]=GROUPS[group]||[]).push(s);return s;
@@ -784,7 +784,7 @@ ROOMSTYLES.bergstrom.backArt=[{x0:4.1,x1:5.9,z0:40,z1:86,draw(g,w,h){           
 // founder's by the fire, the banker's), the fireplace on the left wall between tall oak bookcases with a landscape
 // above the mantel, a low bookcase under an abstract painting on the back wall, plants. Drawn by both rooms.
 ROOMSTYLES.bank={...ROOMSTYLES.scandi,floor:'#C8A27A',tex:'wood',wall:['#F1E6D6','#F7EEE2','#E8DCC8','#DCCDB6'],base:['#B88A5A','#A87A4A'],wains:null,
-  rugs:[[1.6,1.7,6.6,5.3,'#E2D2B6']],props:'lounge',leather:'#A65A3E',oak:'#B88A5A',top:'#C9A06A',leg:'#9A6E44',chair:'#A65A3E',glass:'#B8C8D0',win:'city',light:'day',decor:'bank',
+  rugs:[[2.6,1.7,7.4,5.3,'#E2D2B6']],props:'lounge',leather:'#A65A3E',oak:'#B88A5A',top:'#C9A06A',leg:'#9A6E44',chair:'#A65A3E',glass:'#B8C8D0',win:'city',light:'day',decor:'bank',
   stage:'radial-gradient(ellipse at 50% 40%,#7A6450 0%,#4A3A2E 60%,#2A201A 100%)'};
 ROOMSTYLES.bank.backArt=[{x0:4.1,x1:5.9,z0:46,z1:90,draw(g,w,h){                            // an abstract painting in an oak frame
   g.fillStyle='#9A6E44';g.fillRect(0,0,w,h);g.fillStyle='#F4ECDD';g.fillRect(2.5,2.5,w-5,h-5);
@@ -1076,18 +1076,18 @@ function furnish(){
       if(side==='+x'){q=[x0,y0+at,x1-bt,y1-at];bk=[x1-bt,y0,x1,y1];a1=[x0,y0,x1-bt,y0+at];a2=[x0,y1-at,x1-bt,y1]}
       box(q[0],q[1],q[2],q[3],0,12,L);box(bk[0],bk[1],bk[2],bk[3],0,30,shade2(L,-.06));box(a1[0],a1[1],a1[2],a1[3],0,20,shade2(L,-.03));box(a2[0],a2[1],a2[2],a2[3],0,20,shade2(L,-.03));
       for(let x=Math.floor(x0);x<x1;x++)for(let y=Math.floor(y0);y<y1;y++)SOFT.add(tk(x,y))};
-    couch(2.95,2.04,5.05,2.72,'-y');couch(2.95,4.28,5.05,4.96,'+y');                       // the sofas, two seats each (b_n0..1, b_s0..1)
-    couch(1.24,3.12,1.92,3.88,'-x');couch(6.08,3.12,6.76,3.88,'+x');                       // the armchairs (b_h1, lr_e)
-    [[3.5,2.42,'+y'],[4.5,2.42,'+y'],[3.5,4.58,'-y'],[4.5,4.58,'-y'],[1.62,3.5,'+x'],[6.38,3.5,'-x']].forEach(([x,y,f])=>CHAIRFACE[x+'|'+y]=f);
-    table(2.3,3.05,5.7,3.95,12,st.top,st.leg);                                              // the low oak table, set for coffee
-    custom(3.82,3.38,4.0,3.56,12,26,()=>{const b=P(3.91,3.47,12),t=P(3.91,3.47,22);ctx.save();ctx.fillStyle='rgba(220,236,240,.6)';ctx.fillRect(b[0]-4,t[1],8,b[1]-t[1]);
+    couch(3.95,2.04,6.05,2.72,'-y');couch(3.95,4.28,6.05,4.96,'+y');                       // the sofas, two seats each (b_n1..2, b_s1..2)
+    couch(2.24,3.12,2.92,3.88,'-x');couch(7.08,3.12,7.76,3.88,'+x');                       // the armchairs (lr_w, lr_e)
+    [[4.5,2.42,'+y'],[5.5,2.42,'+y'],[4.5,4.58,'-y'],[5.5,4.58,'-y'],[2.62,3.5,'+x'],[7.38,3.5,'-x']].forEach(([x,y,f])=>CHAIRFACE[x+'|'+y]=f);
+    table(3.3,3.05,6.7,3.95,12,st.top,st.leg);                                              // the low oak table, set for coffee
+    custom(4.82,3.38,5.0,3.56,12,26,()=>{const b=P(4.91,3.47,12),t=P(4.91,3.47,22);ctx.save();ctx.fillStyle='rgba(220,236,240,.6)';ctx.fillRect(b[0]-4,t[1],8,b[1]-t[1]);
       ctx.fillStyle='#4A2E1E';ctx.fillRect(b[0]-4,t[1]+4,8,b[1]-t[1]-4);ctx.fillStyle='#2B2F33';ctx.fillRect(t[0]-4.5,t[1]-1.5,9,2);ctx.fillRect(t[0]-.5,t[1]-5,1,4);ctx.fillRect(b[0]+4,t[1]+2,2,5);ctx.restore()});  // the coffee press
-    mug(2.75,3.3,12,'#FFFFFF');mug(3.3,3.75,12,'#F2E2C8');mug(4.65,3.25,12,'#FFFFFF');mug(5.3,3.7,12,'#F2E2C8');mug(3.4,3.25,12,'#FFFFFF');mug(4.7,3.75,12,'#F2E2C8');
-    bunPlate(4.45,3.5,12);flowers(5.2,3.35,12);
+    mug(3.75,3.3,12,'#FFFFFF');mug(4.3,3.75,12,'#F2E2C8');mug(5.65,3.25,12,'#FFFFFF');mug(6.3,3.7,12,'#F2E2C8');mug(4.4,3.25,12,'#FFFFFF');mug(5.7,3.75,12,'#F2E2C8');
+    bunPlate(5.45,3.5,12);flowers(6.2,3.35,12);
     fireplace();                                                                             // the fire, on the left wall
     shelf(.06,.3,.46,2.15,84,'+x',41,st.oak);shelf(.06,4.85,.46,6.7,84,'+x',43,st.oak);      // tall oak bookcases either side
     shelf(3.9,.1,6.1,.5,40,'+y',47,st.oak);smallPlant(4.3,.3,40);box(5.55,.22,5.75,.42,40,52,'#C98A5A');   // the low bookcase, a plant and a vase on it
-    lamp(1.0,5.3);lamp(7.0,2.6);
+    lamp(1.0,5.3);lamp(8.1,2.6);
     plant(9.45,.55,1.2);plant(9.4,5.6,1.1);plant(7.4,.55,.9);plant(.6,6.95,.8);plant(2.1,5.9,.85);
     box(9.15,1.25,9.75,1.85,0,24,st.oak,{top:'#C9A06A'});mug(9.35,1.45,24,'#FFFFFF');mug(9.55,1.65,24,'#FFFFFF');   // the coffee trolley
   }else if(st.props==='office2'){
@@ -1130,8 +1130,8 @@ function applyRoomStyle(key){
 blockRect(2,3,7,3);blockRect(3,0,6,0);
 [3,4,5,6].forEach((i,k)=>{spot('b_n'+k,'board',i+.5,2.42,i,2,13,'Reading board papers');spot('b_s'+k,'board',i+.5,4.58,i,4,13,'Reading board papers')});
 spot('b_h1','board',1.62,3.5,1,3,13,'Reading board papers');spot('b_h2','board',8.38,3.5,8,3,13,'Reading board papers');
-// the lounge's second armchair (case 16), facing b_h1 across the low table; only a case's seat list puts anyone here
-spot('lr_e','lounge_e',6.38,3.5,6,3,13,'In the meeting');
+// the lounge's two armchairs (case 16), at the ends of its low table; only a case's seat list puts anyone here
+spot('lr_w','lounge_w',2.62,3.5,2,3,13,'In the meeting');spot('lr_e','lounge_e',7.38,3.5,7,3,13,'In the meeting');
 furnish();
 
 // CEO office
@@ -4266,11 +4266,11 @@ const JIBS={
 // ---------------------------------------------------------------- case 16: Five Answers, the opening hook for Responsible Ownership
 const FA_CAST=[
  {id:'tomas_fa',cloth:'pin',mug:'#1F3A30',pocket:'#F4F2EE',age:52,eyes:'#4A6B8A',watch:'#C9CED2',first:'Tomas',last:'Weber',role:'Private banker',fam:false,seat:'lr_e',shirt:'#2A3440',trous:'#22262C',skin:'#F0CFB4',hair:'#7A6A5A',hairType:'short',tie:'#1F3A30',inner:'#F2F4F6',bio:'The family’s private banker. He asked the question nobody else had asked.'},
- {id:'viktor_fa',cloth:'pin',bushy:true,browCol:'#C9C2B6',mug:'#1F3A30',age:63,eyes:'#5B7A99',watch:'#D6B25E',first:'Viktor',last:'',role:'Founder, father',fam:true,seat:'b_h1',shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#C9C2B6',hairType:'short',tie:'#5A2E2E',inner:'#EEF2F6',bio:'The founder. He started the company in 1992 with one refrigerated truck; today it runs cold-chain logistics in six countries, with 2,300 employees.'},
- {id:'elena_fa',pads:true,fem:true,eyes:'#5B7A99',ear:'pearl',mug:'#1F3A30',age:61,first:'Elena',last:'',role:'Holding board, mother',fam:true,seat:'b_n0',shirt:'#5A3A4A',trous:'#2B2F36',skin:'#F2D4BC',hair:'#B8A48A',hairType:'bob',inner:'#F4F4F2',bio:'Viktor’s wife. She has sat on the holding board since the beginning.'},
- {id:'daniel_fa',cloth:'knit',casual:true,mug:'#1F3A30',age:33,eyes:'#4F7F9F',watch:'#2B2B2B',first:'Daniel',last:'',role:'Digital operations, son, 33',fam:true,seat:'b_n1',shirt:'#2F4A6A',trous:'#2E3440',skin:'#EBC5A5',hair:'#6A5A4A',hairType:'short',inner:'#E8ECEF',bio:'33. Runs digital operations in the group, and wants to lead it.'},
- {id:'sofia_fa',pads:true,fem:true,eyes:'#4F7F9F',ear:'silver',lips:'#A8454A',mug:'#1F3A30',age:29,first:'Sofia',last:'',role:'Lawyer in London, daughter, 29',fam:true,seat:'b_s0',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#4A3424',hairType:'long',inner:'#F4F6F8',bio:'29. A lawyer in London. She has never worked in the company.'},
- {id:'mark_fa',casual:true,mug:'#1F3A30',age:24,eyes:'#5B7A99',first:'Mark',last:'',role:'Student, son, 24',fam:true,seat:'b_s1',shirt:'#4A5A4E',trous:'#2E3440',skin:'#F0CFB4',hair:'#8A6A4A',hairType:'short',inner:'#E8ECEF',bio:'24. Finishing a master’s degree.'},
+ {id:'viktor_fa',cloth:'pin',bushy:true,browCol:'#C9C2B6',mug:'#1F3A30',age:63,eyes:'#5B7A99',watch:'#D6B25E',first:'Viktor',last:'',role:'Founder, father',fam:true,seat:'lr_w',shirt:'#2E3A46',trous:'#262B31',skin:'#EBC5A5',hair:'#C9C2B6',hairType:'short',tie:'#5A2E2E',inner:'#EEF2F6',bio:'The founder. He started the company in 1992 with one refrigerated truck; today it runs cold-chain logistics in six countries, with 2,300 employees.'},
+ {id:'elena_fa',pads:true,fem:true,eyes:'#5B7A99',ear:'pearl',mug:'#1F3A30',age:61,first:'Elena',last:'',role:'Holding board, mother',fam:true,seat:'b_n1',shirt:'#5A3A4A',trous:'#2B2F36',skin:'#F2D4BC',hair:'#B8A48A',hairType:'bob',inner:'#F4F4F2',bio:'Viktor’s wife. She has sat on the holding board since the beginning.'},
+ {id:'daniel_fa',cloth:'knit',casual:true,mug:'#1F3A30',age:33,eyes:'#4F7F9F',watch:'#2B2B2B',first:'Daniel',last:'',role:'Digital operations, son, 33',fam:true,seat:'b_n2',shirt:'#2F4A6A',trous:'#2E3440',skin:'#EBC5A5',hair:'#6A5A4A',hairType:'short',inner:'#E8ECEF',bio:'33. Runs digital operations in the group, and wants to lead it.'},
+ {id:'sofia_fa',pads:true,fem:true,eyes:'#4F7F9F',ear:'silver',lips:'#A8454A',mug:'#1F3A30',age:29,first:'Sofia',last:'',role:'Lawyer in London, daughter, 29',fam:true,seat:'b_s1',shirt:'#23355A',trous:'#22282E',skin:'#F6E0CD',hair:'#4A3424',hairType:'long',inner:'#F4F6F8',bio:'29. A lawyer in London. She has never worked in the company.'},
+ {id:'mark_fa',casual:true,mug:'#1F3A30',age:24,eyes:'#5B7A99',first:'Mark',last:'',role:'Student, son, 24',fam:true,seat:'b_s2',shirt:'#4A5A4E',trous:'#2E3440',skin:'#F0CFB4',hair:'#8A6A4A',hairType:'short',inner:'#E8ECEF',bio:'24. Finishing a master’s degree.'},
 ];
 const FA_BASE=[
  {cap:'Viktor started the company in 1992 with one refrigerated truck. Today it runs cold-chain logistics in six countries, with 2,300 employees, and the family name is on every truck.',look:{all:'viktor_fa',viktor_fa:'table'},dur:9},
