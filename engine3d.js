@@ -1319,6 +1319,8 @@ export function create(stage){
   // Case 15: Bergström Industries, the default layout in steel grey and birch on a rainy day; the tools and the slide are shared
   ROOMS.bergstrom = (RS) => ROOMS.boardroom(RS, {rug:'#4E5A62', top:'#D9C9A8', chair:'chair_A', cushion:'#3A4046', art:false});
   ROOMS.jibs = (RS) => ROOMS.boardroom(RS, {rug:'#1F3A5A', top:'#DCCDB0', chair:'chair_A', cushion:'#2A3A4E', art:false});
+  // Case 16: the private bank's meeting room, walnut and bottle-green leather
+  ROOMS.bank = (RS) => ROOMS.boardroom(RS, {rug:'#2E4A3E', top:'#4A2E1E', chair:'chair_A', cushion:'#1F3A30', art:false});
   ROOMS.board_items = (SP, CF) => {
     // a chair at every boardroom seat the engine defines, turned the way the engine turns it.
     // A seat's facing lives in CHAIRFACE: the engine lays the chairs out after it creates the seats.
