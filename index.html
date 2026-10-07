@@ -5056,5 +5056,22 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',read
 {let c0='lindqvist';try{c0=localStorage.getItem('fbsim.case2')||c0}catch(e){}const q=URLQ.get('case');if(q&&CASES.some(c=>c.id===q))c0=q;loadCase(c0)}readTheme();resize();makeScene();focusBoardroom(false);openCase(CASE.id,true);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{floorCache=null});requestAnimationFrame(frame);
 })();
 </script>
+<script>
+// Remote control for pages that embed the tool (e.g. a presentation deck with a clicker).
+// The parent posts {fbsim:'next'}; the tool presses its own next button and replies
+// {fbsim:'ack', step:'watch'|'start'|'wait'|'pass'}. 'pass' tells the parent there is nothing to press.
+(function(){
+  function vis(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden'}
+  window.addEventListener('message',function(e){
+    var d=e.data;if(!d||d.fbsim!=='next')return;
+    var step='pass';
+    var go=document.querySelector('#startPick button.spgo');
+    var watch=document.querySelector('#intro .roles button[data-role="watch"]')||document.querySelector('#intro .roles button[data-role]');
+    if(vis(go)){go.click();step='start'}
+    else if(vis(watch)){if(watch.disabled)step='wait';else{watch.click();step='watch'}}
+    try{e.source.postMessage({fbsim:'ack',step:step},e.origin&&e.origin!=='null'?e.origin:'*')}catch(_){}
+  });
+})();
+</script>
 </body>
 </html>
